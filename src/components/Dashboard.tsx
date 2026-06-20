@@ -8,7 +8,6 @@ import { UserProgress, Level } from "../types";
 import { INITIAL_TRACKS } from "../data/checklist";
 import { Award, Zap, CheckCircle, BarChart3, Star, Sparkles, BookOpen, Cpu, Layers, Globe, SlidersHorizontal, Trophy, Lock, Smile, ArrowRight, Share2, Check } from "lucide-react";
 import { motion } from "motion/react";
-import CelebrationConfetti from "./CelebrationConfetti";
 
 interface DashboardProps {
   progress: UserProgress;
@@ -29,12 +28,24 @@ export default function Dashboard({
 }: DashboardProps) {
   const [selectedCategory, setSelectedCategory] = React.useState<"all" | "tech" | "content" | "growth">("all");
   const [viewingAward, setViewingAward] = React.useState<any | null>(null);
+  const [isEditingName, setIsEditingName] = React.useState(false);
   const [graduateName, setGraduateName] = React.useState<string>(() => {
     try {
       const saved = localStorage.getItem("lms_graduate_name");
-      return saved || "Amrish Kumar Singh";
+      if (saved) return saved;
+
+      // Try to read first lead submitted by this browser
+      const leadsRaw = localStorage.getItem("lms_crm_leads");
+      if (leadsRaw) {
+        const leads = JSON.parse(leadsRaw);
+        if (leads && leads.length > 0 && leads[0].name) {
+          return leads[0].name;
+        }
+      }
+
+      return "Candidate Name";
     } catch (e) {
-      return "Amrish Kumar Singh";
+      return "Candidate Name";
     }
   });
 
@@ -84,19 +95,10 @@ export default function Dashboard({
   };
 
   // --- Mastery Badge & Celebration State ---
-  const [celebratedIds, setCelebratedIds] = React.useState<string[]>(() => {
-    try {
-      const saved = localStorage.getItem("lms_celebrated_levels");
-      return saved ? JSON.parse(saved) : [];
-    } catch (e) {
-      return [];
-    }
-  });
-
   const [selectedBadgeFilter, setSelectedBadgeFilter] = React.useState<"all" | "unlocked" | "locked">("all");
   const [hoveredBadgeLevel, setHoveredBadgeLevel] = React.useState<Level | null>(null);
 
-  // Identify completed levels
+  // Identify completed levels for badge displays
   const completedLevels = levels.filter(level => {
     if (!level.checklistItems || level.checklistItems.length === 0) return false;
     return level.checklistItems.every(item => progress.completedItemIds.includes(item.id));
@@ -106,35 +108,6 @@ export default function Dashboard({
     if (!course.checklistItems || course.checklistItems.length === 0) return false;
     return course.checklistItems.every(item => progress.completedItemIds.includes(item.id));
   });
-
-  const allCompletedIdsArray = [
-    ...completedLevels.map(l => String(l.id)),
-    ...completedCustomCourses.map(c => String(c.id))
-  ];
-
-  // Dynamic popup state
-  const [activeCelebrateId, setActiveCelebrateId] = React.useState<string | null>(null);
-
-  React.useEffect(() => {
-    const uncelebrated = allCompletedIdsArray.find(id => !celebratedIds.includes(String(id)));
-    if (uncelebrated) {
-      setActiveCelebrateId(uncelebrated);
-    } else {
-      setActiveCelebrateId(null);
-    }
-  }, [progress.completedItemIds, celebratedIds, progress.customCourses]);
-
-  const celebratedLevel = activeCelebrateId ? (
-    levels.find(l => String(l.id) === activeCelebrateId) || 
-    (progress.customCourses || []).find(c => String(c.id) === activeCelebrateId)
-  ) : null;
-
-  const handleCelebrateDismiss = (id: string | number) => {
-    const updated = [...celebratedIds, String(id)];
-    setCelebratedIds(updated);
-    localStorage.setItem("lms_celebrated_levels", JSON.stringify(updated));
-    setActiveCelebrateId(null);
-  };
 
   const getCategoryStyle = (category: string) => {
     const cat = category.toLowerCase();
@@ -940,12 +913,6 @@ export default function Dashboard({
         </button>
       </div>
 
-      {/* 🏆 Full-screen Celebratory Mastery Award Overlay */}
-      <CelebrationConfetti
-        activeCelebrateId={activeCelebrateId}
-        celebratedLevel={celebratedLevel}
-        onDismiss={handleCelebrateDismiss}
-      />
 
       {/* 📜 Printable Interactive Digital Mastery Certificate Modal Overlay */}
       {viewingAward && (
@@ -1027,10 +994,44 @@ export default function Dashboard({
                   THIS DOCUMENT SECURELY CONFIRMS THAT
                 </span>
                 
-                <div className="space-y-1">
-                  <h4 className="text-2xl sm:text-3xl font-serif font-extrabold text-amber-700 italic tracking-tight line-clamp-1 py-1">
-                    {graduateName || "Verified Graduate Candidate"}
-                  </h4>
+                <div className="space-y-1 relative">
+                  {isEditingName ? (
+                    <div className="flex justify-center items-center gap-1.5 py-1">
+                      <input
+                        type="text"
+                        value={graduateName}
+                        onChange={(e) => setGraduateName(e.target.value)}
+                        onBlur={() => setIsEditingName(false)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") setIsEditingName(false);
+                        }}
+                        autoFocus
+                        placeholder="Enter Candidate Name"
+                        className="text-2xl sm:text-3xl font-serif font-extrabold text-amber-700 italic text-center bg-amber-50/50 border-b-2 border-amber-500 focus:border-amber-600 focus:outline-none px-4 rounded-md shadow-xs transition-all w-full max-w-xs"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setIsEditingName(false)}
+                        className="p-1 px-2.5 bg-neutral-900 hover:bg-neutral-800 text-white rounded-lg text-xs font-bold"
+                        title="Save name"
+                      >
+                        ✓ Save
+                      </button>
+                    </div>
+                  ) : (
+                    <div 
+                      onClick={() => setIsEditingName(true)}
+                      className="inline-flex items-center justify-center gap-2 group/edit cursor-pointer hover:bg-amber-50/40 px-3 py-0.5 rounded-xl transition-all"
+                      title="Click directly to change candidate name on this diploma"
+                    >
+                      <h4 className="text-2xl sm:text-3xl font-serif font-extrabold text-amber-700 italic tracking-tight line-clamp-1">
+                        {graduateName || "Verified Graduate Candidate"}
+                      </h4>
+                      <span className="text-[10px] font-sans font-bold text-neutral-400 bg-neutral-100/90 hover:bg-neutral-200 px-1.5 py-0.5 rounded border border-neutral-200 opacity-60 group-hover/edit:opacity-100 transition-opacity whitespace-nowrap">
+                        ✏️ Edit Name
+                      </span>
+                    </div>
+                  )}
                   <p className="text-xs text-neutral-400 font-semibold font-mono">
                     Candidate Code: {(viewingAward as any).credentialId}
                   </p>

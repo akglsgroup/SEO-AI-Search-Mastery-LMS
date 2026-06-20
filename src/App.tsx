@@ -12,6 +12,7 @@ import ModuleDetails from "./components/ModuleDetails";
 import CourseCreator from "./components/CourseCreator";
 import QuizModule from "./components/QuizModule";
 import CRMConsole, { LeadFormModal } from "./components/CRMConsole";
+import CelebrationConfetti from "./components/CelebrationConfetti";
 import { 
   BookOpen, Award, LayoutDashboard, Layers, Sparkles, 
   Settings, Flame, CheckCircle, RefreshCw, Star, ArrowRight,
@@ -133,6 +134,18 @@ export default function App() {
     localStorage.setItem("lms_user_awards", JSON.stringify(awards));
   }, [awards]);
 
+  // --- Celebration State ---
+  const [celebratedIds, setCelebratedIds] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem("lms_celebrated_levels");
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      return [];
+    }
+  });
+
+  const [activeCelebrateId, setActiveCelebrateId] = useState<string | null>(null);
+
   // Keep digital certificates updated when any course or modules are checked 100% complete
   useEffect(() => {
     const newAwards: MasteryAward[] = [];
@@ -186,6 +199,43 @@ export default function App() {
       });
     }
   }, [completedItemIds, allLevels, customCourses, awards]);
+
+  // Identify completed levels for celebration
+  const completedLevels = allLevels.filter(level => {
+    if (!level.checklistItems || level.checklistItems.length === 0) return false;
+    return level.checklistItems.every(item => completedItemIds.includes(item.id));
+  });
+
+  const completedCustomCourses = (customCourses || []).filter(course => {
+    if (!course.checklistItems || course.checklistItems.length === 0) return false;
+    return course.checklistItems.every(item => completedItemIds.includes(item.id));
+  });
+
+  const allCompletedIdsArray = [
+    ...completedLevels.map(l => String(l.id)),
+    ...completedCustomCourses.map(c => String(c.id))
+  ];
+
+  useEffect(() => {
+    const uncelebrated = allCompletedIdsArray.find(id => !celebratedIds.includes(String(id)));
+    if (uncelebrated) {
+      setActiveCelebrateId(uncelebrated);
+    } else {
+      setActiveCelebrateId(null);
+    }
+  }, [completedItemIds, celebratedIds, customCourses]);
+
+  const celebratedLevel = activeCelebrateId ? (
+    allLevels.find(l => String(l.id) === activeCelebrateId) || 
+    (customCourses || []).find(c => String(c.id) === activeCelebrateId)
+  ) : null;
+
+  const handleCelebrateDismiss = (id: string | number) => {
+    const updated = [...celebratedIds, String(id)];
+    setCelebratedIds(updated);
+    localStorage.setItem("lms_celebrated_levels", JSON.stringify(updated));
+    setActiveCelebrateId(null);
+  };
 
   // --- AUTO-SCROLL TO TOP ON VIEW/TAB TRANSITIONS ---
   useEffect(() => {
@@ -676,6 +726,13 @@ export default function App() {
           </div>
         </div>
       )}
+
+      {/* 🏆 Full-screen Celebratory Mastery Award Overlay */}
+      <CelebrationConfetti
+        activeCelebrateId={activeCelebrateId}
+        celebratedLevel={celebratedLevel}
+        onDismiss={handleCelebrateDismiss}
+      />
 
       {/* Corporate Lead Capture / Consulting Form Overlay */}
       <LeadFormModal 
