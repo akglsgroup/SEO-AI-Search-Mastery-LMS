@@ -28,7 +28,7 @@ export default function Dashboard({
   onOpenConsulting,
   onToggleItem
 }: DashboardProps) {
-  const [selectedCategory, setSelectedCategory] = React.useState<"all" | "tech" | "content" | "growth">("all");
+  const [selectedCategory, setSelectedCategory] = React.useState<"all" | "tech" | "content" | "growth" | "wordpress">("all");
   const [viewingAward, setViewingAward] = React.useState<any | null>(null);
   const [isEditingName, setIsEditingName] = React.useState(false);
   const [graduateName, setGraduateName] = React.useState<string>(() => {
@@ -1082,7 +1082,7 @@ export default function Dashboard({
               Curriculum Categories &amp; Tracks
             </h2>
             <p className="text-sm text-neutral-600 max-w-2xl leading-relaxed font-medium">
-              Select one of the nine structured mastery paths below to browse specific checklists, lessons, and interactive quiz components.
+              Select one of the {INITIAL_TRACKS.length} structured mastery paths below to browse specific checklists, lessons, and interactive quiz components.
             </p>
           </div>
 
@@ -1136,6 +1136,18 @@ export default function Dashboard({
                 <Globe size={13} className={selectedCategory === "growth" ? "text-white" : "text-purple-600"} />
                 Authority &amp; CRO
               </button>
+              <button
+                type="button"
+                onClick={() => setSelectedCategory("wordpress")}
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-sans font-semibold transition-all cursor-pointer ${
+                  selectedCategory === "wordpress"
+                    ? "bg-amber-600 text-white shadow-xs"
+                    : "text-neutral-500 hover:text-amber-700 hover:bg-amber-50/50"
+                }`}
+              >
+                <Globe size={13} className={selectedCategory === "wordpress" ? "text-white" : "text-amber-600"} />
+                WordPress Optimization
+              </button>
             </div>
           </div>
         </div>
@@ -1169,6 +1181,15 @@ export default function Dashboard({
               accentBg: "bg-purple-50 text-purple-800 border-purple-100",
               groupBorder: "border-purple-200/60 bg-purple-50/[0.12]",
               tracks: [INITIAL_TRACKS[8]]
+            },
+            {
+              id: "wordpress" as const,
+              name: "WordPress Performance & AI Optimization",
+              description: "Unleash extreme site loading speeds and prepare content architectures for autonomous search engine recommendation bots.",
+              icon: <Globe size={20} className="text-amber-600 shrink-0" />,
+              accentBg: "bg-amber-50 text-amber-800 border-amber-100",
+              groupBorder: "border-amber-200/60 bg-amber-50/[0.12]",
+              tracks: [INITIAL_TRACKS[9]]
             }
           ]
             .filter(group => selectedCategory === "all" || group.id === selectedCategory)
@@ -1191,7 +1212,7 @@ export default function Dashboard({
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold border uppercase tracking-wider ${group.accentBg}`}>
-                          {group.id === "tech" ? "Technical" : group.id === "content" ? "Content & AI" : "Authority & CRO"}
+                          {group.id === "tech" ? "Technical" : group.id === "content" ? "Content & AI" : group.id === "wordpress" ? "WordPress" : "Authority & CRO"}
                         </span>
                         <h3 className="text-lg font-sans font-bold text-neutral-800 tracking-tight flex items-center gap-2">
                           {group.icon}
@@ -1208,7 +1229,7 @@ export default function Dashboard({
                       <div className="w-14 bg-neutral-100 h-2 rounded-full overflow-hidden">
                         <div 
                           className={`h-full transition-all duration-300 ${
-                            group.id === "tech" ? "bg-emerald-500" : group.id === "content" ? "bg-blue-500" : "bg-purple-500"
+                            group.id === "tech" ? "bg-emerald-500" : group.id === "content" ? "bg-blue-500" : group.id === "wordpress" ? "bg-amber-500" : "bg-purple-500"
                           }`}
                           style={{ width: `${groupPercent}%` }}
                         ></div>

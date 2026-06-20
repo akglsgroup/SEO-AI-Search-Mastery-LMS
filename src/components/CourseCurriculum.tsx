@@ -125,6 +125,15 @@ const PATH_DETAILS: Record<string, { icon: React.ReactNode; color: string; bg: s
     textClass: "text-rose-900 border-rose-500/30",
     border: "border-rose-200/60",
     accentBorder: "border-rose-500"
+  },
+  wordpress: {
+    icon: <Globe className="text-blue-600 shrink-0" size={16} />,
+    color: "bg-blue-600",
+    bg: "bg-blue-50/45",
+    activeBg: "bg-blue-600 text-white",
+    textClass: "text-blue-900 border-blue-500/30",
+    border: "border-blue-200/60",
+    accentBorder: "border-blue-500"
   }
 };
 

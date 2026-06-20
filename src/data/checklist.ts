@@ -77,6 +77,14 @@ export const INITIAL_TRACKS: Track[] = [
     colorClass: "bg-rose-50 border-rose-200 text-rose-800",
     textColorClass: "text-rose-700",
     levelIds: [17, 18, 19, 20, 28, 29, 30]
+  },
+  {
+    id: "wordpress",
+    title: "10. WordPress Optimization Checklist",
+    description: "The complete, definitive 20-part WordPress speed, security, Core Web Vitals, schema, and GEO/AI search optimization protocol.",
+    colorClass: "bg-amber-50 border-amber-200 text-amber-800",
+    textColorClass: "text-amber-700",
+    levelIds: [101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120]
   }
 ];
 
@@ -895,6 +903,381 @@ export const MASTER_LEVELS: Level[] = [
       { title: "Event Schema Structured Testing", desc: "Embed structured Event details specifying dates, venues (or VirtualLocation), and ticket links. Ensure zero errors via the Google Rich Results Test (https://search.google.com/test/rich-results) to map local events." },
       { title: "Speakable Schema Audio Targeting", desc: "Identify high-importance content assets using CSS selectors or XPath for Text-to-Speech voice assistants. Verify layout using the Google Rich Results Test (https://search.google.com/test/rich-results)." },
       { title: "Rich Results Schema Validation Check", desc: "Establish continuous automated and manual testing pipelines via the Google Rich Results Test tool (https://search.google.com/test/rich-results) before launching schema templates live." }
+    ])
+  },
+  {
+    id: 101,
+    title: "WordPress Core",
+    category: "wordpress-optimization",
+    description: "Keep WordPress updated, utilize PHP 8.3+, and reduce database bloat from revisions & spam to construct a fast core baseline.",
+    difficulty: "Beginner",
+    estimatedMinutes: 35,
+    businessImpact: "Reduces server-side CPU initialization overhead and improves load times by cleaning up unnecessary database records.",
+    bestPractice: "Set up automatic email notifications for major releases and run automated database optimization cron sessions.",
+    details: "Your WordPress core configuration sets the speed and capability benchmark. Running outdated software directly impairs load performance and API connection speeds.",
+    checklistItems: createItems(101, [
+      { title: "Latest WordPress Version", desc: "Keep WordPress updated for security and performance." },
+      { title: "Latest PHP Version", desc: "Use PHP 8.3+ for faster processing and better compatibility." },
+      { title: "Database Optimization", desc: "Remove unnecessary data and optimize tables." },
+      { title: "Remove Post Revisions", desc: "Reduce database bloat from saved revisions." },
+      { title: "Remove Spam Comments", desc: "Improve database health and site cleanliness." },
+      { title: "Remove Unused Themes", desc: "Reduce security risks and resource usage." }
+    ])
+  },
+  {
+    id: 102,
+    title: "Hosting & Server",
+    category: "wordpress-optimization",
+    description: "Configure edge servers, modern CDNs, the HTTP/3 protocol, dynamic pre-routing and Brotli compression to build responsive network engines.",
+    difficulty: "Beginner",
+    estimatedMinutes: 45,
+    businessImpact: "Directly improves Time to First Byte (TTFB), bringing latency down for worldwide visitors.",
+    bestPractice: "Serve assets via high-performance managed hosting with Cloudflare proxy edge rules.",
+    details: "Host choice and server caching parameters govern initial byte response speeds. Standard shared plans fail under multi-bot crawling runs.",
+    checklistItems: createItems(102, [
+      { title: "Quality Hosting", desc: "Use reliable and high-performance hosting." },
+      { title: "CDN Setup", desc: "Deliver content faster through global servers." },
+      { title: "Edge Caching", desc: "Cache content closer to users." },
+      { title: "HTTP/3 Activation", desc: "Configure modern HTTP/3 protocols to support resource transfers on unstable cellular connections." },
+      { title: "Brotli Compression", desc: "Compress files for faster loading." },
+      { title: "Server Monitoring", desc: "Monitor uptime and server health." }
+    ])
+  },
+  {
+    id: 103,
+    title: "URL & Site Structure",
+    category: "wordpress-optimization",
+    description: "Configure clean, search-friendly URLs and nested directories to pass internal authority and guide index scanners.",
+    difficulty: "Beginner",
+    estimatedMinutes: 30,
+    businessImpact: "Saves crawling resources on duplicate paths and guides bots through topical silos.",
+    bestPractice: "Design consistent post permalinks such as /%category%/%postname%/ and avoid deep category nesting.",
+    details: "A clear URL layout helps machines categorize content themes effortlessly. Ambiguous structure causes internal crawl traps.",
+    checklistItems: createItems(103, [
+      { title: "SEO-Friendly Permalinks", desc: "Use clean, readable URLs." },
+      { title: "Category Structure", desc: "Organize content logically." },
+      { title: "Breadcrumb Navigation", desc: "Show users and crawlers page hierarchy." },
+      { title: "Internal Linking Structure", desc: "Connect related content." },
+      { title: "HTML Sitemap", desc: "Improve crawlability and navigation." }
+    ])
+  },
+  {
+    id: 104,
+    title: "Theme Optimization",
+    category: "wordpress-optimization",
+    description: "Deploy lightweight, modern themes and responsive templates to guarantee high Google speed scores on mobile breakpoints.",
+    difficulty: "Intermediate",
+    estimatedMinutes: 40,
+    businessImpact: "Increases mobile conversion rates and eliminates CLS shifts from unstyled fonts or dynamic headers.",
+    bestPractice: "Favor performance-driven, block-based themes with minimal built-in sliders or layout plugins.",
+    details: "Themes define your document's DOM hierarchy. Complex structural packages block browser UI threads and lag first content presentation.",
+    checklistItems: createItems(104, [
+      { title: "Lightweight Theme", desc: "Use performance-focused themes." },
+      { title: "Mobile Responsive Design", desc: "Ensure proper mobile display." },
+      { title: "Remove Unused Theme Features", desc: "Eliminate unnecessary code." },
+      { title: "Theme Performance Testing", desc: "Measure theme impact on speed." }
+    ])
+  },
+  {
+    id: 105,
+    title: "Plugin Optimization",
+    category: "wordpress-optimization",
+    description: "Eliminate low-quality or duplicative plugins to reduce script conflicts and security vulnerabilities.",
+    difficulty: "Intermediate",
+    estimatedMinutes: 45,
+    businessImpact: "Saves page load capacity and ensures reliable template execution without database locking issues.",
+    bestPractice: "Axe any plugin that hasn't been updated in 6 months or has high-usage overlap profiles.",
+    details: "WordPress extensibility is a common source of code bloating. Standardizing plugin list items keeps servers clean.",
+    checklistItems: createItems(105, [
+      { title: "Plugin Audit", desc: "Review all installed plugins." },
+      { title: "Remove Inactive Plugins", desc: "Reduce security risks." },
+      { title: "Remove Duplicate Plugins", desc: "Avoid overlapping functionality." },
+      { title: "Performance Review", desc: "Identify slow plugins." },
+      { title: "Security Review", desc: "Ensure plugins are trusted and updated." }
+    ])
+  },
+  {
+    id: 106,
+    title: "Caching",
+    category: "wordpress-optimization",
+    description: "Deploy layered caching, opcode caching, and edge-side setups to deliver static assets fast.",
+    difficulty: "Beginner",
+    estimatedMinutes: 50,
+    businessImpact: "Mitigates database query overhead, saving thousands of dollars in server CPU usage.",
+    bestPractice: "Configure server-level page caching directly (e.g. Nginx FastCGI or LiteSpeed) over reliance on heavy PHP-level plugins.",
+    details: "Caching avoids redundant resource execution by caching finished outputs. This keeps TTFB low.",
+    checklistItems: createItems(106, [
+      { title: "Page Cache", desc: "Store generated pages for faster delivery." },
+      { title: "Browser Cache", desc: "Save files on user devices." },
+      { title: "Object Cache", desc: "Speed up database queries." },
+      { title: "Opcode Cache", desc: "Improve PHP execution performance." },
+      { title: "Dynamic Cache", desc: "Cache frequently requested content." }
+    ])
+  },
+  {
+    id: 107,
+    title: "Core Web Vitals",
+    category: "wordpress-optimization",
+    description: "Fine-tune page presentation and client threads to fulfill Google's rigorous LCP, CLS, and INP thresholds.",
+    difficulty: "Intermediate",
+    estimatedMinutes: 60,
+    businessImpact: "Direct ranking impact across Google index listings and enhanced user engagement rates.",
+    bestPractice: "Size image dimensions explicitly and delay script executions that don't directly feed the main viewport.",
+    details: "Core Web Vitals represent user load experiences. Even lightweight sites fail if images shift elements or heavy fonts load slowly.",
+    checklistItems: createItems(107, [
+      { title: "LCP Optimization", desc: "Improve largest visible content loading speed." },
+      { title: "CLS Optimization", desc: "Prevent layout shifting during load." },
+      { title: "INP Optimization", desc: "Improve interaction responsiveness." },
+      { title: "FCP Optimization", desc: "Speed up first visible content rendering." },
+      { title: "TTFB Optimization", desc: "Reduce server response time." }
+    ])
+  },
+  {
+    id: 108,
+    title: "Image Optimization",
+    category: "wordpress-optimization",
+    description: "Compress digital graphics, serve next-gen formats, and implement lazy loading to reduce transfer weights.",
+    difficulty: "Intermediate",
+    estimatedMinutes: 45,
+    businessImpact: "Drastically scales down payload weights and accelerates mobile data downloads.",
+    bestPractice: "Adopt adaptive WebP/AVIF formats and enforce strict size-matching boundaries on media uploads.",
+    details: "Large image assets are the main culprit for performance degradation. Compressing images speeds up rendering.",
+    checklistItems: createItems(108, [
+      { title: "Image Compression", desc: "Reduce image file sizes." },
+      { title: "WebP Images", desc: "Use modern image format." },
+      { title: "AVIF Images", desc: "Use advanced compression format." },
+      { title: "Responsive Images", desc: "Serve device-specific image sizes." },
+      { title: "Lazy Loading", desc: "Load images only when needed." },
+      { title: "Image Alt Text", desc: "Improve accessibility and SEO." }
+    ])
+  },
+  {
+    id: 109,
+    title: "CSS Optimization",
+    category: "wordpress-optimization",
+    description: "Minify styles, isolate critical CSS rules above the fold, and clean up bloated theme code.",
+    difficulty: "Intermediate",
+    estimatedMinutes: 40,
+    businessImpact: "Clears critical browser rendering blockages, and improves first paint milestones.",
+    bestPractice: "Automate style compilation and defer non-critical CSS files to decrease page weight.",
+    details: "Browser engines block visual creation until all stylesheet dependencies are fetched. Cleaning stylesheets speed up displays.",
+    checklistItems: createItems(109, [
+      { title: "CSS Minification", desc: "Remove unnecessary code." },
+      { title: "Critical CSS", desc: "Load important styles first." },
+      { title: "Remove Unused CSS", desc: "Reduce page weight." },
+      { title: "CSS Compression", desc: "Optimize style delivery." }
+    ])
+  },
+  {
+    id: 110,
+    title: "JavaScript Optimization",
+    category: "wordpress-optimization",
+    description: "Deconstruct scripts weight, delay unnecessary analytics trackers, and implement code splitting.",
+    difficulty: "Intermediate",
+    estimatedMinutes: 50,
+    businessImpact: "Improves interactive responsiveness values and trims device processing overhead.",
+    bestPractice: "Decline bloated social media plugins and only load complex sliders on respective checkout zones.",
+    details: "Heavy JavaScript scripts block browser UI rendering threads. Minimizing script files keeps devices running smoothly.",
+    checklistItems: createItems(110, [
+      { title: "JS Minification", desc: "Reduce script size." },
+      { title: "Delay Non-Critical JS", desc: "Delay non-critical JS to improve initial loading speed." },
+      { title: "Remove Unused JS", desc: "Reduce unnecessary execution." },
+      { title: "Code Splitting", desc: "Load scripts only when required." },
+      { title: "Reduce Third-Party Scripts", desc: "Minimize external dependencies." }
+    ])
+  },
+  {
+    id: 111,
+    title: "SEO Plugin Optimization",
+    category: "wordpress-optimization",
+    description: "Configure robust meta patterns, automated XML maps, and canonical indexes to secure proper index mapping.",
+    difficulty: "Intermediate",
+    estimatedMinutes: 40,
+    businessImpact: "Ensures automated indexing layout control, preventing duplicate keyword search ranking conflicts.",
+    bestPractice: "Use a clean all-in-one SEO suite with minimized administrative features enabled.",
+    details: "SEO plugins configure baseline document indexing rules. Proper alignment prevents indexers from crawling duplicate listing pages.",
+    checklistItems: createItems(111, [
+      { title: "SEO Plugin Setup", desc: "Configure SEO plugin setup and settings properly." },
+      { title: "XML Sitemap", desc: "Help search engines discover pages via XML sitemaps." },
+      { title: "Robots.txt", desc: "Control crawler access using robots.txt." },
+      { title: "Canonical Tags", desc: "Prevent duplicate content issues." },
+      { title: "Meta Titles", desc: "Optimize page titles." },
+      { title: "Meta Descriptions", desc: "Improve click-through rates." }
+    ])
+  },
+  {
+    id: 112,
+    title: "Technical SEO",
+    category: "wordpress-optimization",
+    description: "Address broken redirects, audit index coverage alerts, and optimize crawling efficiency.",
+    difficulty: "Intermediate",
+    estimatedMinutes: 55,
+    businessImpact: "Ensures search engine bots index valuable pages without getting lost in redirect loops.",
+    bestPractice: "Run weekly crawls using auditing software to trace and repair broken internal URLs.",
+    details: "Crawl efficiency drops when server resources are wasted on redirect chains, soft 404 sheets, or orphan categories.",
+    checklistItems: createItems(112, [
+      { title: "XML Sitemap Validation", desc: "Ensure sitemap is error-free." },
+      { title: "Index Coverage Review", desc: "Check indexed pages and resolve errors." },
+      { title: "Redirect Management", desc: "Manage URL changes properly." },
+      { title: "404 Error Monitoring", desc: "Fix broken pages." },
+      { title: "Crawl Error Monitoring", desc: "Identify crawling issues." },
+      { title: "Orphan Page Audit", desc: "Find pages without internal links." }
+    ])
+  },
+  {
+    id: 113,
+    title: "Schema Markup",
+    category: "wordpress-optimization",
+    description: "Inject clean JSON-LD schema layouts to supply search engines and chatbots with clean semantic attributes.",
+    difficulty: "Intermediate",
+    estimatedMinutes: 50,
+    businessImpact: "Unlocks rich snippets, review stars, and price indicators in traditional and conversational results.",
+    bestPractice: "Fulfill Google mandatory schema fields exactly to qualify for rich query listings.",
+    details: "JSON-LD schema translates website copy into direct database attributes, assisting search crawlers to verify page context.",
+    checklistItems: createItems(113, [
+      { title: "Organization Schema", desc: "Define business information." },
+      { title: "Website Schema", desc: "Describe website entity." },
+      { title: "Breadcrumb Schema", desc: "Show page hierarchy." },
+      { title: "Article Schema", desc: "Enhance article visibility." },
+      { title: "FAQ Schema", desc: "Improve FAQ rich results." },
+      { title: "Product Schema", desc: "Enhance product listings." },
+      { title: "Service Schema", desc: "Describe services." },
+      { title: "Review Schema", desc: "Display ratings and reviews." },
+      { title: "Person Schema", desc: "Define author profiles." }
+    ])
+  },
+  {
+    id: 114,
+    title: "Security Optimization",
+    category: "wordpress-optimization",
+    description: "Secure WordPress directory structures, block brute force attempts, and set up multi-tier firewalls.",
+    difficulty: "Beginner",
+    estimatedMinutes: 45,
+    businessImpact: "Protects from listing blacklists and ensures secure data transitions across payment channels.",
+    bestPractice: "Change default /wp-admin/ paths and disable XML-RPC protocols to deflect bulk scanning bots.",
+    details: "Securing your core files keeps your layout free from malware scripts, preventing Google search blacklist penalties.",
+    checklistItems: createItems(114, [
+      { title: "SSL Certificate", desc: "Secure website connections." },
+      { title: "HTTPS Enforcement", desc: "Force secure URLs." },
+      { title: "Security Plugin", desc: "Protect against attacks." },
+      { title: "Firewall Setup", desc: "Block malicious traffic." },
+      { title: "Login Protection", desc: "Secure admin access." },
+      { title: "Malware Scanning", desc: "Detect security threats." },
+      { title: "Backup System", desc: "Recover site if needed." }
+    ])
+  },
+  {
+    id: 115,
+    title: "Database Optimization",
+    category: "wordpress-optimization",
+    description: "Clean up MySQL options databases, database tables, old revisions, and orphan keys.",
+    difficulty: "Intermediate",
+    estimatedMinutes: 35,
+    businessImpact: "Improves overall database query speeds, decreasing backend PHP page assembly times.",
+    bestPractice: "Axe expired transient data records and keep revisions limited to under 10 saved records.",
+    details: "As post counts rise, the database accumulates expired options or transient keys, slowing SQL processing times.",
+    checklistItems: createItems(115, [
+      { title: "Database Cleanup", desc: "Remove unnecessary records." },
+      { title: "Revision Cleanup", desc: "Delete old revisions." },
+      { title: "Transient Cleanup", desc: "Remove expired temporary data." },
+      { title: "Table Optimization", desc: "Improve database efficiency." }
+    ])
+  },
+  {
+    id: 116,
+    title: "WooCommerce Optimization",
+    category: "wordpress-optimization",
+    description: "Audit shopping cart processing speeds, optimize product imagery, and construct fluid checkouts.",
+    difficulty: "Advanced",
+    estimatedMinutes: 50,
+    businessImpact: "Improves cart retention, reduces cart abandonment, and speeds up product list loading.",
+    bestPractice: "Use client-side AJAX cart updates cautiously and prevent e-commerce scripts from loading on blog pages.",
+    details: "WooCommerce is database-intensive. Fine-tuning dynamic AJAX calls and catalogs ensures checkout reliability.",
+    checklistItems: createItems(116, [
+      { title: "Product Image Optimization", desc: "Improve product page speed." },
+      { title: "Product Schema", desc: "Enhance search visibility." },
+      { title: "Checkout Optimization", desc: "Improve conversion rates." },
+      { title: "Cart Performance", desc: "Speed up shopping cart." },
+      { title: "Payment Gateway Testing", desc: "Ensure payment gateway reliability." }
+    ])
+  },
+  {
+    id: 117,
+    title: "GEO & AI Search Optimization",
+    category: "wordpress-optimization",
+    description: "Format block-level content, FAQ accordions, and design structures for Retrieval-Augmented Generation.",
+    difficulty: "Advanced",
+    estimatedMinutes: 60,
+    businessImpact: "Prepares your articles and brand metrics to be recommended inside Gemini and ChatGPT searches.",
+    bestPractice: "Include bulleted concept boxes and direct definitive summaries inside all core publications.",
+    details: "Conversational... bots retrieve content from sites. Structuring content in clear paragraphs helps bots cite your brand.",
+    checklistItems: createItems(117, [
+      { title: "AI-Friendly Content Structure", desc: "Create AI-readable content." },
+      { title: "FAQ Sections", desc: "Answer common questions clearly." },
+      { title: "Definition Boxes", desc: "Improve answer extraction." },
+      { title: "llms.txt", desc: "Deploy/publish a root directory llms.txt context map summarizing your core expertise assets." },
+      { title: "AI Bot Accessibility", desc: "Allow AI search crawlers." },
+      { title: "Chunk Optimization", desc: "Create self-contained content sections." },
+      { title: "Citation Optimization", desc: "Increase AI citation opportunities." },
+      { title: "Entity Optimization", desc: "Strengthen entity recognition." }
+    ])
+  },
+  {
+    id: 118,
+    title: "Accessibility",
+    category: "wordpress-optimization",
+    description: "Secure keyboard navigation, high color contrasts, and ARIA layouts to qualify for WCAG standards.",
+    difficulty: "Advanced",
+    estimatedMinutes: 40,
+    businessImpact: "Satisfies legal non-discrimination requirements and secures positive human rater evaluations.",
+    bestPractice: "Incorporate automated visual validator testing directly in development workflows.",
+    details: "Ensuring your website is fully accessible to assistive tools like screen readers is an important search quality metric.",
+    checklistItems: createItems(118, [
+      { title: "WCAG Compliance", desc: "Meet accessibility standards." },
+      { title: "Keyboard Navigation", desc: "Enable non-mouse usage." },
+      { title: "ARIA Labels", desc: "Improve assistive technology support." },
+      { title: "Contrast Optimization", desc: "Improve readability with proper contrasts." },
+      { title: "Alt Text Coverage", desc: "Describe images properly." }
+    ])
+  },
+  {
+    id: 119,
+    title: "Analytics & Monitoring",
+    category: "wordpress-optimization",
+    description: "Deploy GA4 properties, configure Search Console tracking, and establish uptime monitors.",
+    difficulty: "Advanced",
+    estimatedMinutes: 45,
+    businessImpact: "Enables error-free performance auditing and tracks marketing campaign returns accurately.",
+    bestPractice: "Consolidate multiple analytics setups under a lightweight script manager like GTM.",
+    details: "Monitoring traffic pathways and crawl health informs administrators of indexing shifts instantly.",
+    checklistItems: createItems(119, [
+      { title: "GA4 Setup", desc: "Track user behavior with GA4." },
+      { title: "Search Console Setup", desc: "Monitor search performance with Search Console." },
+      { title: "Bing Webmaster Setup", desc: "Monitor Bing visibility." },
+      { title: "Uptime Monitoring", desc: "Track website availability." },
+      { title: "Error Monitoring", desc: "Detect technical issues." },
+      { title: "Core Web Vitals Tracking", desc: "Monitor performance metrics." }
+    ])
+  },
+  {
+    id: 120,
+    title: "Advanced WordPress Optimization",
+    category: "wordpress-optimization",
+    description: "Implement Redis database stores, Edge server engines, headless architectures, and AI tracking workflows.",
+    difficulty: "Expert",
+    estimatedMinutes: 90,
+    businessImpact: "Ensures website speeds of under 500 milliseconds for massive sites with millions of monthly visits.",
+    bestPractice: "Deploy headless WordPress frontends or perform caching at edge router networks.",
+    details: "Advanced WordPress speeds up massive sites using non-traditional rendering pipelines.",
+    checklistItems: createItems(120, [
+      { title: "Redis Object Cache", desc: "Speed up database queries with Redis." },
+      { title: "Edge Rendering", desc: "Deliver content closer to users via edge workers." },
+      { title: "Headless WordPress", desc: "Separate frontend and backend of WordPress." },
+      { title: "API Optimization", desc: "Improve REST API and custom endpoint performance." },
+      { title: "AI Visibility Monitoring", desc: "Track AI search mentions." },
+      { title: "Knowledge Graph Optimization", desc: "Strengthen entity authority." },
+      { title: "AI Citation Tracking", desc: "Monitor AI-generated citations." },
+      { title: "Search Everywhere Optimization", desc: "Optimize beyond classic Google search." }
     ])
   }
 ];
