@@ -1774,23 +1774,102 @@ export const LEVEL_QUIZZES: Record<number, QuizQuestion[]> = {
   ]
 };
 
-// Fill up missing quizzes dynamically to ensure every level has at least one mock diagnostic question
+// Fill up missing quizzes dynamically to ensure every level has exactly 5 basic diagnostic questions
 MASTER_LEVELS.forEach(level => {
   if (!LEVEL_QUIZZES[level.id]) {
-    LEVEL_QUIZZES[level.id] = [
-      {
-        id: `q${level.id}_1`,
-        levelId: level.id,
-        question: `Which approach is the industry best practice when optimizing for "${level.title}"?`,
-        options: [
-          "Rely entirely on basic automated templates without custom adjustments.",
-          `Implement programmatic checks, structured schema mappings, and document original insights covering "${level.title}" parameters.`,
-          "Obscure terms and pack high volumes of keyphrases inside hidden footer boxes.",
-          "Disable responsive formats and focus on desktop-only layouts."
-        ],
-        correctAnswerIndex: 1,
-        explanation: `Succeeding in "${level.title}" requires structured content, semantic depth, and verifiable trust signals, rather than reliance on quick tricks or raw shortcuts.`
+    LEVEL_QUIZZES[level.id] = [];
+  }
+  
+  const currentQuizzes = LEVEL_QUIZZES[level.id];
+  const needed = 5 - currentQuizzes.length;
+  
+  if (needed > 0) {
+    const items = level.checklistItems || [];
+    
+    // Attempt to grab distinct checklist items for questions
+    const item1: any = items[0] || { title: "Strategic Discovery Routing", description: "Allows crawler bots to navigate structural paths easily." };
+    const item2: any = items[Math.min(1, items.length - 1)] || items[0] || { title: "Diagnostic Validation Checking", description: "Secures performance health benchmarks across all URLs." };
+    const item3: any = items[Math.min(2, items.length - 1)] || items[0] || { title: "Metadata Signal Precision", description: "Tells search indices the exact context of the node content." };
+    const item4: any = items[items.length - 1] || items[0] || { title: "Continuous Auditing Standards", description: "Maintains optimal search visibility over long-term updates." };
+    
+    // We will generate different types of questions to reach exactly 5
+    for (let i = currentQuizzes.length; i < 5; i++) {
+      if (i === 0) {
+        // High Level Best Practice Question
+        currentQuizzes.push({
+          id: `q${level.id}_b1`,
+          levelId: level.id,
+          question: `What is the primary industry best practice when optimizing for "${level.title}"?`,
+          options: [
+            "Rely entirely on automated tools or templates without conducting custom audits.",
+            level.bestPractice ? level.bestPractice : "Implement programmatic checks, structured schemas, and document original insights.",
+            "Pack high volumes of hidden keyword strings into footer boxes.",
+            "Serve outdated media layers to crawl bots to reduce processing loads."
+          ],
+          correctAnswerIndex: 1,
+          explanation: `Succeeding in "${level.title}" requires structured execution: ${level.bestPractice ? level.bestPractice : 'prioritizing high-quality, readable content and robust indexing architectures.'}`
+        });
+      } else if (i === 1) {
+        // Business Impact Question
+        currentQuizzes.push({
+          id: `q${level.id}_b2`,
+          levelId: level.id,
+          question: `Regarding "${level.title}", how does this optimization primarily influence business and index performance?`,
+          options: [
+            "It acts as a temporary styling fix with zero long-term search engine impact.",
+            "It guarantees immediate top-ranking spots for competitive terms with no further effort.",
+            level.businessImpact ? level.businessImpact : "It accelerates page discoverability, enhances user engagement, and secures rich-result presentation.",
+            "It allows the domain to bypass all legal and technical security standards automatically."
+          ],
+          correctAnswerIndex: 2,
+          explanation: `The real impact of "${level.title}" is clear: ${level.businessImpact ? level.businessImpact : 'it optimizes the user experience, avoids search bot crawl friction, and improves overall domain visibility.'}`
+        });
+      } else if (i === 2) {
+        // Question about item 1
+        currentQuizzes.push({
+          id: `q${level.id}_i1`,
+          levelId: level.id,
+          question: `Within "${level.title}", what is the primary benefit of completing "${item1.title}"?`,
+          options: [
+            item1.description ? item1.description : "It ensures the directory is accessible, properly formatted, and discoverable.",
+            "It completely replaces the need for standard robots.txt exclusion rules.",
+            "It disables layout rendering on non-mobile devices to restrict cache use.",
+            "It enforces secure client-browser encryptions across local developer environments."
+          ],
+          correctAnswerIndex: 0,
+          explanation: `Completing "${item1.title}" allows developers to: ${item1.description ? item1.description : 'guarantee proper configuration and optimal crawler accessibility.'}`
+        });
+      } else if (i === 3) {
+        // Question about item 2 / item 3
+        currentQuizzes.push({
+          id: `q${level.id}_i2`,
+          levelId: level.id,
+          question: `During the implementation of "${level.title}", why should you dedicate focus to "${item2.title}"?`,
+          options: [
+            "To mask network latency errors from diagnostic crawler logs.",
+            "To minimize the need for high-performance hosting plans.",
+            "To hide key sections from being scraped by competitive indexing frameworks.",
+            item2.description ? item2.description : "To elevate search engine comprehension of pages and accelerate discovery cycles."
+          ],
+          correctAnswerIndex: 3,
+          explanation: `Directing focus to "${item2.title}" directly helps to: ${item2.description ? item2.description : 'ensure your metadata and code structures are fully discoverable and readable by search bots.'}`
+        });
+      } else if (i === 4) {
+        // Question about last item
+        currentQuizzes.push({
+          id: `q${level.id}_i3`,
+          levelId: level.id,
+          question: `For advanced performance scaling in "${level.title}", what is the primary objective of "${item4.title}"?`,
+          options: [
+            item4.description ? item4.description : "To continuously audit, validate, and secure the domain's long-term ranking signals.",
+            "To flatten interactive navigation paths into single-record static files.",
+            "To inject high quantities of tracking variables into product sitemaps.",
+            "To delay search crawler requests until the database completes intensive storage compression."
+          ],
+          correctAnswerIndex: 0,
+          explanation: `The "${item4.title}" benchmark helps to: ${item4.description ? item4.description : 'establish secure, robust, and scalable indexing signals that resist core algorithm updates.'}`
+        });
       }
-    ];
+    }
   }
 });
