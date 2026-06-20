@@ -134,6 +134,15 @@ const PATH_DETAILS: Record<string, { icon: React.ReactNode; color: string; bg: s
     textClass: "text-blue-900 border-blue-500/30",
     border: "border-blue-200/60",
     accentBorder: "border-blue-500"
+  },
+  "gsc-complete": {
+    icon: <Search className="text-teal-600 shrink-0" size={16} />,
+    color: "bg-teal-600",
+    bg: "bg-teal-50/45",
+    activeBg: "bg-teal-600 text-white",
+    textClass: "text-teal-900 border-teal-500/30",
+    border: "border-teal-200/60",
+    accentBorder: "border-teal-500"
   }
 };
 

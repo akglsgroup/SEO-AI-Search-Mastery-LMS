@@ -85,6 +85,14 @@ export const INITIAL_TRACKS: Track[] = [
     colorClass: "bg-amber-50 border-amber-200 text-amber-800",
     textColorClass: "text-amber-700",
     levelIds: [101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120]
+  },
+  {
+    id: "gsc-complete",
+    title: "11. Google Search Console Complete Checklist (2026-2027)",
+    description: "The complete, definitive 20-part Google Search Console workflow to ensure 100% indexing parity, search visibility tracking, and advanced GEO/AEO optimization.",
+    colorClass: "bg-teal-50 border-teal-200 text-teal-800",
+    textColorClass: "text-teal-700",
+    levelIds: [201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220]
   }
 ];
 
@@ -1278,6 +1286,388 @@ export const MASTER_LEVELS: Level[] = [
       { title: "Knowledge Graph Optimization", desc: "Strengthen entity authority." },
       { title: "AI Citation Tracking", desc: "Monitor AI-generated citations." },
       { title: "Search Everywhere Optimization", desc: "Optimize beyond classic Google search." }
+    ])
+  },
+  {
+    id: 201,
+    title: "1. Property Setup & DNS Verification",
+    category: "gsc-complete",
+    description: "Establish unified Domain or URL-Prefix properties, configure multiple user levels, and complete secure DNS ownership verification.",
+    difficulty: "Beginner",
+    estimatedMinutes: 30,
+    businessImpact: "Validates authorized crawl domains and generates comprehensive coverage diagnostics across all subdomains.",
+    bestPractice: "Setup Domain Properties directly with DNS TXT verification to track both HTTP/HTTPS and www/non-www traffic globally.",
+    details: "Setting up your Google Search Console profile is the foundational layer of search diagnostics. DNS TXT records are preferred over HTML file uploads.",
+    checklistItems: createItems(201, [
+      { title: "Domain Property Setup", desc: "Track all protocols and subdomains in one property representation." },
+      { title: "URL Prefix Property", desc: "Monitor specific sub-directory structures, localized content routes, or alternative staging environments." },
+      { title: "DNS Verification", desc: "Verify secure ownership by adding TXT validation strings directly into DNS providers." },
+      { title: "Multiple User Access", desc: "Delegate appropriate read/write, owner, or restricted permissions to analytics teams." },
+      { title: "Primary Property Selection", desc: "Enforce a single authoritative property for consistent agency metric reports." }
+    ])
+  },
+  {
+    id: 202,
+    title: "2. XML Sitemap Discovery & Monitoring",
+    category: "gsc-complete",
+    description: "Submit index-guiding sitemaps to GSC and review processing statuses to catch discovery bottlenecks.",
+    difficulty: "Beginner",
+    estimatedMinutes: 30,
+    businessImpact: "Accelerates discovery cycles for fresh articles or programmatic layouts by establishing structured paths for Googlebot.",
+    bestPractice: "Keep sitemaps strictly dynamic, containing only canonical 200-OK pages with zero redirects or non-indexable URLs.",
+    details: "Google relies on sitemaps to navigate massive sites efficiently. Use specialised sub-sitemaps for rich content types.",
+    checklistItems: createItems(202, [
+      { title: "XML Sitemap Submitted", desc: "Deliver dynamic index-ready path parameters directly inside the GSC sitemaps panel." },
+      { title: "Sitemap Status Monitoring", desc: "Routinely inspect processing records to quickly resolve 'Fetch Failed' errors." },
+      { title: "Image Sitemap", desc: "Incorporate specialized image markup tags to improve rich-graphics discovery." },
+      { title: "Video Sitemap", desc: "Provide duration, thumbnail paths, and player URLs to unlock Google search video visual reels." },
+      { title: "News Sitemap", desc: "Build standard news sitemaps with up-to-date timestamps to rank in Google News carousels." },
+      { title: "Dynamic Sitemap Updates", desc: "Configure server-side hooks to update sitemap structures instantly when publishing updates." },
+      { title: "Remove Invalid URLs", desc: "Prune redirects, draft items, 404 pages, and canonical-divergences from sitemap feeds." }
+    ])
+  },
+  {
+    id: 203,
+    title: "3. Page Index Coverage Diagnostics",
+    category: "gsc-complete",
+    description: "Isolate crawled-not-indexed warnings, correct soft 404 flags, and monitor Googlebot exclusions.",
+    difficulty: "Intermediate",
+    estimatedMinutes: 45,
+    businessImpact: "Prunes crawl bloat, ensuring high-value pages receive maximum ranking attention.",
+    bestPractice: "Resolve Crawled-Not-Indexed issues by beefing up content quality, adding unique internal links, and removing duplicates.",
+    details: "The Coverage report tells you exactly what Google thinks of your site's quality. Excluded statuses must be evaluated for indexing errors.",
+    checklistItems: createItems(203, [
+      { title: "Pages Indexed", desc: "Verify all primary core site directories are fully represented in Google's main index." },
+      { title: "Crawled Not Indexed", desc: "Audit ignored sections to locate thin pages, rendering errors, or duplicate content blocks." },
+      { title: "Discovered Not Indexed", desc: "Address server response bottlenecks and optimize site structures to resolve discovery queue limits." },
+      { title: "Excluded Pages Review", desc: "Analyze canonical-redirect mappings and noindex commands to ensure they match SEO intent." },
+      { title: "Noindex Validation", desc: "Confirm pages tagged with 'noindex' (e.g. user panels, checkouts) are successfully blocked." },
+      { title: "Canonical Validation", desc: "Confirm Google respects user-selected canonical mappings instead of choosing alternate ones." },
+      { title: "Duplicate URL Review", desc: "Determine causes for duplicate URLs without user-declared canonical tags and consolidate." },
+      { title: "Soft 404 Monitoring", desc: "Fix thin or empty sheets triggering soft 404 flags that exhaust spider crawl budgets." },
+      { title: "Server Error Review", desc: "Address server-side 5XX error responses to keep search spider routes clear." },
+      { title: "Redirect Validation", desc: "Audit redirect paths to ensure links transition smoothly without redirect loops." }
+    ])
+  },
+  {
+    id: 204,
+    title: "4. GSC URL Inspection Protocol",
+    category: "gsc-complete",
+    description: "Inspect single URL states, compare indexed renders with live layouts, and issue indexing requests.",
+    difficulty: "Beginner",
+    estimatedMinutes: 20,
+    businessImpact: "Allows SEO engineers to verify immediate code changes and request rapid indexing on modified files.",
+    bestPractice: "Always review the 'Rendered HTML' when diagnosing index failures to ensure text content isn't blocked by client-side JS.",
+    details: "The inspect tool provides Googlebot's eye-view of standard directories, showing raw logs, javascript errors, and canonical pairings.",
+    checklistItems: createItems(204, [
+      { title: "URL Inspection Testing", desc: "Input central endpoints to query current index metadata from Google's live databases." },
+      { title: "Live URL Testing", desc: "Verify response payloads, mobile layout adaptiveness, and rendering logs in real-time." },
+      { title: "Request Indexing", desc: "Trigger prioritized queue updates for dynamic or newly created content files." },
+      { title: "Rendered HTML Review", desc: "Inspect completed Document Object Model (DOM) code blocks to confirm correct textual visibility." },
+      { title: "Canonical Review", desc: "Inspect canonical parameters to verify alignment between declared and google-selected canonicals." },
+      { title: "Mobile Usability Check", desc: "Review user-agent responsiveness indicators within simulated mobile bots." }
+    ])
+  },
+  {
+    id: 205,
+    title: "5. Performance Analytics & Insights",
+    category: "gsc-complete",
+    description: "Correlate clicks, impressions, positions, and CTR patterns to uncover geographic and seasonal trends.",
+    difficulty: "Intermediate",
+    estimatedMinutes: 40,
+    businessImpact: "Identifies top organic revenue drivers and surfaces high-potential layout adjustments.",
+    bestPractice: "Filter query data by device types to ensure click-through ratios (CTR) aren't decaying on small-screen sizes.",
+    details: "GSC's Performance report hosts incredibly rich, zero-sample organic traffic data. Compare date ranges to isolate performance decay.",
+    checklistItems: createItems(205, [
+      { title: "Total Clicks Analysis", desc: "Track overall click volume transitions across specific product directories." },
+      { title: "Total Impressions Analysis", desc: "Diagnose overall display reach in SERPs to value market sentiment levels." },
+      { title: "Average CTR Review", desc: "Monitor CTR baselines across top-tier priority tracks and maximize meta layouts." },
+      { title: "Average Position Tracking", desc: "Measure average keyword position trends, isolating subtle algorithm shifts." },
+      { title: "Top Queries Analysis", desc: "Isolate keyword queries that provide high commercial-intent search visits." },
+      { title: "Top Pages Analysis", desc: "Find dominant landing sheets to secure they receive maximum internal linking support." },
+      { title: "Country Performance Review", desc: "Analyze regional search profiles to adjust localized localized marketing strategies." },
+      { title: "Device Performance Review", desc: "Contrast desktop and smartphone display CTR to identify responsive usability bugs." },
+      { title: "Search Appearance Review", desc: "Audit high-value rich snippets, track FAQ clicks, and index structured review ratings." },
+      { title: "Date Comparison Analysis", desc: "Benchmark 3-month performance over time to find conversion changes." }
+    ])
+  },
+  {
+    id: 206,
+    title: "6. Search Queries CTR Optimization",
+    category: "gsc-complete",
+    description: "Identify high-impression query subsets running on weak click-rates and target semantic opportunity gaps.",
+    difficulty: "Intermediate",
+    estimatedMinutes: 35,
+    businessImpact: "Increases average CTR and boosts traffic volumes without writing new articles.",
+    bestPractice: "Optimize meta tags and page titles for files that rank high but suffer from low click-through-rates.",
+    details: "Find keywords ranking on page 1 with high impressions but low click-rates, and rewrite titles and description structures to captivate readers.",
+    checklistItems: createItems(206, [
+      { title: "High Impression Low CTR Keywords", desc: "Rewrite snippet meta-descriptions to enhance click appeal." },
+      { title: "High Position Low CTR Keywords", desc: "Iterate title tag combinations to outperform organic SERP alternatives." },
+      { title: "Low Position High CTR Keywords", desc: "Improve rankings for terms users already find highly engaging." },
+      { title: "Question Keywords", desc: "Track query strings matching 'How', 'What', or 'Why' to target Answer Engine Optimization." },
+      { title: "Long-Tail Keywords", desc: "Trace specific structural modifier queries to design focused content answers." },
+      { title: "Brand Keywords", desc: "Monitor brand name search trends to evaluate broader digital marketing impact." },
+      { title: "Non-Brand Keywords", desc: "Isolate transactional search modifiers to increase commercial traffic segments." },
+      { title: "AI Search Queries", desc: "Track Conversational queries and new semantic questions driving index mentions." }
+    ])
+  },
+  {
+    id: 207,
+    title: "7. Landing Page Decay Diagnostics",
+    category: "gsc-complete",
+    description: "Isolate declining layouts, secure healthy growing sheets, and map high-converting organic hubs.",
+    difficulty: "Intermediate",
+    estimatedMinutes: 35,
+    businessImpact: "Arrests organic traffic loss and maintains continuous conversion volumes across priority products.",
+    bestPractice: "Setup custom spreadsheets to pull GSC API performance logs regularly for immediate decay discovery.",
+    details: "Pages naturally decay as competitors publish fresher resources. Keep landing pages fresh and updated with original research.",
+    checklistItems: createItems(207, [
+      { title: "Top Landing Pages", desc: "Isolate and support top traffic-generating folders with strong internal link references." },
+      { title: "Declining Pages", desc: "Benchmark page click decay and rewrite outdated sections with modern data." },
+      { title: "Growing Pages", desc: "Fuel momentum on upward-ranking directories with fresh contextual support." },
+      { title: "Zero Click Pages", desc: "Determine if zero-click pages should be updated, canonicalized, redirected, or pruned." },
+      { title: "Conversion Pages", desc: "Monitor search pathways that drive customers directly to CTA and product pipelines." },
+      { title: "Seasonal Pages", desc: "Plan content updates months before traffic waves hit search targets." }
+    ])
+  },
+  {
+    id: 208,
+    title: "8. Web Vitals & Loading Diagnostics",
+    category: "gsc-complete",
+    description: "Troubleshoot INP shifts, address layout shifts, and trigger official GSC validation queues.",
+    difficulty: "Intermediate",
+    estimatedMinutes: 40,
+    businessImpact: "Ensures responsive, rapid displays to reduce visitor friction and satisfy ranking algorithms.",
+    bestPractice: "Validate speed metrics using real user data in GSC, rather than sterile lab environments.",
+    details: "Core Web Vitals measure real-world loading speed, responsiveness, and visual stability (LCP, INP, CLS).",
+    checklistItems: createItems(208, [
+      { title: "LCP Review", desc: "Isolate elements that delay Largest Contentful Paint to render primary text faster." },
+      { title: "CLS Review", desc: "Verify lazy-loaded media structures have fixed container boundaries to reduce layout shifts." },
+      { title: "INP Review", desc: "Optimize javascript execution times to improve responsiveness." },
+      { title: "Poor URLs Review", desc: "Audit and solve systemic rendering speed issues across template groups." },
+      { title: "Mobile CWV Review", desc: "Optimize cellular loading parameters to deliver smooth mobile speeds." },
+      { title: "Desktop CWV Review", desc: "Optimize desktop scripts and CDN routing schedules to ensure rapid delivery." },
+      { title: "Validation Requests", desc: "Confirm issue resolutions and trigger Google's field-verification cycle directly in the GSC dashboard." }
+    ])
+  },
+  {
+    id: 209,
+    title: "9. Mobile Usability Auditing",
+    category: "gsc-complete",
+    description: "Solve structural mobile usability alerts, adapt responsive styles, and optimize viewport scaling.",
+    difficulty: "Beginner",
+    estimatedMinutes: 25,
+    businessImpact: "Secures mobile-first index rankings and prevents usability bounce rates.",
+    bestPractice: "Verify that font-sizes remain larger than 16px to pass mobile readability audits seamlessly.",
+    details: "Smartphone usability is crucial. GSC alerts you to text size, tap target, and viewport scaling issues.",
+    checklistItems: createItems(209, [
+      { title: "Mobile-Friendly Design", desc: "Optimize overall structural templates for modern smartphone viewports." },
+      { title: "Responsive Layout", desc: "Ensure horizontal scrollbars don't occur because of oversized width components." },
+      { title: "Touch Element Spacing", desc: "Maintain a minimum distance between buttons and text links to avoid tap overlap errors." },
+      { title: "Readable Text Size", desc: "Enforce CSS styling structures to prevent fonts from scaling down below index thresholds." },
+      { title: "Mobile Rendering Check", desc: "Confirm css stylesheet assets are accessible to Googlebot-Mobile for correct render." }
+    ])
+  },
+  {
+    id: 210,
+    title: "10. Rich Results & Markup Compliance",
+    category: "gsc-complete",
+    description: "Verify JSON-LD schemas, fix structured warning blocks, and audit rich appearance features.",
+    difficulty: "Intermediate",
+    estimatedMinutes: 40,
+    businessImpact: "Increases search listing footprint, capturing eyes and clicks on highly competitive query spaces.",
+    bestPractice: "Prune structured schemas triggering 'critical errors' immediately to prevent Google from dropping rich enhancements.",
+    details: "Rich Results profiles map machine-readable data. Monitor the Enhancements panel to keep items active.",
+    checklistItems: createItems(210, [
+      { title: "FAQ Schema Validation", desc: "Monitor FAQ diagnostic reports to keep QA snippets visible." },
+      { title: "Product Schema Validation", desc: "Fine-tune price, availability, and rating tags to display product offers directly in SERPs." },
+      { title: "Review Schema Validation", desc: "Ensure rating values are coded correctly to display star reviews." },
+      { title: "Article Schema Validation", desc: "Review structural properties to optimize publishing metadata." },
+      { title: "Breadcrumb Schema Validation", desc: "Confirm navigational breadcrumbs are correctly recognized." },
+      { title: "Video Schema Validation", desc: "Check if video thumbnails and key clips are schema-validated." },
+      { title: "Event Schema Validation", desc: "Monitor markup profiles for event calendars and schedule displays." },
+      { title: "Course Schema Validation", desc: "Verify educational course lists map correct structure parameters." }
+    ])
+  },
+  {
+    id: 211,
+    title: "11. Crawl Budget & Statistics Diagnostics",
+    category: "gsc-complete",
+    description: "Investigate server loads, monitor response codes, and analyze crawler user-agents.",
+    difficulty: "Advanced",
+    estimatedMinutes: 45,
+    businessImpact: "Saves critical server resources and ensures Googlebot parses fresh sheets immediately.",
+    bestPractice: "Track the Crawl Stats report for spikes in high latency to prevent Googlebot from slowing crawl rates.",
+    details: "Crawl stats expose raw web-server interactions. Keep average response times under 200ms.",
+    checklistItems: createItems(211, [
+      { title: "Crawl Requests Review", desc: "Monitor daily total crawl request transitions to identify anomalies." },
+      { title: "Response Code Analysis", desc: "Audit response statistics, keeping 4XX and 5XX codes to zero." },
+      { title: "Host Status Review", desc: "Confirm network connectivity, robots.txt accessibility, and server response consistency." },
+      { title: "Crawl Purpose Analysis", desc: "Verify if Googlebot is primarily indexing new content or refreshing existing records." },
+      { title: "File Type Analysis", desc: "Analyze the breakdown of fetched files, minimizing useless assets." },
+      { title: "Crawl Trend Analysis", desc: "Locate unusual crawler crawls to discover misconfigured files." }
+    ])
+  },
+  {
+    id: 212,
+    title: "12. Internal Linking & Topic Silos",
+    category: "gsc-complete",
+    description: "Detect orphan pages, optimize internal linking architecture, and balance target keyphrase anchors.",
+    difficulty: "Intermediate",
+    estimatedMinutes: 30,
+    businessImpact: "Channels PageRank to important conversion categories organically.",
+    bestPractice: "Use Google Search Console's Link report to identify important pages lacking sufficient internal links.",
+    details: "Internal links form your site's knowledge system, giving Google structural indicators of relative priority.",
+    checklistItems: createItems(212, [
+      { title: "Internal Link Count", desc: "Audit internal link distributions across index lists to correct imbalances." },
+      { title: "Important Pages Linked", desc: "Verify primary converting landing folders receive the highest internal reference density." },
+      { title: "Orphan Page Detection", desc: "Isolate and resolve isolated files that aren't linked anywhere." },
+      { title: "Link Equity Flow Review", desc: "Audit and optimize internal anchor text variation to prevent spam signals." }
+    ])
+  },
+  {
+    id: 213,
+    title: "13. Backlink Profiles & Referrals",
+    category: "gsc-complete",
+    description: "Analyze top linked pages, track referring domains, and identify harmful link spikes.",
+    difficulty: "Intermediate",
+    estimatedMinutes: 35,
+    businessImpact: "Protects site authority from spam attacks and evaluates digital marketing reach.",
+    bestPractice: "Audit incoming anchors within GSC to ensure inbound profiles look natural and organic.",
+    details: "External backlinks represent external authority. Evaluate top linking domains to confirm traffic quality.",
+    checklistItems: createItems(213, [
+      { title: "Top Linked Pages", desc: "Ensure your best external links point to core canonical content folders." },
+      { title: "Top Referring Domains", desc: "Review referring host names to confirm credibility." },
+      { title: "Anchor Text Review", desc: "Trace high-density external anchors to prevent over-optimized keyphrases." },
+      { title: "Toxic Link Review", desc: "Identify negative SEO attacks or domain-level link injections." },
+      { title: "Lost Link Monitoring", desc: "Identify lost external references to recover broken authority pathways." }
+    ])
+  },
+  {
+    id: 214,
+    title: "14. Security & Manual Action Protections",
+    category: "gsc-complete",
+    description: "Monitor manual penalties and resolve malware injection flags immediately.",
+    difficulty: "Beginner",
+    estimatedMinutes: 20,
+    businessImpact: "Secures permanent access to Google's index listings and maintains user trust.",
+    bestPractice: "Regularly check the Security panel to catch hacked injector scripts early.",
+    details: "Security or policy violations will drop your listings. Check these panels to maintain search compliance.",
+    checklistItems: createItems(214, [
+      { title: "Manual Action Review", desc: "Ensure the manual actions panel matches the 'No issues detected' status." },
+      { title: "Security Issues Review", desc: "Scan and confirm that zero file injectors or hijackers are flagged on the domain." },
+      { title: "Malware Detection", desc: "Secure frontend scripts against malicious code injections." },
+      { title: "Spam Detection", desc: "Moderate user comments and open registers to block outgoing spam links." }
+    ])
+  },
+  {
+    id: 215,
+    title: "15. AI Overview & Conversational Visibility",
+    category: "gsc-complete",
+    description: "Track brand occurrences in AI summaries, audit voice-ready formats, and optimize semantic patterns.",
+    difficulty: "Advanced",
+    estimatedMinutes: 50,
+    businessImpact: "Saves high-value brand traffic as standard search shifts to AI-driven summaries.",
+    bestPractice: "Analyze queries displaying rich snippet integrations to build targeted content structures.",
+    details: "Conversational engines synthesize page content directly. Structure answers cleanly to stay in citation pools.",
+    checklistItems: createItems(215, [
+      { title: "AI Overview Visibility", desc: "Identify keyphrases that trigger AI Overview blocks." },
+      { title: "Featured Snippet Presence", desc: "Secure definition boxes by formatting headers with answering text." },
+      { title: "FAQ Visibility", desc: "Optimize QA layouts to align with conversational search structures." },
+      { title: "Conversational Query Growth", desc: "Determine traffic shifts from multi-phrase conversational queries." },
+      { title: "Entity Visibility", desc: "Audit brand mentions inside key conversational answers and comparisons." }
+    ])
+  },
+  {
+    id: 216,
+    title: "16. GEO & AEO Search Analytics",
+    category: "gsc-complete",
+    description: "Align copy with LLM retrieval, optimize definitions, and configure comparative frameworks.",
+    difficulty: "Advanced",
+    estimatedMinutes: 45,
+    businessImpact: "Enables discovery on voice assistants and generative RAG platforms.",
+    bestPractice: "Track detailed comparison keyphrases to structure transparent tables of product differences.",
+    details: "AI and voice tools require direct, structured, and factual data layers to process answers.",
+    checklistItems: createItems(216, [
+      { title: "Question Query Performance", desc: "Audit the performance of directories answering specific informational questions." },
+      { title: "How-To Query Performance", desc: "Style process checklists clearly to capture instructional searches." },
+      { title: "Comparison Query Performance", desc: "Track queries with high transactional intent comparing alternative solutions." },
+      { title: "Definition Query Performance", desc: "Format explicit dictionary definitions above the fold to capture rich snippets." },
+      { title: "Voice Search Query Tracking", desc: "Track long-tail conversational questions to target voice assistant search." }
+    ])
+  },
+  {
+    id: 217,
+    title: "17. Content Auditing & Pruning Protocols",
+    category: "gsc-complete",
+    description: "Audit duplicate directories, isolate thin sheets, and refresh aging information.",
+    difficulty: "Advanced",
+    estimatedMinutes: 40,
+    businessImpact: "Raises overall directory authority, preventing index bloat and crawling friction.",
+    bestPractice: "Identify zero-click pages after 180 days and either refresh, direct, or prune them.",
+    details: "Thin content dilutes site quality. Prune weak content or consolidate duplicates to keep your index highly efficient.",
+    checklistItems: createItems(217, [
+      { title: "Thin Content Pages", desc: "Fix low-word-count sheets with deep, comprehensive research." },
+      { title: "Duplicate Content Pages", desc: "Resolve content cannibalization by implementing clear canonical rules." },
+      { title: "Outdated Content", desc: "Iterate old directories containing stale years or static outdated guides." },
+      { title: "Low CTR Content", desc: "Analyze impressions to find content that can be upgraded." },
+      { title: "High Potential Pages", desc: "Identify high-ranking pages that are close to ranking in top position slots." }
+    ])
+  },
+  {
+    id: 218,
+    title: "18. Entity Mapping & Brand Graphs",
+    category: "gsc-complete",
+    description: "Track Knowledge Graph mentions, establish expert nodes, and map brand authority parameters.",
+    difficulty: "Advanced",
+    estimatedMinutes: 45,
+    businessImpact: "Constructs semantic entity associations that shield domains from classic core updates.",
+    bestPractice: "Utilize GSC Brand and Founder queries to evaluate overall domain authority growth.",
+    details: "Modern SEO focuses on entities, not just strings. Validate your relationships across Knowledge panels.",
+    checklistItems: createItems(218, [
+      { title: "Brand Entity Queries", desc: "Track brand name click volumes to evaluate audience brand awareness." },
+      { title: "Founder Queries", desc: "Monitor authority signals around core founder and expert profiles." },
+      { title: "Product Entity Queries", desc: "Track catalog visibility across specialized product nodes." },
+      { title: "Service Entity Queries", desc: "Ensure your commercial service directories are clearly mapping entity definitions." },
+      { title: "Knowledge Panel Presence", desc: "Track matches with the official organization definition inside knowledge databases." }
+    ])
+  },
+  {
+    id: 219,
+    title: "19. Regional & Multilingual Diagnostics",
+    category: "gsc-complete",
+    description: "Validate hreflang mappings, configure localization settings, and monitor localized crawler logs.",
+    difficulty: "Advanced",
+    estimatedMinutes: 40,
+    businessImpact: "Drives clean global traffic routing, avoiding duplicate indexing across locations.",
+    bestPractice: "Trace hreflang configuration errors inside GSC to confirm search bots can resolve localized folders.",
+    details: "International SEO requires matching localization settings. Maintain a clean, error-free hreflang system.",
+    checklistItems: createItems(219, [
+      { title: "hreflang Validation", desc: "Confirm multilingual hreflang tag declarations match target URL coordinates." },
+      { title: "Regional Traffic Review", desc: "Track country-level organic clicks to target localized growth." },
+      { title: "Language Indexing Review", desc: "Ensure localized folders index correct translated sheets without cross-pollution." },
+      { title: "Country-Specific Rankings", desc: "Assess ranking variations across local search market ecosystems." }
+    ])
+  },
+  {
+    id: 220,
+    title: "20. Advanced Crawling & Budget Controls",
+    category: "gsc-complete",
+    description: "Address keyword cannibalization, monitor server server logs, and optimize crawling limits.",
+    difficulty: "Expert",
+    estimatedMinutes: 90,
+    businessImpact: "Enables enterprise level indexes to scale infinitely with optimal crawl paths.",
+    bestPractice: "Avoid unnecessary index bloat by keeping search filters and parameters out of crawlable paths.",
+    details: "Maximizing crawl paths is vital for massive sites. Consolidate your layouts and monitor index structures continuously.",
+    checklistItems: createItems(220, [
+      { title: "Keyword Cannibalization", desc: "Identify competing pages ranking for the same target keywords." },
+      { title: "Index Bloat Detection", desc: "Isolate and block thin dynamic files (search returns, categories) from crawlable paths." },
+      { title: "Crawl Budget Optimization", desc: "Focus Google on key directories by configuring robots.txt blocks correctly." },
+      { title: "Log File Correlation", desc: "Compare server access patterns with GSC data to find crawl priority issues." },
+      { title: "Search Intent Mapping", desc: "Align landing pages with search keywords to improve user engagement metrics." },
+      { title: "Ranking Trend Analysis", desc: "Audit high-level organic rank movements across priority collections." },
+      { title: "AI Search Trend Tracking", desc: "Track weekly growth patterns of conversational engine impressions." }
     ])
   }
 ];

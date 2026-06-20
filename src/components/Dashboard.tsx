@@ -6,7 +6,7 @@
 import React from "react";
 import { UserProgress, Level } from "../types";
 import { INITIAL_TRACKS } from "../data/checklist";
-import { Award, Zap, CheckCircle, BarChart3, Star, Sparkles, BookOpen, Cpu, Layers, Globe, SlidersHorizontal, Trophy, Lock, Smile, ArrowRight, Share2, Check, Clock, Bell } from "lucide-react";
+import { Award, Zap, CheckCircle, BarChart3, Star, Sparkles, BookOpen, Cpu, Layers, Globe, SlidersHorizontal, Trophy, Lock, Smile, ArrowRight, Share2, Check, Clock, Bell, Search } from "lucide-react";
 import { motion } from "motion/react";
 
 interface DashboardProps {
@@ -28,7 +28,7 @@ export default function Dashboard({
   onOpenConsulting,
   onToggleItem
 }: DashboardProps) {
-  const [selectedCategory, setSelectedCategory] = React.useState<"all" | "tech" | "content" | "growth" | "wordpress">("all");
+  const [selectedCategory, setSelectedCategory] = React.useState<"all" | "tech" | "content" | "growth" | "wordpress" | "gsc">("all");
   const [viewingAward, setViewingAward] = React.useState<any | null>(null);
   const [isEditingName, setIsEditingName] = React.useState(false);
   const [graduateName, setGraduateName] = React.useState<string>(() => {
@@ -1148,6 +1148,18 @@ export default function Dashboard({
                 <Globe size={13} className={selectedCategory === "wordpress" ? "text-white" : "text-amber-600"} />
                 WordPress Optimization
               </button>
+              <button
+                type="button"
+                onClick={() => setSelectedCategory("gsc")}
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-sans font-semibold transition-all cursor-pointer ${
+                  selectedCategory === "gsc"
+                    ? "bg-teal-600 text-white shadow-xs"
+                    : "text-neutral-500 hover:text-teal-700 hover:bg-teal-50/50"
+                }`}
+              >
+                <Search size={13} className={selectedCategory === "gsc" ? "text-white" : "text-teal-600"} />
+                Google Search Console
+              </button>
             </div>
           </div>
         </div>
@@ -1190,6 +1202,15 @@ export default function Dashboard({
               accentBg: "bg-amber-50 text-amber-800 border-amber-100",
               groupBorder: "border-amber-200/60 bg-amber-50/[0.12]",
               tracks: [INITIAL_TRACKS[9]]
+            },
+            {
+              id: "gsc" as const,
+              name: "Google Search Console Complete (2026-2027)",
+              description: "Deploy the authoritative, comprehensive 20-part monitoring blueprint covering setup, indexing coverage, CWV stats, entity mappings, and live URL inspection routines.",
+              icon: <Search size={20} className="text-teal-600 shrink-0" />,
+              accentBg: "bg-teal-50 text-teal-800 border-teal-100",
+              groupBorder: "border-teal-200/60 bg-teal-50/[0.12]",
+              tracks: [INITIAL_TRACKS[10]]
             }
           ]
             .filter(group => selectedCategory === "all" || group.id === selectedCategory)
@@ -1212,7 +1233,7 @@ export default function Dashboard({
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold border uppercase tracking-wider ${group.accentBg}`}>
-                          {group.id === "tech" ? "Technical" : group.id === "content" ? "Content & AI" : group.id === "wordpress" ? "WordPress" : "Authority & CRO"}
+                          {group.id === "tech" ? "Technical" : group.id === "content" ? "Content & AI" : group.id === "wordpress" ? "WordPress" : group.id === "gsc" ? "Search Console" : "Authority & CRO"}
                         </span>
                         <h3 className="text-lg font-sans font-bold text-neutral-800 tracking-tight flex items-center gap-2">
                           {group.icon}
@@ -1229,7 +1250,7 @@ export default function Dashboard({
                       <div className="w-14 bg-neutral-100 h-2 rounded-full overflow-hidden">
                         <div 
                           className={`h-full transition-all duration-300 ${
-                            group.id === "tech" ? "bg-emerald-500" : group.id === "content" ? "bg-blue-500" : group.id === "wordpress" ? "bg-amber-500" : "bg-purple-500"
+                            group.id === "tech" ? "bg-emerald-500" : group.id === "content" ? "bg-blue-500" : group.id === "wordpress" ? "bg-amber-500" : group.id === "gsc" ? "bg-teal-500" : "bg-purple-500"
                           }`}
                           style={{ width: `${groupPercent}%` }}
                         ></div>
