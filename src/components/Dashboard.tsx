@@ -510,57 +510,57 @@ export default function Dashboard({
   return (
     <div className="space-y-8" id="lms-dashboard">
       {/* Hero Welcome Panel */}
-      <div className="p-6 bg-gradient-to-br from-neutral-900 to-neutral-800 text-white rounded-3xl relative overflow-hidden shadow-xl border border-neutral-700">
-        <div className="absolute right-0 bottom-0 translate-x-12 translate-y-12 opacity-10">
-          <Award size={280} className="text-white" />
+      <div className="p-6 md:p-8 bg-white border border-neutral-200/90 text-neutral-900 rounded-3xl relative overflow-hidden shadow-xs">
+        <div className="absolute right-0 bottom-0 translate-x-12 translate-y-12 opacity-[0.03] text-neutral-900 pointer-events-none">
+          <Award size={280} />
         </div>
-        <div className="relative z-10 space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/20 text-amber-300 rounded-full border border-amber-500/30 text-xs font-mono">
+        <div className="relative z-10 space-y-5">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-50 text-amber-800 rounded-full border border-amber-200 text-xs font-semibold">
             <Sparkles size={14} />
             <span>2026-2027 ENTERPRISE EDITION</span>
           </div>
           
           <div className="max-w-xl space-y-2">
-            <h1 className="text-3xl md:text-4xl font-sans font-bold tracking-tight">
+            <h1 className="text-3xl md:text-4xl font-sans font-bold tracking-tight text-neutral-900">
               AI Search &amp; Checklist Engine
             </h1>
-            <p className="text-neutral-300 text-sm md:text-base leading-relaxed">
+            <p className="text-neutral-600 text-sm md:text-base leading-relaxed">
               Master Google Search, ChatGPT, Gemini, Claude, and Perplexity using our structured checklists. Complete course milestones, test your recall, or create custom audit tracks.
             </p>
           </div>
 
           {/* Quick Metrics Header */}
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 pt-4 border-t border-neutral-700/50">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 pt-4 border-t border-neutral-100">
             <div className="space-y-1 col-span-1">
-              <span className="text-xs text-neutral-400 font-mono">CURRENT LEVEL</span>
-              <p className="text-lg font-semibold text-white truncate">{getRankTitle(overallMasteryRating)}</p>
+              <span className="text-[10px] text-neutral-400 font-mono tracking-wider">CURRENT LEVEL</span>
+              <p className="text-base font-semibold text-neutral-900 truncate">{getRankTitle(overallMasteryRating)}</p>
             </div>
             <div className="space-y-1 col-span-1">
-              <span className="text-xs text-neutral-400 font-mono">CHECKLIST MILESTONE</span>
-              <p className="text-lg font-semibold text-emerald-400">
+              <span className="text-[10px] text-neutral-400 font-mono tracking-wider">CHECKLIST MILESTONE</span>
+              <p className="text-base font-semibold text-emerald-600">
                 {completedItemsCount} / {totalItemsCount} <span className="text-xs text-neutral-400 font-normal">items</span>
               </p>
             </div>
             <div className="space-y-1 col-span-1">
-              <span className="text-xs text-neutral-400 font-mono">OVERALL MASTERY</span>
-              <p className="text-lg font-semibold text-white">{overallCompletionPercentage}%</p>
+              <span className="text-[10px] text-neutral-400 font-mono tracking-wider">OVERALL MASTERY</span>
+              <p className="text-base font-semibold text-neutral-900">{overallCompletionPercentage}%</p>
             </div>
             <div className="space-y-1 col-span-1">
-              <span className="text-xs text-neutral-400 font-mono">DAILY LEARNING STREAK</span>
-              <div className="flex items-center gap-1.5 text-amber-400 font-semibold text-lg">
-                <Zap size={18} fill="currentColor" />
+              <span className="text-[10px] text-neutral-400 font-mono tracking-wider">DAILY LEARNING STREAK</span>
+              <div className="flex items-center gap-1.5 text-amber-600 font-semibold text-base">
+                <Zap size={16} fill="currentColor" />
                 <span>{progress.currentStreak} Day{progress.currentStreak !== 1 && "s"}</span>
               </div>
             </div>
             <div className="space-y-1 col-span-2 md:col-span-1">
-              <span className="text-xs text-neutral-400 font-mono">SIMULATION PANEL</span>
+              <span className="text-[10px] text-neutral-400 font-mono tracking-wider">SIMULATION PANEL</span>
               <div className="pt-0.5">
                 <button
                   onClick={toggleSimulateInactivity}
                   className={`px-3 py-1 rounded-xl text-[11px] font-bold font-mono transition-all border shadow-2xs cursor-pointer ${
                     simulateInactivity 
                       ? "bg-amber-500 text-white border-amber-400 animate-pulse font-bold" 
-                      : "bg-white/10 text-neutral-300 border-white/10 hover:bg-white/20 hover:text-white"
+                      : "bg-neutral-50 text-neutral-600 hover:bg-neutral-100 border-neutral-200"
                   }`}
                   title="Simulate 48+ hours of offline inactivity to trigger re-engagement study suggestions"
                 >

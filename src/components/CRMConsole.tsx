@@ -212,16 +212,16 @@ export default function CRMConsole({ onClose }: CRMConsoleProps) {
   return (
     <div className="bg-white rounded-2xl border border-neutral-200/90 shadow-md overflow-hidden animate-fade-in font-sans" id="crm-panel-container">
       {/* Header of the console */}
-      <div className="bg-neutral-900 px-5 py-4 flex items-center justify-between text-white border-b border-neutral-800">
+      <div className="bg-neutral-50 px-5 py-4 flex items-center justify-between text-neutral-900 border-b border-neutral-150">
         <div className="flex items-center gap-2.5">
-          <div className="bg-emerald-500 p-2 text-neutral-900 rounded-lg shadow-sm">
+          <div className="bg-emerald-600 p-2 text-white rounded-lg shadow-sm">
             <Briefcase size={16} />
           </div>
           <div>
             <h3 className="font-sans font-extrabold text-sm tracking-tight leading-none">
               Enterprise Lead Management &amp; CRM
             </h3>
-            <p className="text-[10px] text-neutral-400 font-mono mt-0.5 tracking-wider uppercase font-bold">
+            <p className="text-[10px] text-neutral-500 font-mono mt-1 tracking-wider uppercase font-bold">
               Amrish Kumar Singh - Consulting Office
             </p>
           </div>
@@ -230,7 +230,7 @@ export default function CRMConsole({ onClose }: CRMConsoleProps) {
         {isAuthenticated && (
           <button
             onClick={handleLogout}
-            className="px-2.5 py-1 text-[10px] uppercase font-mono font-bold bg-neutral-800 hover:bg-neutral-700 text-neutral-300 rounded-md border border-neutral-700/50 transition-all cursor-pointer"
+            className="px-2.5 py-1 text-[10px] uppercase font-mono font-bold bg-neutral-100 hover:bg-neutral-200 text-neutral-700 rounded-md border border-neutral-200 transition-all cursor-pointer"
           >
             Lock Terminal
           </button>
@@ -755,16 +755,16 @@ export function LeadFormModal({ isOpen, onClose, onSubmitSuccess }: LeadFormModa
       <div className="bg-white rounded-2xl border border-neutral-150 shadow-2xl max-w-lg w-full overflow-hidden animate-scale-up text-neutral-900 flex flex-col max-h-[95vh] sm:max-h-[90vh]">
         
         {/* Aesthetic design top stripe banner */}
-        <div className="bg-neutral-900 px-6 py-4.5 text-white flex items-center justify-between shrink-0">
+        <div className="bg-neutral-50 px-6 py-4.5 text-neutral-900 border-b border-neutral-150 flex items-center justify-between shrink-0">
           <div className="space-y-0.5">
-            <span className="text-[9px] font-mono font-bold tracking-widest text-emerald-400 uppercase">Consultant Engagement Request</span>
+            <span className="text-[9px] font-mono font-bold tracking-widest text-emerald-700 uppercase">Consultant Engagement Request</span>
             <h3 className="font-sans font-extrabold text-sm sm:text-base leading-none">
               Work Directly With Amrish
             </h3>
           </div>
           <button
             onClick={onClose}
-            className="text-neutral-400 hover:text-white transition-all text-xs font-mono p-1 bg-neutral-800 rounded-md border border-neutral-700/50 cursor-pointer"
+            className="text-neutral-500 hover:text-neutral-900 transition-all text-xs font-mono p-1 bg-neutral-100 rounded-md border border-neutral-200 cursor-pointer"
           >
             Esc
           </button>

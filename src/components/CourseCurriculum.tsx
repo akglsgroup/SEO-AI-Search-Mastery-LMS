@@ -375,18 +375,18 @@ export default function CourseCurriculum({
           </div>
 
           {/* Sidebar Consulting card */}
-          <div className="hidden lg:block p-4.5 bg-neutral-900 border border-neutral-800 text-white rounded-2xl shadow-sm space-y-3">
+          <div className="hidden lg:block p-4.5 bg-emerald-50/40 border border-emerald-100 text-neutral-900 rounded-2xl shadow-3xs space-y-3">
             <div className="flex items-center gap-1.5">
-              <Sparkles size={14} className="text-emerald-400 animate-pulse" />
-              <span className="text-[10px] font-mono font-bold tracking-widest uppercase text-neutral-400">Enterprise Auditing</span>
+              <Sparkles size={14} className="text-emerald-600 animate-pulse" />
+              <span className="text-[10px] font-mono font-bold tracking-widest uppercase text-emerald-800">Enterprise Auditing</span>
             </div>
-            <p className="text-[11px] text-neutral-300 leading-relaxed font-sans">
+            <p className="text-[11px] text-neutral-600 leading-relaxed font-sans">
               Need premium custom onsite SEO/AEO training or corporate compliance audits? Work directly with Amrish.
             </p>
             <button
               type="button"
               onClick={onOpenConsulting}
-              className="w-full py-2 bg-emerald-500 hover:bg-emerald-400 text-neutral-950 font-sans font-bold text-[11px] rounded-xl transition-all shadow-xs text-center cursor-pointer focus:outline-hidden"
+              className="w-full py-2 bg-neutral-900 hover:bg-neutral-850 text-white font-sans font-bold text-[11px] rounded-xl transition-all shadow-xs text-center cursor-pointer focus:outline-hidden"
             >
               Inquire Services
             </button>
