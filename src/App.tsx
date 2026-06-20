@@ -570,6 +570,7 @@ export default function App() {
               onSelectLevel={handleSelectLevel}
               tabChanger={(tab) => setActiveTab(tab)}
               onOpenConsulting={() => setIsLeadModalOpen(true)}
+              onToggleItem={handleToggleItem}
             />
           )}
 

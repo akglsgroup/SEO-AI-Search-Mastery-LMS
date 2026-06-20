@@ -6,7 +6,7 @@
 import React from "react";
 import { UserProgress, Level } from "../types";
 import { INITIAL_TRACKS } from "../data/checklist";
-import { Award, Zap, CheckCircle, BarChart3, Star, Sparkles, BookOpen, Cpu, Layers, Globe, SlidersHorizontal, Trophy, Lock, Smile, ArrowRight, Share2, Check } from "lucide-react";
+import { Award, Zap, CheckCircle, BarChart3, Star, Sparkles, BookOpen, Cpu, Layers, Globe, SlidersHorizontal, Trophy, Lock, Smile, ArrowRight, Share2, Check, Clock, Bell } from "lucide-react";
 import { motion } from "motion/react";
 
 interface DashboardProps {
@@ -16,6 +16,7 @@ interface DashboardProps {
   onSelectLevel: (levelId: number | string) => void;
   tabChanger: (tab: "curriculum" | "creator" | "quiz") => void;
   onOpenConsulting?: () => void;
+  onToggleItem?: (itemId: string) => void;
 }
 
 export default function Dashboard({
@@ -24,7 +25,8 @@ export default function Dashboard({
   onChangeTrack,
   onSelectLevel,
   tabChanger,
-  onOpenConsulting
+  onOpenConsulting,
+  onToggleItem
 }: DashboardProps) {
   const [selectedCategory, setSelectedCategory] = React.useState<"all" | "tech" | "content" | "growth">("all");
   const [viewingAward, setViewingAward] = React.useState<any | null>(null);
@@ -57,42 +59,233 @@ export default function Dashboard({
 
   const [sharingAwardId, setSharingAwardId] = React.useState<string | null>(null);
 
+  // --- Daily Study Task State & Inactivity Detection ---
+  const [simulateInactivity, setSimulateInactivity] = React.useState<boolean>(() => {
+    try {
+      return localStorage.getItem("lms_simulate_inactivity") === "true";
+    } catch {
+      return false;
+    }
+  });
+
+  const hasInactivity = React.useMemo(() => {
+    if (simulateInactivity) return true;
+    if (!progress.lastActivityDate) return false;
+    try {
+      // Decode last activity date (e.g., "Sat Jun 20 2026")
+      const lastTime = Date.parse(progress.lastActivityDate);
+      if (isNaN(lastTime)) return false;
+      const differenceMs = Date.now() - lastTime;
+      const differenceHours = differenceMs / (1000 * 60 * 60);
+      return differenceHours >= 48;
+    } catch (e) {
+      return false;
+    }
+  }, [progress.lastActivityDate, simulateInactivity]);
+
+  const [isTaskBannerDismissed, setIsTaskBannerDismissed] = React.useState<boolean>(() => {
+    try {
+      return sessionStorage.getItem("lms_dismiss_daily_task_banner") === "true";
+    } catch {
+      return false;
+    }
+  });
+
+  // Calculate remaining checklist items across all levels & custom courses
+  const remainingStudyItems = React.useMemo(() => {
+    const items: { item: any; sourceTitle: string; sourceId: string | number; isCustomCourse: boolean }[] = [];
+    
+    // 1. Gather from standard master levels
+    levels.forEach(level => {
+      if (level.checklistItems) {
+        level.checklistItems.forEach(item => {
+          if (!progress.completedItemIds.includes(item.id)) {
+            items.push({
+              item,
+              sourceTitle: level.title,
+              sourceId: level.id,
+              isCustomCourse: false
+            });
+          }
+        });
+      }
+    });
+
+    // 2. Gather from user-created custom courses
+    if (progress.customCourses) {
+      progress.customCourses.forEach(course => {
+        if (course.checklistItems) {
+          course.checklistItems.forEach(item => {
+            if (!progress.completedItemIds.includes(item.id)) {
+              items.push({
+                item,
+                sourceTitle: course.title,
+                sourceId: course.id,
+                isCustomCourse: true
+              });
+            }
+          });
+        }
+      });
+    }
+
+    return items;
+  }, [levels, progress.completedItemIds, progress.customCourses]);
+
+  // Determine the suggested daily study task using a stable hash based on today's date
+  const [suggestionOffset, setSuggestionOffset] = React.useState<number>(0);
+  
+  const suggestedStudyTask = React.useMemo(() => {
+    if (remainingStudyItems.length === 0) return null;
+    
+    // Hash of today's date string so it updates daily but remains static during the day
+    const todayStr = new Date().toDateString();
+    let hash = 0;
+    for (let i = 0; i < todayStr.length; i++) {
+      hash = todayStr.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    
+    const index = (Math.abs(hash) + suggestionOffset) % remainingStudyItems.length;
+    return remainingStudyItems[index];
+  }, [remainingStudyItems, suggestionOffset]);
+
+  const toggleSimulateInactivity = () => {
+    const updated = !simulateInactivity;
+    setSimulateInactivity(updated);
+    try {
+      localStorage.setItem("lms_simulate_inactivity", String(updated));
+    } catch {}
+  };
+
+  const handleDismissBanner = () => {
+    setIsTaskBannerDismissed(true);
+    try {
+      sessionStorage.setItem("lms_dismiss_daily_task_banner", "true");
+    } catch {}
+  };
+
+  // --- Dynamic Shared Link Handler on Mount (Verifies shared diplomas) ---
+  React.useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const verifyCert = params.get("verify_cert");
+      const title = params.get("title");
+      const candidate = params.get("candidate");
+      const date = params.get("date");
+      const id = params.get("id") || "public_verify";
+      const category = params.get("category") || "growth";
+
+      if (verifyCert && title && candidate && date) {
+        setViewingAward({
+          id,
+          title,
+          credentialId: verifyCert,
+          formattedDate: date,
+          category,
+          completedAt: new Date(date).getTime() || Date.now(),
+        });
+        setGraduateName(candidate);
+      }
+    } catch (e) {
+      console.error("Failed to auto-verify shared certificate from link", e);
+    }
+  }, []);
+
   const handleShareAward = async (e: React.MouseEvent, award: any, credentialId: string) => {
     e.stopPropagation();
-    const shareTitle = `Search Engine Mechanics Mastery Certification`;
-    const shareText = `I completed "${award.title}" on the Search Engine Mechanics platform! Verified Candidate ID: ${credentialId}. Check my achievement:`;
     
-    // Dynamic URL
-    const shareUrl = window.location.origin + window.location.pathname;
+    // Construct details
+    const certTitle = award.title || "LMS Completion Certificate";
+    const certName = graduateName || "Verified Graduate Candidate";
+    const certDate = award.formattedDate || new Date(award.completedAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+    const certCategory = award.category || "growth";
+    const certIdInt = award.id || "public_verify";
+
+    // 🔗 Available verified dynamic certificate link
+    const shareUrl = `${window.location.origin}${window.location.pathname}?verify_cert=${encodeURIComponent(credentialId)}&title=${encodeURIComponent(certTitle)}&candidate=${encodeURIComponent(certName)}&date=${encodeURIComponent(certDate)}&category=${encodeURIComponent(certCategory)}&id=${encodeURIComponent(certIdInt)}`;
+    
+    // 🖼️ Create a stylized high-resolution certificate banner image representing the student's mastery status
+    const featuredImageUrl = `https://placehold.co/1200x630/171717/f59e0b?text=AskAmrish+Mastery+Certificate%0A%0AUNLOCKED+BY:+${encodeURIComponent(certName.toUpperCase())}%0ACOURSE:+${encodeURIComponent(certTitle.toUpperCase())}%0AVerified+Credential+ID:+${encodeURIComponent(credentialId)}`;
+
+    const shareTitle = `AskAmrish Search Engine Mechanics Mastery Certification`;
+    
+    const motivationalCheckText = `🏆 I successfully completed the AskAmrish Search Engine Mechanics course and earned my Board Mastery Certification!\n\n🎓 Certification: "${certTitle}"\n🆔 Credential: ${credentialId}\n\n🖼️ Featured Certificate Badge:\n👉 ${featuredImageUrl}\n\n💡 LEVEL UP YOUR OWN SEARCH STRATEGY!\nThis comprehensive tracker covers next-gen SEO, GEO, AEO, and AI search interfaces like Gemini. Build custom site audit tracklists, run diagnostic quizes, and master modern ranking mechanics under the expert AskAmrish framework.\n\nVerify and view my interactive certified diploma here:`;
 
     if (navigator.share) {
       try {
         await navigator.share({
           title: shareTitle,
-          text: shareText,
+          text: `${motivationalCheckText}\n${shareUrl}`,
           url: shareUrl,
         });
       } catch (error) {
-        console.warn("Could not share using Web Share API:", error);
-        copyToClipboard(award.id, shareTitle, shareText, shareUrl);
+        console.warn("navigator.share failed, failing back to clipboard copy", error);
+        copyToClipboard(award.id, shareTitle, motivationalCheckText, shareUrl, featuredImageUrl);
       }
     } else {
-      copyToClipboard(award.id, shareTitle, shareText, shareUrl);
+      copyToClipboard(award.id, shareTitle, motivationalCheckText, shareUrl, featuredImageUrl);
     }
   };
 
-  const copyToClipboard = async (awardId: string, title: string, text: string, url: string) => {
+  const copyToClipboard = async (awardId: string, title: string, text: string, url: string, imageUrl?: string) => {
     try {
-      const fullShareText = `🏆 ${title}\n\n${text}\n👉 ${url}`;
+      const fullShareText = `${text}\n👉 ${url}`;
       await navigator.clipboard.writeText(fullShareText);
       setSharingAwardId(awardId);
       setTimeout(() => {
         setSharingAwardId(null);
-      }, 2500);
+      }, 3000);
     } catch (err) {
       console.error("Could not copy link to clipboard:", err);
     }
   };
+
+  // --- Dynamic OpenGraph & Meta tag updates for Social Platforms / Crawlers when viewing/sharing certificates ---
+  React.useEffect(() => {
+    if (viewingAward) {
+      const certTitle = viewingAward.title || "LMS Completion Certificate";
+      const certName = graduateName || "Verified Graduate Candidate";
+      const certDate = viewingAward.formattedDate || new Date(viewingAward.completedAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+      const certId = viewingAward.credentialId || "MASTER_CERT";
+
+      const originalTitle = document.title;
+      // Set human-friendly verified document title under the AskAmrish flag
+      document.title = `Award Certified: ${certName} - ${certTitle} | AskAmrish`;
+
+      // 🖼️ Featured High-Resolution Certificate OpenGraph image
+      const featuredImageUrl = `https://placehold.co/1200x630/171717/f59e0b?text=AskAmrish+Mastery+Certificate%0A%0AUNLOCKED+BY:+${encodeURIComponent(certName.toUpperCase())}%0ACOURSE:+${encodeURIComponent(certTitle.toUpperCase())}%0AVerified+Credential+ID:+${encodeURIComponent(certId)}`;
+
+      const upsertMeta = (property: string, content: string, isTwitter = false) => {
+        const attributeName = isTwitter ? 'name' : 'property';
+        let meta = document.querySelector(`meta[${attributeName}="${property}"]`);
+        if (!meta) {
+          meta = document.createElement('meta');
+          meta.setAttribute(attributeName, property);
+          document.head.appendChild(meta);
+        }
+        meta.setAttribute('content', content);
+      };
+
+      // OpenGraph SEO Meta Tag Declarations
+      upsertMeta('og:title', `AskAmrish Board Mastery Certification: ${certTitle}`);
+      upsertMeta('og:description', `Verified credentials for ${certName}. Master Search Engine Mechanics, LLM Discovery, and GEO optimization under the AskAmrish framework.`);
+      upsertMeta('og:image', featuredImageUrl);
+      upsertMeta('og:image:width', '1200');
+      upsertMeta('og:image:height', '630');
+      upsertMeta('og:url', window.location.href);
+      upsertMeta('og:type', 'website');
+
+      // Twitter Cards Meta Tag Declarations
+      upsertMeta('twitter:card', 'summary_large_image', true);
+      upsertMeta('twitter:title', `AskAmrish Board Mastery Certification: ${certTitle}`, true);
+      upsertMeta('twitter:description', `Verified credentials for ${certName}. Master Search Engine Mechanics, LLM Discovery, and GEO optimization under the AskAmrish framework.`, true);
+      upsertMeta('twitter:image', featuredImageUrl, true);
+
+      return () => {
+        document.title = originalTitle;
+      };
+    }
+  }, [viewingAward, graduateName]);
 
   // --- Mastery Badge & Celebration State ---
   const [selectedBadgeFilter, setSelectedBadgeFilter] = React.useState<"all" | "unlocked" | "locked">("all");
@@ -201,18 +394,18 @@ export default function Dashboard({
           </div>
 
           {/* Quick Metrics Header */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-neutral-700/50">
-            <div className="space-y-1">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 pt-4 border-t border-neutral-700/50">
+            <div className="space-y-1 col-span-1">
               <span className="text-xs text-neutral-400 font-mono">CURRENT LEVEL</span>
               <p className="text-lg font-semibold text-white truncate">{getRankTitle(overallMasteryRating)}</p>
             </div>
-            <div className="space-y-1">
+            <div className="space-y-1 col-span-1">
               <span className="text-xs text-neutral-400 font-mono">CHECKLIST MILESTONE</span>
               <p className="text-lg font-semibold text-emerald-400">
                 {completedItemsCount} / {totalItemsCount} <span className="text-xs text-neutral-400 font-normal">items</span>
               </p>
             </div>
-            <div className="space-y-1">
+            <div className="space-y-1 col-span-1">
               <span className="text-xs text-neutral-400 font-mono">OVERALL MASTERY</span>
               <p className="text-lg font-semibold text-white">{overallCompletionPercentage}%</p>
             </div>
@@ -223,9 +416,98 @@ export default function Dashboard({
                 <span>{progress.currentStreak} Day{progress.currentStreak !== 1 && "s"}</span>
               </div>
             </div>
+            <div className="space-y-1 col-span-2 md:col-span-1">
+              <span className="text-xs text-neutral-400 font-mono">SIMULATION PANEL</span>
+              <div className="pt-0.5">
+                <button
+                  onClick={toggleSimulateInactivity}
+                  className={`px-3 py-1 rounded-xl text-[11px] font-bold font-mono transition-all border shadow-2xs cursor-pointer ${
+                    simulateInactivity 
+                      ? "bg-amber-500 text-white border-amber-400 animate-pulse font-bold" 
+                      : "bg-white/10 text-neutral-300 border-white/10 hover:bg-white/20 hover:text-white"
+                  }`}
+                  title="Simulate 48+ hours of offline inactivity to trigger re-engagement study suggestions"
+                >
+                  {simulateInactivity ? "🧪 Sim Inactive: ON" : "🧪 Sim Inactivity"}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+
+      {/* 🕒 Suggested Daily Study Task Banner for Inactivity (Re-engagement nudges) */}
+      {hasInactivity && !isTaskBannerDismissed && suggestedStudyTask && (
+        <div className="p-5 bg-amber-50/70 border border-amber-200/80 rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-1.5 h-full bg-amber-500"></div>
+          <div className="flex items-start gap-4">
+            <div className="p-3 bg-amber-100 text-amber-700 rounded-xl mt-0.5">
+              <Clock size={20} className="animate-pulse" />
+            </div>
+            <div className="space-y-1 max-w-xl">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-[10px] font-mono font-extrabold tracking-wider text-amber-800 bg-amber-200 uppercase px-2.5 py-0.5 rounded-full inline-flex items-center gap-1">
+                  👁️ Re-Engagement Suggestion
+                </span>
+                <span className="text-[10px] font-mono font-bold tracking-wider text-neutral-800 bg-neutral-200/80 uppercase px-2 py-0.5 rounded-full">
+                  +{suggestedStudyTask.item.points} XP Award
+                </span>
+                <span className="text-[10px] font-mono font-bold text-neutral-400">
+                  (inactive 48h+)
+                </span>
+              </div>
+              <h3 className="text-base font-bold text-neutral-900 leading-tight">
+                Suggested Study: <span className="text-amber-800 font-extrabold font-serif">“{suggestedStudyTask.item.title}”</span>
+              </h3>
+              <p className="text-xs text-neutral-600 flex flex-wrap items-center gap-1.5 font-sans">
+                <span>Associated Module:</span>
+                <button 
+                  onClick={() => onSelectLevel(suggestedStudyTask.sourceId)} 
+                  className="font-bold text-neutral-800 hover:text-amber-700 underline text-left focus:outline-none"
+                >
+                  {suggestedStudyTask.sourceTitle}
+                </button>
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
+            <button
+              onClick={() => onSelectLevel(suggestedStudyTask.sourceId)}
+              className="flex-1 md:flex-none inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-bold text-neutral-800 bg-white hover:bg-neutral-50 text-center rounded-lg border border-neutral-200 shadow-2xs transition-colors cursor-pointer"
+            >
+              <BookOpen size={13} />
+              Open Lesson
+            </button>
+            
+            {onToggleItem && (
+              <button
+                onClick={() => onToggleItem(suggestedStudyTask.item.id)}
+                className="flex-1 md:flex-none inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-bold text-white bg-amber-600 hover:bg-amber-700 text-center rounded-lg shadow-2xs transition-all cursor-pointer"
+              >
+                <CheckCircle size={13} />
+                Mark Completed
+              </button>
+            )}
+
+            <button
+              onClick={() => setSuggestionOffset(prev => prev + 1)}
+              title="Give me another recommendation"
+              className="p-1.5 text-neutral-700 hover:text-neutral-900 bg-white hover:bg-neutral-100 border border-neutral-200 rounded-lg shadow-2xs text-xs inline-flex items-center gap-1 cursor-pointer"
+            >
+              🔄 Shuffle
+            </button>
+
+            <button
+              onClick={handleDismissBanner}
+              title="Dismiss suggestion"
+              className="p-1.5 text-neutral-500 hover:text-neutral-700 bg-white hover:bg-neutral-100 border border-neutral-200 rounded-lg shadow-2xs text-xs cursor-pointer"
+            >
+              ✕ Dismiss
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* 2026 Enterprise Scoring Framework (Dynamic Formulas) */}
       <div className="space-y-4">
@@ -985,6 +1267,13 @@ export default function Dashboard({
                   <h3 className="text-xl sm:text-2xl font-serif font-bold text-neutral-900 tracking-tight leading-none mt-1">
                     Certificate of Mastery
                   </h3>
+                  {viewingAward?.id === "public_verify" && (
+                    <div className="pt-1.5">
+                      <span className="inline-inline-flex items-center gap-1 px-3 py-1 bg-emerald-500 text-white text-[9px] font-mono font-extrabold rounded-full uppercase tracking-wider shadow-xs border border-emerald-400 animate-pulse">
+                        🛡️ Authenticated & Verified
+                      </span>
+                    </div>
+                  )}
                   <div className="w-32 h-[1px] bg-gradient-to-r from-transparent via-amber-500 to-transparent mx-auto mt-2.5"></div>
                 </div>
               </div>
