@@ -242,49 +242,185 @@ export default function Dashboard({
 
   // --- Dynamic OpenGraph & Meta tag updates for Social Platforms / Crawlers when viewing/sharing certificates ---
   React.useEffect(() => {
+    const upsertMeta = (property: string, content: string, isTwitter = false) => {
+      const attributeName = isTwitter ? 'name' : 'property';
+      let meta = document.head.querySelector(`meta[${attributeName}="${property}"]`);
+      if (!meta) {
+        meta = document.createElement('meta');
+        meta.setAttribute(attributeName, property);
+        document.head.appendChild(meta);
+      }
+      meta.setAttribute('content', content);
+    };
+
+    const originalTitle = document.title;
+
     if (viewingAward) {
       const certTitle = viewingAward.title || "LMS Completion Certificate";
       const certName = graduateName || "Verified Graduate Candidate";
       const certDate = viewingAward.formattedDate || new Date(viewingAward.completedAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
       const certId = viewingAward.credentialId || "MASTER_CERT";
 
-      const originalTitle = document.title;
       // Set human-friendly verified document title under the AskAmrish flag
       document.title = `Award Certified: ${certName} - ${certTitle} | AskAmrish`;
 
-      // 🖼️ Featured High-Resolution Certificate OpenGraph image
-      const featuredImageUrl = `https://placehold.co/1200x630/171717/f59e0b?text=AskAmrish+Mastery+Certificate%0A%0AUNLOCKED+BY:+${encodeURIComponent(certName.toUpperCase())}%0ACOURSE:+${encodeURIComponent(certTitle.toUpperCase())}%0AVerified+Credential+ID:+${encodeURIComponent(certId)}`;
+      // 🖼️ Generate a pristine High-Resolution Certificate OpenGraph image containing matching layout as the real component
+      let featuredImageUrl = "";
+      try {
+        const width = 1200;
+        const height = 630;
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          // Fill luxurious stone cream background
+          ctx.fillStyle = "#fafaf9";
+          ctx.fillRect(0, 0, width, height);
 
-      const upsertMeta = (property: string, content: string, isTwitter = false) => {
-        const attributeName = isTwitter ? 'name' : 'property';
-        let meta = document.querySelector(`meta[${attributeName}="${property}"]`);
-        if (!meta) {
-          meta = document.createElement('meta');
-          meta.setAttribute(attributeName, property);
-          document.head.appendChild(meta);
+          // Double Gold/Amber Borders
+          ctx.strokeStyle = "#d97706";
+          ctx.lineWidth = 14;
+          ctx.strokeRect(35, 35, width - 70, height - 70);
+          
+          ctx.strokeStyle = "#b45309";
+          ctx.lineWidth = 3;
+          ctx.strokeRect(52, 52, width - 104, height - 104);
+
+          // Security watermark backdrop lines
+          ctx.strokeStyle = "rgba(217, 119, 6, 0.05)";
+          ctx.lineWidth = 1.5;
+          for (let i = 70; i < width - 70; i += 40) {
+            ctx.beginPath();
+            ctx.moveTo(i, 70);
+            ctx.lineTo(i, height - 70);
+            ctx.stroke();
+          }
+
+          // Header Text
+          ctx.fillStyle = "#b45309";
+          ctx.font = "bold 15px sans-serif";
+          ctx.textAlign = "center";
+          // Emulate character spacing tracking-widest with spaces
+          ctx.fillText("OFFICIAL BOARD CERTIFICATION CREDENTIAL", width / 2, 115);
+
+          ctx.fillStyle = "#1c1917";
+          ctx.font = "bold italic 44px Georgia, serif";
+          ctx.fillText("Certificate of Mastery", width / 2, 180);
+
+          ctx.fillStyle = "#78716c";
+          ctx.font = "italic 13px Georgia, serif";
+          ctx.fillText("THIS DIGITAL RECORD SECURELY VERIFIES THAT", width / 2, 240);
+
+          // Full Name of Candidate (stunning large typography)
+          ctx.fillStyle = "#b45309";
+          ctx.font = "bold italic 46px Georgia, serif";
+          ctx.fillText(certName, width / 2, 310);
+
+          // Line separator
+          ctx.strokeStyle = "rgba(217, 119, 6, 0.25)";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(width / 2 - 160, 335);
+          ctx.lineTo(width / 2 + 160, 335);
+          ctx.stroke();
+
+          // Description
+          ctx.fillStyle = "#44403c";
+          ctx.font = "normal 14px sans-serif";
+          ctx.fillText("has successfully completed all module checklists, diagnostic audits, and required framework items of:", width / 2, 370);
+
+          // Course Target
+          ctx.fillStyle = "#1c1917";
+          ctx.font = "bold 25px sans-serif";
+          ctx.fillText(certTitle, width / 2, 420);
+
+          // Signatures Area
+          ctx.strokeStyle = "#e7e5e4";
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(width / 4 - 80, 520);
+          ctx.lineTo(width / 4 + 140, 520);
+          ctx.moveTo(3 * width / 4 - 140, 520);
+          ctx.lineTo(3 * width / 4 + 80, 520);
+          ctx.stroke();
+
+          // Left Signatory text
+          ctx.fillStyle = "#1c1917";
+          ctx.font = "italic 16px Georgia, serif";
+          ctx.fillText("Amrish Kumar Singh", width / 4 + 30, 505);
+          ctx.fillStyle = "#78716c";
+          ctx.font = "bold 9px sans-serif";
+          ctx.fillText("ENTERPRISE LEAD AUDITOR", width / 4 + 30, 538);
+
+          // Right Timestamp text
+          ctx.fillStyle = "#1c1917";
+          ctx.font = "bold 14px sans-serif";
+          ctx.fillText(certDate, 3 * width / 4 - 30, 505);
+          ctx.fillStyle = "#78716c";
+          ctx.font = "bold 9px sans-serif";
+          ctx.fillText("VERIFICATION TIMESTAMP", 3 * width / 4 - 30, 538);
+
+          // Interactive Crest Gold Seal
+          ctx.fillStyle = "#f59e0b";
+          ctx.beginPath();
+          ctx.arc(width / 2, 515, 34, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = "#b45309";
+          ctx.lineWidth = 2;
+          ctx.stroke();
+
+          ctx.fillStyle = "#ffffff";
+          ctx.font = "bold 30px serif";
+          ctx.fillText("★", width / 2, 525);
+
+          // Security Footer
+          ctx.fillStyle = "rgba(120, 113, 108, 0.8)";
+          ctx.font = "bold 10px monospace";
+          ctx.fillText(`AUTHENTICATED BY ASKAMRISH SECURE SIGNATURE HASH PROTOCOL: LMS-SEC-XF92-${certId.toUpperCase()}`, width / 2, 595);
+
+          featuredImageUrl = canvas.toDataURL("image/png");
         }
-        meta.setAttribute('content', content);
-      };
+      } catch (err) {
+        console.error("Canvas dynamic cert image generation failed, falling back to clean placeholder", err);
+        featuredImageUrl = `https://placehold.co/1200x630/171717/f59e0b?text=AskAmrish+Mastery+Certificate%0A%0AUNLOCKED+BY:+${encodeURIComponent(certName.toUpperCase())}%0ACOURSE:+${encodeURIComponent(certTitle.toUpperCase())}%0AVerified+Credential+ID:+${encodeURIComponent(certId)}`;
+      }
 
-      // OpenGraph SEO Meta Tag Declarations
+      // If data url generation was fully successful, use it! Otherwise fallback.
+      const ogImg = featuredImageUrl || `https://placehold.co/1200x630/171717/f59e0b?text=AskAmrish+Mastery+Certificate%0A%0AUNLOCKED+BY:+${encodeURIComponent(certName.toUpperCase())}%0ACOURSE:+${encodeURIComponent(certTitle.toUpperCase())}%0AVerified+Credential+ID:+${encodeURIComponent(certId)}`;
+
+      // OpenGraph SEO Meta Tag Declarations overrides
       upsertMeta('og:title', `AskAmrish Board Mastery Certification: ${certTitle}`);
       upsertMeta('og:description', `Verified credentials for ${certName}. Master Search Engine Mechanics, LLM Discovery, and GEO optimization under the AskAmrish framework.`);
-      upsertMeta('og:image', featuredImageUrl);
+      upsertMeta('og:image', ogImg);
       upsertMeta('og:image:width', '1200');
       upsertMeta('og:image:height', '630');
       upsertMeta('og:url', window.location.href);
       upsertMeta('og:type', 'website');
 
-      // Twitter Cards Meta Tag Declarations
-      upsertMeta('twitter:card', 'summary_large_image', true);
-      upsertMeta('twitter:title', `AskAmrish Board Mastery Certification: ${certTitle}`, true);
-      upsertMeta('twitter:description', `Verified credentials for ${certName}. Master Search Engine Mechanics, LLM Discovery, and GEO optimization under the AskAmrish framework.`, true);
-      upsertMeta('twitter:image', featuredImageUrl, true);
+      // Twitter Cards Meta Tag Declarations overrides
+      upsertMeta('twitter:card', 'summary_large_image');
+      upsertMeta('twitter:title', `AskAmrish Board Mastery Certification: ${certTitle}`);
+      upsertMeta('twitter:description', `Verified credentials for ${certName}. Master Search Engine Mechanics, LLM Discovery, and GEO optimization under the AskAmrish framework.`);
+      upsertMeta('twitter:image', ogImg);
+    } else {
+      // Revert / Reset to Base Meta Tags for 'AskAmrish | SEO & AI Search Mastery LMS'
+      document.title = "AskAmrish | SEO & AI Search Mastery LMS";
+      upsertMeta('og:title', "AskAmrish | SEO & AI Search Mastery LMS");
+      upsertMeta('og:description', "Master next-generation SEO, Generative Engine Optimization (GEO), LLM discovery ranking factors, and next-gen AI search retrieval engines with the AskAmrish Mastery platform.");
+      upsertMeta('og:image', `${window.location.origin}/logo.png`);
+      upsertMeta('og:url', window.location.href);
+      upsertMeta('og:type', 'website');
 
-      return () => {
-        document.title = originalTitle;
-      };
+      upsertMeta('twitter:card', 'summary_large_image');
+      upsertMeta('twitter:title', "AskAmrish | SEO & AI Search Mastery LMS");
+      upsertMeta('twitter:description', "Master next-generation SEO, Generative Engine Optimization (GEO), LLM discovery ranking factors, and next-gen AI search retrieval engines with the AskAmrish Mastery platform.");
+      upsertMeta('twitter:image', `${window.location.origin}/logo.png`);
     }
+
+    return () => {
+      document.title = originalTitle;
+    };
   }, [viewingAward, graduateName]);
 
   // --- Mastery Badge & Celebration State ---
