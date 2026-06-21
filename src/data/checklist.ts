@@ -93,6 +93,22 @@ export const INITIAL_TRACKS: Track[] = [
     colorClass: "bg-teal-50 border-teal-200 text-teal-800",
     textColorClass: "text-teal-700",
     levelIds: [201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220]
+  },
+  {
+    id: "sxo",
+    title: "12. Search Everywhere Optimization (SXO) Mastery",
+    description: "Optimize brand discoverability and visibility across traditional search, AI engines, chat interfaces, specialized catalogs, and social databases.",
+    colorClass: "bg-indigo-50 border-indigo-200 text-indigo-800",
+    textColorClass: "text-indigo-700",
+    levelIds: [301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316]
+  },
+  {
+    id: "gbp",
+    title: "13. Google Business Profile Optimization Checklist",
+    description: "Fully maximize storefront visibility, configure category & service architecture, optimize engagement media, and increase local trust conversions.",
+    colorClass: "bg-sky-50 border-sky-200 text-sky-800",
+    textColorClass: "text-sky-700",
+    levelIds: [401, 402, 403, 404, 405]
   }
 ];
 
@@ -1668,6 +1684,388 @@ export const MASTER_LEVELS: Level[] = [
       { title: "Search Intent Mapping", desc: "Align landing pages with search keywords to improve user engagement metrics." },
       { title: "Ranking Trend Analysis", desc: "Audit high-level organic rank movements across priority collections." },
       { title: "AI Search Trend Tracking", desc: "Track weekly growth patterns of conversational engine impressions." }
+    ])
+  },
+  {
+    id: 301,
+    title: "SXO 1: Search Everywhere Fundamentals",
+    category: "sxo",
+    description: "Understand structural shifts from classic SEO to Search Everywhere Optimization (SXO), dynamic multi-platform journeys, and entity setups.",
+    difficulty: "Beginner",
+    estimatedMinutes: 30,
+    businessImpact: "Aligns corporate positioning with modern user discovery channels and structures a unified cross-platform discovery matrix.",
+    bestPractice: "Map out the complete digital touchpoint footprint of your brand to build perfect cross-platform entity consistency.",
+    details: "SXO is about optimizing discoverability on every surface users ask questions. Focus on establishing entity signals first.",
+    checklistItems: createItems(301, [
+      { title: "Search Ecosystem Audit", desc: "Evaluate search market visibility percentages across classic search, AI chat interfaces, and social video boards." },
+      { title: "Brand Presence Audit", desc: "Conduct exhaustive search queries for exact-match corporate labels to identify indexing or naming variations." },
+      { title: "Search Platform Inventory", desc: "Document active profiles and ranking states on YouTube, Reddit, ChatGPT, Gemini, Amazon, and App Stores." },
+      { title: "Visibility Scorecard", desc: "Create a baseline metrics audit assessing organic rankings versus conversational engine quote citations." },
+      { title: "Entity Consistency Review", desc: "Verify Name, Organization Schema, corporate URLs, and author names are aligned across primary platforms." }
+    ])
+  },
+  {
+    id: 302,
+    title: "SXO 2: Google Search Optimization",
+    category: "sxo",
+    description: "Master classic organic criteria, featured snippet extraction, E-E-A-T trust signals, and Google AI Overview optimization models.",
+    difficulty: "Intermediate",
+    estimatedMinutes: 45,
+    businessImpact: "Maintains authority on the world's primary search engine while securing premium visibility within AI Overviews.",
+    bestPractice: "Write clear, direct, and fact-focused summaries paired with structural schemas to satisfy Google's retrieval systems.",
+    details: "Google ranking models rely heavily on quality, user satisfaction, and machine-readable data structures such as JSON-LD schemas.",
+    checklistItems: createItems(302, [
+      { title: "Core Web Vitals Check", desc: "Validate LCP, FID, and CLS performance levels across mobile templates." },
+      { title: "Structured Data Implementation", desc: "Submit JSON-LD organization, article, product, and QA schemas to define explicit entity connections." },
+      { title: "Internal Linking Model", desc: "Design a strict parent-child topical routing pattern to pass domain rank authority to core resources." },
+      { title: "Entity Mapping Setup", desc: "Map vocabulary concepts to authoritative Wikipedia, Wikidata, or industry authority indices." },
+      { title: "AI Overview Optimization", desc: "Structure summary sections at the top of resources to optimize for AI Overview query extractions." },
+      { title: "Featured Snippet Optimization", desc: "Implement clean tables, target lists, and explicit definition headers to satisfy snippet extractions." },
+      { title: "Knowledge Graph Alignment", desc: "Claim organization knowledge panels and link social indexes to reinforce google identification." },
+      { title: "Google Search Console Link", desc: "Connect properties to monitor real-time index coverage, sitemap submissions, and Google queries." }
+    ])
+  },
+  {
+    id: 303,
+    title: "SXO 3: Bing Search Optimization",
+    category: "sxo",
+    description: "Submit real-time indexing records, configure Bing Webmaster tools, and maximize authority signals for Microsoft Copilot integration.",
+    difficulty: "Beginner",
+    estimatedMinutes: 30,
+    businessImpact: "Expands reach to the premium Bing user demographic and ensures integration into the Windows/Microsoft AI ecosystem.",
+    bestPractice: "Deploy real-time IndexNow protocols to alert Bing instantly of any fresh or optimized directory updates.",
+    details: "Bing values direct index submissions and clear machine-readable markup, which are directly queried by the Copilot search engine.",
+    checklistItems: createItems(303, [
+      { title: "Bing Webmaster Verification", desc: "Establish ownership of properties within Bing Webmaster tools via DNS or meta-tags." },
+      { title: "XML Sitemap Submission", desc: "Deliver up-to-date, indexable directory sitemaps directly into the Bing sitemaps control." },
+      { title: "IndexNow Integration", desc: "Install direct API hooks to automatically alert Bing search agents of layout or text updates." },
+      { title: "Copilot Visibility Audit", desc: "Query Microsoft Copilot with commercial brand queries to verify product or site citations." },
+      { title: "Bing Ranking Audit", desc: "Monitor search query CTR trends and index performance inside Bing Webmaster tools." }
+    ])
+  },
+  {
+    id: 304,
+    title: "SXO 4: YouTube Search Optimization",
+    category: "sxo",
+    description: "Leverage the world's second-largest search engine by optimizing video assets, ranking algorithms, and user retention models.",
+    difficulty: "Intermediate",
+    estimatedMinutes: 45,
+    businessImpact: "Drives visual, high-engaging video traffic directly to product lines from organic search results.",
+    bestPractice: "Incorporate semantic terms in video transcribing and format titles to match user question intent directly.",
+    details: "YouTube ranking incorporates play loops, retention rates, CTR, chapters, and the thematic metadata of titles and descriptions.",
+    checklistItems: createItems(304, [
+      { title: "Keyword Search Research", desc: "Identify high-volume and low-competition search phrases inside YouTube Search autocomplete." },
+      { title: "Title & Hook Optimization", desc: "Refine titles to balance clickability with clear semantic search relevance." },
+      { title: "Thumbnail CTR Optimization", desc: "Design custom visual patterns specifying core phrases to increase click frequencies." },
+      { title: "Interactive Video Chapters", desc: "Provide precise timecode points with keyword titles to unlock organic Google video key-moments." },
+      { title: "Transcript Optimization", desc: "Read target search terms clearly within the initial 30 seconds of video audio files to improve autogenerated transcribing." },
+      { title: "Video Schema Deployment", desc: "Incorporate VideoObject structured metadata inside the hosting web page to map index paths." },
+      { title: "Playlist Organization", desc: "Group related video subjects into structured playlists to amplify crawl path loops." }
+    ])
+  },
+  {
+    id: 305,
+    title: "SXO 5: ChatGPT Search Optimization",
+    category: "sxo",
+    description: "Structure highly readable content, implement LLM robot rules, and secure citation references in ChatGPT / OpenAI Search.",
+    difficulty: "Intermediate",
+    estimatedMinutes: 40,
+    businessImpact: "Captures high-intent users who utilize ChatGPT as their primary research and recommendation tool.",
+    bestPractice: "Maintain an explicit, text-rich, and clearly structured web directory that is easy for RAG retrieval models to crawl.",
+    details: "ChatGPT utilizes OpenAI's search crawlers and partner search layers to pull live summaries. It prioritizes direct citations of trustworthy, clear sites.",
+    checklistItems: createItems(305, [
+      { title: "Entity Consistency Check", desc: "Maintain uniform and clear description patterns across Wikidata and Crunchbase profile records." },
+      { title: "Structured Content Format", desc: "Write distinct, heading-based copy with clear factual points to facilitate retrieval parse passes." },
+      { title: "FAQ Optimization Layout", desc: "Incorporate clear question-and-answer patterns that match conversational user prompts." },
+      { title: "Brand Mention Strategy", desc: "Acquire mentions across reputable industry publications mapped to ChatGPT citation groups." },
+      { title: "Authority Verification", desc: "Incorporate authoritative external reference links to build trust scores with retrieval engines." },
+      { title: "LLM Access (llms.txt)", desc: "Deploy standard /llms.txt metadata files at domain roots to provide dense, machine-readable data feeds." },
+      { title: "Citation Building Blocks", desc: "Configure review layouts and product descriptions with clear identifiers to capture user quote blocks." }
+    ])
+  },
+  {
+    id: 306,
+    title: "SXO 6: Gemini Search Optimization",
+    category: "sxo",
+    description: "Optimize layout systems, schema mappings, and organization data for Google's Gemini multimodal AI ecosystems.",
+    difficulty: "Intermediate",
+    estimatedMinutes: 35,
+    businessImpact: "Ensures maximum brand visibility and direct attribution within google conversation indices.",
+    bestPractice: "Utilize structured entity references in the Google Knowledge Graph and verify exact organizational schema alignments.",
+    details: "Gemini is deeply integrated with Google's main Knowledge Graph and search databases, parsing both multimodal inputs and structured schemas.",
+    checklistItems: createItems(306, [
+      { title: "Entity Reconciliation", desc: "Reconcile brand attributes across Google Business Listings and Wikidata records." },
+      { title: "Multimodal Schema Sync", desc: "Deploy robust Organization, Author, and Article schemas stating sameAs link targets." },
+      { title: "Author Entity Definition", desc: "Define individual writer biographics containing validated LinkedIn and Wikipedia link indicators." },
+      { title: "Organization Schema Build", desc: "Incorporate explicit sameAs values linking to official social profiles and corporate registers." },
+      { title: "Google Business Optimization", desc: "Optimize your primary local listing with rich, accurate category attributes and updated photos." },
+      { title: "Knowledge Graph Audit", desc: "Inspect Google search entity panels to verify name, founder, parent organization, and details are accurate." }
+    ])
+  },
+  {
+    id: 307,
+    title: "SXO 7: Claude Search Optimization",
+    category: "sxo",
+    description: "Prepare dense, factual, and exhaustively structured long-form content optimized for Anthropic's Claude context retrieval models.",
+    difficulty: "Intermediate",
+    estimatedMinutes: 35,
+    businessImpact: "Aids B2B companies in capturing deep technical queries where professionals consult Claude for research.",
+    bestPractice: "Publish complete, highly dense, authoritative content guides that are easy to parse and contain clear structural headers.",
+    details: "Claude prioritizes dense, coherent, logically sound long-form data. It performs exceptionally well on clearly formatted data chunks.",
+    checklistItems: createItems(307, [
+      { title: "Long-Form Data Density", desc: "Produce exhaustive, definitive guides covering topics from multiple critical viewpoints." },
+      { title: "Structured Section Blocks", desc: "Format with HTML tags or Markdown structures to clearly block conceptual categories." },
+      { title: "Source Attributions", desc: "Cite reputable scientific publications or primary data sources explicitly in the text." },
+      { title: "Content Chunking Layout", desc: "Write distinct paragraphs focusing on a single core point with explicit definitions." },
+      { title: "Entity References Mapped", desc: "Define proprietary concepts early in the document to allow direct concept indexing." }
+    ])
+  },
+  {
+    id: 308,
+    title: "SXO 8: Perplexity Search Optimization",
+    category: "sxo",
+    description: "Align brand mentions on primary citation domains and optimize news feeds for Perplexity's real-time retrieval engines.",
+    difficulty: "Advanced",
+    estimatedMinutes: 45,
+    businessImpact: "Captures active, tech-savvy users seeking live, referenced answers for buying decisions.",
+    bestPractice: "Target the index sources Perplexity cites for target topics, and keep news directories updated via indexing protocols.",
+    details: "Perplexity answers questions with live search results, citing credible publications, directories, and high-quality web pages.",
+    checklistItems: createItems(308, [
+      { title: "Citation Source Audit", desc: "Identify what domains Perplexity cites for industry competitor keywords." },
+      { title: "Content Freshness Audit", desc: "Refresh outdated reference pages with recent timestamps and up-to-date data figures." },
+      { title: "Digital PR Placements", desc: "Secure brand features and reviews on top-tier authority news domains." },
+      { title: "Expert Quote Integrations", desc: "Add expert name opinions paired with credentials directly inside your landing pages." },
+      { title: "Factual FAQ Build", desc: "Include direct answers to long-tail user queries to capture fast citation slots." }
+    ])
+  },
+  {
+    id: 309,
+    title: "SXO 9: Reddit Search Optimization",
+    category: "sxo",
+    description: "Navigate community boards, manage brand visibility, and target community-driven discovery on Reddit.",
+    difficulty: "Beginner",
+    estimatedMinutes: 30,
+    businessImpact: "Attains genuine word-of-mouth visibility on Google Search results which heavily feature Reddit discussions.",
+    bestPractice: "Encourage honest community discussions and participate helpfully without overt promotional spam.",
+    details: "Reddit has massive Google search visibility and high-trust user search volume. Users value raw, peer-to-peer authentic reviews.",
+    checklistItems: createItems(309, [
+      { title: "Subreddit Target Mapping", desc: "Audit and map the active Reddit boards where target audiences ask for sector solutions." },
+      { title: "Community Participation", desc: "Contribute helpful answers, link citations, and guide user issues, building local account trust." },
+      { title: "Expert Profile Building", desc: "Optimize profile bios with corporate titles and clear contact/verified links." },
+      { title: "Brand Discussion Monitoring", desc: "Track name mentions and feedback threads to react to reputation concerns quickly." },
+      { title: "Reputation Management", desc: "Adopt formal, polite guidelines to address negative user experiences on public threads." }
+    ])
+  },
+  {
+    id: 310,
+    title: "SXO 10: LinkedIn Search Optimization",
+    category: "sxo",
+    description: "Accelerate professional and brand B2B discoverability by optimizing creator and corporate profile assets.",
+    difficulty: "Beginner",
+    estimatedMinutes: 30,
+    businessImpact: "Drives B2B lead generation and enhances authority positioning directly with executive decision-makers.",
+    bestPractice: "Utilize critical target industry search words in titles, about descriptions, and periodic published posts.",
+    details: "LinkedIn search index filters profiles, keywords, and publication headlines to match search request patterns.",
+    checklistItems: createItems(310, [
+      { title: "Profile Keyword Optimization", desc: "Incorporate targeted skill and service keywords in creator headlines and profile summaries." },
+      { title: "Headline Optimization", desc: "Structure job titles and taglines to clearly declare specialized niche solutions." },
+      { title: "Niche Keyword Mapping", desc: "Define 5 core phrases and integrate them into articles and about descriptions." },
+      { title: "Company Page Setup", desc: "Align corporate bio taglines and website URLs on organization portfolio structures." },
+      { title: "Content Visibility Strategy", desc: "Establish weekly thought-leadership posts containing relevant industry hashtags." }
+    ])
+  },
+  {
+    id: 311,
+    title: "SXO 11: Amazon Search Optimization",
+    category: "sxo",
+    description: "Dominate the transactional search index by mastering the A9/A10 ranking factors, reviews, and detail pages.",
+    difficulty: "Advanced",
+    estimatedMinutes: 50,
+    businessImpact: "Directly increases product sales and organic transaction velocities on the largest e-commerce platform.",
+    bestPractice: "Place high-priority transactional keyword tags directly into titles and backend keyword files.",
+    details: "Amazon's search index ranks product listings based on sales velocity, text matches, conversion rates, and positive review volumes.",
+    checklistItems: createItems(311, [
+      { title: "Transactional Keyword Research", desc: "Compile actual purchase intent phrases from Amazon search suggest lists." },
+      { title: "Product Title Optimization", desc: "Write titles containing brand, model, key benefits, and critical search descriptors." },
+      { title: "Bullet Point Semantic Build", desc: "Optimize the 5 main feature bullets with benefits and critical technical parameters." },
+      { title: "A+ Content Integration", desc: "Deploy visually rich blocks, comparison charts, and image keyword data." },
+      { title: "Product Image Alt Tags", desc: "Incorporate clear, descriptive keywords in image alternative details." },
+      { title: "Review Acceleration Strategy", desc: "Utilize Amazon Vine or feedback requests to build initial verified customer reviews." }
+    ])
+  },
+  {
+    id: 312,
+    title: "SXO 12: App Store Search Optimization (ASO)",
+    category: "sxo",
+    description: "Optimize metadata and rating signals to maximize visibility inside Apple App Store and Google Play listings.",
+    difficulty: "Advanced",
+    estimatedMinutes: 45,
+    businessImpact: "Increases organic catalog downloads and reduces dependency on paid user acquisition spend.",
+    bestPractice: "Balance keyword placements across titles, subtitles, and hidden metadata fields to avoid keyword stuffing.",
+    details: "ASO relies on textual keyword matching, user ratings, download velocity, crash rates, and conversion-to-download percentages.",
+    checklistItems: createItems(312, [
+      { title: "App Title Optimization", desc: "Determine an engaging name specifying main utility descriptors within character counts." },
+      { title: "Keyword Field Mapping", desc: "Target high-traffic competitive keywords inside store backend metadata fields." },
+      { title: "Store Screenshot Assets", desc: "Upload clear, high-contrast visual screens detailing value-propositions." },
+      { title: "Video Store Previews", desc: "Insert high-retention video loops showcasing active app UI mechanics." },
+      { title: "Rating and Review Strategy", desc: "Trigger rating request alerts at moments of peak user satisfaction within the app." },
+      { title: "Store Listing Localization", desc: "Translate app listings and screenshots to scale international download volumes." }
+    ])
+  },
+  {
+    id: 313,
+    title: "SXO 13: Entity SEO Across Search Platforms",
+    category: "sxo",
+    description: "Build an ironclad entity presence across authoritative registries to align brand definitions in the AI age.",
+    difficulty: "Intermediate",
+    estimatedMinutes: 40,
+    businessImpact: "Ensures Google Knowledge Graph and AI search engines resolve your brand as a primary, trustworthy authority entity.",
+    bestPractice: "Reconcile corporate attributes and founders on independent entities such as Wikidata.",
+    details: "AI engines do not just index keywords; they index entities. Reconciling metadata across semantic platforms secures entity status.",
+    checklistItems: createItems(313, [
+      { title: "Wikidata Entity Build", desc: "Establish Wikidata records highlighting the corporate mission, website, and parent organization." },
+      { title: "Google Knowledge Graph Alignment", desc: "Directly link organization websites to Knowledge Graph records via unified identifier IDs." },
+      { title: "Social Profiles Optimization", desc: "Verify exact handle and name consistency on official LinkedIn, X, and YouTube accounts." },
+      { title: "Business Directories Audit", desc: "Perform cleanup of public records on Yelp, Crunchbase, and localized directories." },
+      { title: "AI Search Entity Profile", desc: "Cross-link brand references on authoritative sources to reinforce organizational sameAs parameters." }
+    ])
+  },
+  {
+    id: 314,
+    title: "SXO 14: AI Search Visibility Monitoring",
+    category: "sxo",
+    description: "Formulate programmatic or systematic routines to monitor brand citation levels across ChatGPT, Gemini, and Perplexity.",
+    difficulty: "Intermediate",
+    estimatedMinutes: 35,
+    businessImpact: "Provides marketing teams with clear data on conversational engine citation share and competitive visibility.",
+    bestPractice: "Consistently prompt conversational AI layers with buying templates to check brand recommendations.",
+    details: "Tracking artificial intelligence mentions is a new discipline. Establish qualitative brand queries to monitor coverage ratios.",
+    checklistItems: createItems(314, [
+      { title: "ChatGPT Visibility Tracking", desc: "Query OpenAI Search Weekly with product niche reviews to inspect citation links." },
+      { title: "Gemini Visibility Monitoring", desc: "Audit Google AI Overviews on target seed phrases to log display rates." },
+      { title: "Claude Citation Audit", desc: "Verify Claude correctly states corporate details and service attributes when asked deep industry guides." },
+      { title: "Perplexity citation checks", desc: "Analyze cited domains in Perplexity solutions to log your domain footprint." },
+      { title: "Mentions Alerts Config", desc: "Deploy automated trackers monitoring brand keywords on news networks and forums." }
+    ])
+  },
+  {
+    id: 315,
+    title: "SXO 15: Search Everywhere Dashboard & Reporting",
+    category: "sxo",
+    description: "Build deep unified metrics reporting dashboards tracking search, conversational citation performance, and social discovery paths.",
+    difficulty: "Intermediate",
+    estimatedMinutes: 40,
+    businessImpact: "Synthesizes multi-platform visibility metrics into unified B2B KPIs for board-level decision-makers.",
+    bestPractice: "Create a single visualization framework that balances traditional SEO clicks with AI search citations.",
+    details: "A comprehensive reporting board provides an exhaustive view of search organic health and brand discoverability metrics.",
+    checklistItems: createItems(315, [
+      { title: "Set Unified Visibility", desc: "Configure an integrated analytics board showing classic views and conversational share of voice." },
+      { title: "Verify Webmaster Analytics", desc: "Maintain monthly sitemap, click, and placement trend metrics from Google and Bing panels." },
+      { title: "YouTube Discovery Patterns", desc: "Track video traffic, search impressions, and external site click attributes." },
+      { title: "AI Citations Metric Build", desc: "Integrate brand citation counts from LLMs into primary marketing logs." },
+      { title: "Reddit & Forum Tracking", desc: "Track thread placements, upvotes, and customer referral clicks." }
+    ])
+  },
+  {
+    id: 316,
+    title: "SXO 16: Final Capstone Project - Search Everywhere Optimization Audit",
+    category: "sxo",
+    description: "Submit a comprehensive multi-platform search, AI, and social visibility optimization report for a target commercial organization.",
+    difficulty: "Expert",
+    estimatedMinutes: 120,
+    businessImpact: "Validates high-level professional mastery, unlocking the authoritative SXO Enterprise Architect Certification.",
+    bestPractice: "Conduct exhaustive, real-world discovery tests across all 11 platforms to expose visibility gap opportunities.",
+    details: "The capstone project represents the ultimate challenge. Complete the exhaustive audits to secure official board recognition.",
+    checklistItems: createItems(316, [
+      { title: "Conduct Google & Bing Audit", desc: "Submit complete indexing reports, schemas, and performance diagnostics." },
+      { title: "Execute AI Answer Audit", desc: "Query ChatGPT, Gemini, Claude, and Perplexity, stating citation links and reference sources." },
+      { title: "Optimize Community Channels", desc: "Deploy optimised YouTube content guides, Reddit engagement procedures, and optimized LinkedIn bios." },
+      { title: "Model transactional platforms", desc: "Draft high-converting Amazon detail copy and optimized app store screenshot descriptions." },
+      { title: "Validate Brand Entity Mappings", desc: "Submit unified sameAs JSON-LD blocks and compiled platform reports to certification panels." }
+    ])
+  },
+  {
+    id: 401,
+    title: "GBP 1: Core Identity (NAP-W)",
+    category: "gbp",
+    description: "Secure business authenticity by configuring your storefront's exact legal name, physical coordinates, local phone lines, and UTM-tracked landing URLs.",
+    difficulty: "Beginner",
+    estimatedMinutes: 30,
+    businessImpact: "Establishes a solid foundational footprint in Google's local indexing databases, preventing profile suspensions while accurately tracking organic click attribution.",
+    bestPractice: "Always utilize your exact storefront legal name without keyword stuffing, and ensure the address matches your official corporate articles exactly.",
+    details: "Google Business Profile rules mandate perfect matching across digital footprints. Inconsistencies or title keyword-stuffing are leading causes of automatic suspension.",
+    checklistItems: createItems(401, [
+      { title: "Official Business Name", desc: "Use your exact legal storefront name. Never stuff keywords into your title, as Google frequently suspends profiles for this violation." },
+      { title: "Physical Address", desc: "Ensure your street name, suite number, and postal code perfectly match your official website and government listings." },
+      { title: "Phone Number", desc: "Use a local phone number as your primary line to signal local presence. You can add a tracking number as primary only if your main line is listed as secondary." },
+      { title: "Website URL", desc: "Link directly to your homepage or a location-specific landing page. Append UTM tracking codes (?utm_source=google&utm_medium=organic&utm_campaign=gbp) to track clicks accurately in Google Analytics." }
+    ])
+  },
+  {
+    id: 402,
+    title: "GBP 2: Category & Service Architecture",
+    category: "gbp",
+    description: "Formulate local directory visibility using primary classifications, specific sub-categories, long-tail custom services, and rich product menus.",
+    difficulty: "Intermediate",
+    estimatedMinutes: 35,
+    businessImpact: "Unlocks high search volume for categorical search queries and maps specific commercial intents to your service cards.",
+    bestPractice: "Match your primary category exactly to your primary commercial intent, and populate custom service descriptions with long-tail keywords.",
+    details: "Category mapping is the single most powerful off-site optimization hook. Well-structured custom service cards feed semantic contexts back to Google query matches.",
+    checklistItems: createItems(402, [
+      { title: "Primary Category Selection", desc: "Choose the absolute closest match to your core business model. This single setting carries the heaviest weight for your local search rankings." },
+      { title: "Secondary Categories", desc: "Add 2 to 5 specific secondary categories to unlock broader search visibility. Do not add irrelevant categories, as this dilutes your profile relevance." },
+      { title: "Services Menu", desc: "Fully build out your services tab. Utilize custom service fields to add targeted, long-tail local keywords and clear price ranges where applicable." },
+      { title: "Products Catalog", desc: "For physical goods or fixed-price packages, upload high-quality product images, detailed descriptions, and direct 'Buy' or 'Order Online' call-to-action buttons." }
+    ])
+  },
+  {
+    id: 403,
+    title: "GBP 3: Profile Enrichment",
+    category: "gbp",
+    description: "Elevate search engine indexation coverage using the 750-character story pane, exact holiday operating hours, and voice-search attribute tagging.",
+    difficulty: "Beginner",
+    estimatedMinutes: 25,
+    businessImpact: "Aligns business profile matching with detailed voice commands, filter searches, and improves CTR on localized query interfaces.",
+    bestPractice: "Synthesize keyword density inside the first 250 characters of corporate descriptions before truncation takes place.",
+    details: "Profile enrichment increases your surface area for secondary filters (e.g., wheelchair accessible, veteran-owned) which are increasingly triggered by voice assistant searches.",
+    checklistItems: createItems(403, [
+      { title: "750-Character Description", desc: "Write a compelling brand story. Put your most important services and target city names in the first 250 characters, as the rest gets truncated behind a 'More' link." },
+      { title: "Operation Hours", desc: "Keep regular hours accurate to prevent negative reviews from angry customers. Update the 'Special Hours' tool immediately for holidays or sudden closures." },
+      { title: "Business Attributes", desc: "Check all applicable boxes for amenities, safety measures, and identity tags (e.g., Wheelchair Accessible, Women-Led, Identifies as LGBTQ+ owned). These power Google's voice and filtered searches." }
+    ])
+  },
+  {
+    id: 404,
+    title: "GBP 4: Visuals & Engagement Media",
+    category: "gbp",
+    description: "Reinforce customer engagement ratios by publishing verified high-resolution logos, cover layouts, geotagged real team imagery, and dynamic video walk-throughs.",
+    difficulty: "Intermediate",
+    estimatedMinutes: 30,
+    businessImpact: "Increases user dwell times, builds trust before physical contact, and delivers micro-conversions directly within Google Maps.",
+    bestPractice: "Upload real, un-edited pictures of your office facade and team instead of stock imagery, and aim for weekly photo updates.",
+    details: "Visual content signals active business presence to Google algorithms. User dwell time on photos provides a proxy of trust and direct conversion activity.",
+    checklistItems: createItems(404, [
+      { title: "Logo & Cover Photo", desc: "Upload a clean square logo (250x250px) and an high-resolution cover photo (1080x608px) that clearly shows your physical location or main service." },
+      { title: "Geotagged Real Photos", desc: "Upload 3 to 5 new photos weekly. Prioritize real photos of your team, interior, exterior, and completed work over generic stock imagery." },
+      { title: "Short Videos", desc: "Upload 30-second video clips showing customer walkthroughs, product demonstrations, or behind-the-scenes work to increase user dwell time on your profile." }
+    ])
+  },
+  {
+    id: 405,
+    title: "GBP 5: Conversion & Trust Management",
+    category: "gbp",
+    description: "Establish deep engagement loops by setting up review protocols, rapid feedback replies, chat/messaging features, and automated FAQs.",
+    difficulty: "Advanced",
+    estimatedMinutes: 45,
+    businessImpact: "Maximizes local buyer conversion rates, boosts ranking positions through active user interaction signals, and increases lead velocities.",
+    bestPractice: "Reply to all reviews within 24 hours and include service keywords in your answers politely to enrich local contextual keywords.",
+    details: "Conversion management signals freshness. Google rewards profiles that engage with customers via active messaging, prompt review responses, and constant post updates.",
+    checklistItems: createItems(405, [
+      { title: "Review Acquisition Strategy", desc: "Create a short, custom review link from your dashboard. Actively ask customers for feedback and guide them to mention specific services and your city name in their text." },
+      { title: "Review Responses", desc: "Reply to every single review within 24 to 48 hours. Thank positive reviewers, and address negative ones politely with a clear solution and a number to call offline." },
+      { title: "Merchant Messaging", desc: "Turn on the chat feature to allow real-time customer inquiries. Set up automated welcome messages and ensure your team replies within 24 hours to keep the feature active." },
+      { title: "Pre-Populated Q&A", desc: "Use a personal Google account to ask your business its top 5 most frequently asked questions. Log into your business profile to provide authoritative, detailed answers." },
+      { title: "Google Weekly Posts", desc: "Use the 'Updates,' 'Offers,' or 'Events' post types at least once a week. Include sharp visuals and specific call-to-action buttons like 'Book Now' or 'Learn More'." }
     ])
   }
 ];

@@ -28,7 +28,8 @@ import {
   Network,
   Code,
   Store,
-  Globe
+  Globe,
+  MapPin
 } from "lucide-react";
 import { motion } from "motion/react";
 
@@ -143,6 +144,24 @@ const PATH_DETAILS: Record<string, { icon: React.ReactNode; color: string; bg: s
     textClass: "text-teal-900 border-teal-500/30",
     border: "border-teal-200/60",
     accentBorder: "border-teal-500"
+  },
+  "sxo": {
+    icon: <Network className="text-indigo-600 shrink-0" size={16} />,
+    color: "bg-indigo-600",
+    bg: "bg-indigo-50/45",
+    activeBg: "bg-indigo-600 text-white",
+    textClass: "text-indigo-900 border-indigo-500/30",
+    border: "border-indigo-200/60",
+    accentBorder: "border-indigo-500"
+  },
+  "gbp": {
+    icon: <MapPin className="text-sky-600 shrink-0" size={16} />,
+    color: "bg-sky-600",
+    bg: "bg-sky-50/45",
+    activeBg: "bg-sky-600 text-white",
+    textClass: "text-sky-900 border-sky-500/30",
+    border: "border-sky-200/60",
+    accentBorder: "border-sky-500"
   }
 };
 

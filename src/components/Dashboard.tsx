@@ -6,7 +6,7 @@
 import React from "react";
 import { UserProgress, Level } from "../types";
 import { INITIAL_TRACKS } from "../data/checklist";
-import { Award, Zap, CheckCircle, BarChart3, Star, Sparkles, BookOpen, Cpu, Layers, Globe, SlidersHorizontal, Trophy, Lock, Smile, ArrowRight, Share2, Check, Clock, Bell, Search } from "lucide-react";
+import { Award, Zap, CheckCircle, BarChart3, Star, Sparkles, BookOpen, Cpu, Layers, Globe, SlidersHorizontal, Trophy, Lock, Smile, ArrowRight, Share2, Check, Clock, Bell, Search, Network, MapPin } from "lucide-react";
 import { motion } from "motion/react";
 
 interface DashboardProps {
@@ -27,8 +27,8 @@ export default function Dashboard({
   tabChanger,
   onOpenConsulting,
   onToggleItem
-}: DashboardProps) {
-  const [selectedCategory, setSelectedCategory] = React.useState<"all" | "tech" | "content" | "growth" | "wordpress" | "gsc">("all");
+ }: DashboardProps) {
+  const [selectedCategory, setSelectedCategory] = React.useState<"all" | "tech" | "content" | "growth" | "wordpress" | "gsc" | "sxo" | "gbp">("all");
   const [viewingAward, setViewingAward] = React.useState<any | null>(null);
   const [isEditingName, setIsEditingName] = React.useState(false);
   const [graduateName, setGraduateName] = React.useState<string>(() => {
@@ -1160,6 +1160,30 @@ export default function Dashboard({
                 <Search size={13} className={selectedCategory === "gsc" ? "text-white" : "text-teal-600"} />
                 Google Search Console
               </button>
+              <button
+                type="button"
+                onClick={() => setSelectedCategory("sxo")}
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-sans font-semibold transition-all cursor-pointer ${
+                  selectedCategory === "sxo"
+                    ? "bg-indigo-600 text-white shadow-xs"
+                    : "text-neutral-500 hover:text-indigo-700 hover:bg-indigo-50/50"
+                }`}
+              >
+                <Network size={13} className={selectedCategory === "sxo" ? "text-white" : "text-indigo-600"} />
+                Search Everywhere (SXO)
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectedCategory("gbp")}
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-sans font-semibold transition-all cursor-pointer ${
+                  selectedCategory === "gbp"
+                    ? "bg-sky-600 text-white shadow-xs"
+                    : "text-neutral-500 hover:text-sky-700 hover:bg-sky-50/50"
+                }`}
+              >
+                <MapPin size={13} className={selectedCategory === "gbp" ? "text-white" : "text-sky-600"} />
+                Google Business Profile (GBP)
+              </button>
             </div>
           </div>
         </div>
@@ -1211,6 +1235,24 @@ export default function Dashboard({
               accentBg: "bg-teal-50 text-teal-800 border-teal-100",
               groupBorder: "border-teal-200/60 bg-teal-50/[0.12]",
               tracks: [INITIAL_TRACKS[10]]
+            },
+            {
+              id: "sxo" as const,
+              name: "Search Everywhere Optimization (SXO) Mastery",
+              description: "The complete enterprise multi-platform Search Everywhere certification covering classic Web, AI assistant citations (ChatGPT, Gemini, Claude, Perplexity), specialized app/commerce engines, and community search boards.",
+              icon: <Network size={20} className="text-indigo-600 shrink-0" />,
+              accentBg: "bg-indigo-50 text-indigo-800 border-indigo-100",
+              groupBorder: "border-indigo-200/60 bg-indigo-50/[0.12]",
+              tracks: [INITIAL_TRACKS[11]]
+            },
+            {
+              id: "gbp" as const,
+              name: "Google Business Profile (GBP) Local Optimization",
+              description: "Build local entity relevance, map target primary and secondary categories, construct custom local service menus, compile products, and streamline reviews acquisition & chat channels.",
+              icon: <MapPin size={20} className="text-sky-600 shrink-0" />,
+              accentBg: "bg-sky-50 text-sky-800 border-sky-100",
+              groupBorder: "border-sky-200/60 bg-sky-50/[0.12]",
+              tracks: [INITIAL_TRACKS[12]]
             }
           ]
             .filter(group => selectedCategory === "all" || group.id === selectedCategory)
@@ -1233,7 +1275,7 @@ export default function Dashboard({
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold border uppercase tracking-wider ${group.accentBg}`}>
-                          {group.id === "tech" ? "Technical" : group.id === "content" ? "Content & AI" : group.id === "wordpress" ? "WordPress" : group.id === "gsc" ? "Search Console" : "Authority & CRO"}
+                          {group.id === "tech" ? "Technical" : group.id === "content" ? "Content & AI" : group.id === "wordpress" ? "WordPress" : group.id === "gsc" ? "Search Console" : group.id === "sxo" ? "SXO Mastery" : group.id === "gbp" ? "GBP Local" : "Authority & CRO"}
                         </span>
                         <h3 className="text-lg font-sans font-bold text-neutral-800 tracking-tight flex items-center gap-2">
                           {group.icon}
@@ -1250,7 +1292,7 @@ export default function Dashboard({
                       <div className="w-14 bg-neutral-100 h-2 rounded-full overflow-hidden">
                         <div 
                           className={`h-full transition-all duration-300 ${
-                            group.id === "tech" ? "bg-emerald-500" : group.id === "content" ? "bg-blue-500" : group.id === "wordpress" ? "bg-amber-500" : group.id === "gsc" ? "bg-teal-500" : "bg-purple-500"
+                            group.id === "tech" ? "bg-emerald-500" : group.id === "content" ? "bg-blue-500" : group.id === "wordpress" ? "bg-amber-500" : group.id === "gsc" ? "bg-teal-500" : group.id === "sxo" ? "bg-indigo-500" : group.id === "gbp" ? "bg-sky-500" : "bg-purple-500"
                           }`}
                           style={{ width: `${groupPercent}%` }}
                         ></div>
