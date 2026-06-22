@@ -109,6 +109,14 @@ export const INITIAL_TRACKS: Track[] = [
     colorClass: "bg-sky-50 border-sky-200 text-sky-800",
     textColorClass: "text-sky-700",
     levelIds: [401, 402, 403, 404, 405]
+  },
+  {
+    id: "ga4",
+    title: "14. Google Analytics 4 (GA4) Complete Guide",
+    description: "The complete enterprise-grade Google Analytics 4 checklist from setups, event tracking networks, conversion triggers, ecommerce funnels, to AI optimization audits.",
+    colorClass: "bg-orange-50 border-orange-200 text-orange-800",
+    textColorClass: "text-orange-700",
+    levelIds: [501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 512, 513, 514, 515]
   }
 ];
 
@@ -2066,6 +2074,283 @@ export const MASTER_LEVELS: Level[] = [
       { title: "Merchant Messaging", desc: "Turn on the chat feature to allow real-time customer inquiries. Set up automated welcome messages and ensure your team replies within 24 hours to keep the feature active." },
       { title: "Pre-Populated Q&A", desc: "Use a personal Google account to ask your business its top 5 most frequently asked questions. Log into your business profile to provide authoritative, detailed answers." },
       { title: "Google Weekly Posts", desc: "Use the 'Updates,' 'Offers,' or 'Events' post types at least once a week. Include sharp visuals and specific call-to-action buttons like 'Book Now' or 'Learn More'." }
+    ])
+  },
+  {
+    id: 501,
+    title: "GA4 1: Setup & Configuration",
+    category: "ga4",
+    description: "Launch your Google Analytics 4 property correctly with accurate reporting timezones, base currency settings, and secure admin accounts.",
+    difficulty: "Beginner",
+    estimatedMinutes: 20,
+    businessImpact: "Secures standard web analytics baseline settings to prevent misconfigured dates, incorrect revenue display currencies, and lost account controls.",
+    bestPractice: "Always assign at least two administrators to prevent losing access if one person leaves the company, and configure Google Tag Manager early.",
+    details: "Setting up correct business configurations ensures compliance with internal finance systems and guarantees that metrics roll-over precisely on timezone boundaries.",
+    checklistItems: createItems(501, [
+      { title: "GA4 Property Created", desc: "Analytics account for collecting website data. Create a GA4 property in Google Analytics." },
+      { title: "Correct Time Zone", desc: "Ensures reports show accurate dates and times. Set your business time zone." },
+      { title: "Correct Currency", desc: "Ensures revenue reporting accuracy. Select your primary business currency." },
+      { title: "Admin Access Setup", desc: "Controls who can access analytics. Assign appropriate permissions." },
+      { title: "Backup Admin Account", desc: "Prevents losing account access. Add at least two administrators." },
+      { title: "Google Tag Manager Connected", desc: "Centralized tracking management system. Connect GTM for easier event tracking." }
+    ])
+  },
+  {
+    id: 502,
+    title: "GA4 2: Tracking Installation",
+    category: "ga4",
+    description: "Connect your live websites to GA4 using tracking codes, verify real-time data flows, and test cross-device configurations.",
+    difficulty: "Beginner",
+    estimatedMinutes: 25,
+    businessImpact: "Establishes a solid pipeline for collecting user traffic data without dropping page hits or missing mobile screen dimensions.",
+    bestPractice: "Utilize GTM variables to deploy tags uniformly across all directories and templates.",
+    details: "Using modern debugging systems like Tag Assistant confirms scripts fire asynchronously without degrading the frontend Core Web Vitals.",
+    checklistItems: createItems(502, [
+      { title: "Tracking Code Installed", desc: "Allows GA4 to collect website data. Install GA4 tag on all pages." },
+      { title: "Real-Time Data Verification", desc: "Confirms tracking works correctly. Open Real-Time report and visit your website." },
+      { title: "Debug Mode Testing", desc: "Validates event tracking. Use DebugView in GA4." },
+      { title: "Cross-Browser Testing", desc: "Ensures tracking works everywhere. Test Chrome, Firefox, Safari, Edge." },
+      { title: "Mobile Tracking Validation", desc: "Verifies mobile visitor tracking. Test on Android and iPhone devices." }
+    ])
+  },
+  {
+    id: 503,
+    title: "GA4 3: Enhanced Measurement",
+    category: "ga4",
+    description: "Enable Google's automated micro-interaction tracking, including scroll depth, file download triggers, and external outlinks.",
+    difficulty: "Beginner",
+    estimatedMinutes: 20,
+    businessImpact: "Automatically harvests engagement data without tedious custom frontend code, enriching user story logs.",
+    bestPractice: "Review internal search parameters regularly to catch high-intent keywords that site users type.",
+    details: "Enhanced Measurement is a native feature that processes standard event names automatically, laying the foundation for advanced analytics reporting.",
+    checklistItems: createItems(503, [
+      { title: "Page View Tracking", desc: "Tracks page visits automatically. Enable Enhanced Measurement." },
+      { title: "Scroll Tracking", desc: "Tracks when users scroll down pages. Verify scroll events are firing." },
+      { title: "Outbound Link Tracking", desc: "Tracks clicks to external websites. Review outbound click reports." },
+      { title: "File Download Tracking", desc: "Tracks downloads like PDFs. Test downloading files." },
+      { title: "Site Search Tracking", desc: "Tracks searches on your website. Configure internal search parameters." },
+      { title: "Video Tracking", desc: "Tracks video interactions. Verify play, pause, and completion events." }
+    ])
+  },
+  {
+    id: 504,
+    title: "GA4 4: Event Tracking",
+    category: "ga4",
+    description: "Design custom GTM triggers to track key button clicks, lead form submissions, phone call interactions, and chat opens.",
+    difficulty: "Intermediate",
+    estimatedMinutes: 35,
+    businessImpact: "Captures explicit buyer intent indicators, creating a clear dataset of physical conversion paths.",
+    bestPractice: "Implement standardized mailto: and tel: click events to monitor click-to-contact rates on mobile viewports.",
+    details: "Custom GTM configurations translate user clicks into standardized schema events, bringing clarity to user-facing performance logs.",
+    checklistItems: createItems(504, [
+      { title: "Button Click Tracking", desc: "Measures CTA button clicks. Create click events through GTM." },
+      { title: "Contact Form Tracking", desc: "Tracks lead form submissions. Mark successful submissions as events." },
+      { title: "Phone Click Tracking", desc: "Tracks tap-to-call actions. Monitor tel: link clicks." },
+      { title: "Email Click Tracking", desc: "Tracks email interactions. Monitor mailto: link clicks." },
+      { title: "WhatsApp Click Tracking", desc: "Tracks WhatsApp lead generation. Create event for WhatsApp buttons." },
+      { title: "Live Chat Tracking", desc: "Measures chat engagement. Track chat opens and messages." },
+      { title: "Download Tracking", desc: "Tracks resources and assets. Monitor PDF, DOC, ZIP downloads." }
+    ])
+  },
+  {
+    id: 505,
+    title: "GA4 5: Conversion Tracking",
+    category: "ga4",
+    description: "Configure key user-interaction events as conversions to directly monitor sales pipelines, lead actions, and newsletter signups.",
+    difficulty: "Intermediate",
+    estimatedMinutes: 30,
+    businessImpact: "Allows immediate conversion rate optimization and channels performance ROI tracking across channels.",
+    bestPractice: "Mark specific target thank-you views as high-priority conversions, and periodically verify their fire integrity.",
+    details: "Conversions act as the absolute compass for search campaigns and organic SEO tactics, matching digital investments to real outcomes.",
+    checklistItems: createItems(505, [
+      { title: "Lead Conversion", desc: "Measures successful lead submissions. Mark lead events as conversions." },
+      { title: "Contact Form Conversion", desc: "Tracks inquiry forms. Verify thank-you page or event fires." },
+      { title: "Call Conversion", desc: "Measures phone leads. Use phone click tracking." },
+      { title: "WhatsApp Conversion", desc: "Tracks WhatsApp inquiries. Mark WhatsApp clicks as conversions." },
+      { title: "Demo Request Conversion", desc: "Tracks demo requests. Create dedicated conversion event." },
+      { title: "Newsletter Signup", desc: "Measures email subscriptions. Track successful signups." }
+    ])
+  },
+  {
+    id: 506,
+    title: "GA4 6: Ecommerce Tracking",
+    category: "ga4",
+    description: "Install full-funnel ecommerce events mapping checkout progress, cart additions, purchase records, and revenue accuracy.",
+    difficulty: "Advanced",
+    estimatedMinutes: 45,
+    businessImpact: "Enables direct monitoring of ecommerce transaction value, customer purchase paths, and product item performance.",
+    bestPractice: "Ensure items lists are mapped cleanly to standard parameters to leverage native product-performance analytics.",
+    details: "Ecommerce tracking feeds real-time transaction totals back to Google systems, unlocking advanced performance indicators like Average Order Value (AOV).",
+    checklistItems: createItems(506, [
+      { title: "Product View Tracking", desc: "Tracks product page visits. Enable ecommerce events." },
+      { title: "Add to Cart Tracking", desc: "Tracks shopping intent. Verify add_to_cart event." },
+      { title: "Checkout Tracking", desc: "Tracks checkout progress. Configure checkout funnel." },
+      { title: "Purchase Tracking", desc: "Tracks completed sales. Verify purchase event accuracy." },
+      { title: "Revenue Tracking", desc: "Measures generated revenue. Confirm transaction values." },
+      { title: "Refund Tracking", desc: "Measures returned orders. Implement refund events." }
+    ])
+  },
+  {
+    id: 507,
+    title: "GA4 7: Traffic Source Analysis",
+    category: "ga4",
+    description: "Deconstruct acquisition channels to analyze organic growth, direct views, partner referrals, and UTM-tracked campaigns.",
+    difficulty: "Beginner",
+    estimatedMinutes: 20,
+    businessImpact: "Allows clear visualization of which marketing channels generate visitors and business signups.",
+    bestPractice: "Utilize structured UTM builders for email campaigns to prevent tracking leaks into unassigned direct buckets.",
+    details: "Acquisition dimensions align sessions with source channels, providing accurate traffic metrics for SEO and PR teams.",
+    checklistItems: createItems(507, [
+      { title: "Organic Traffic", desc: "Visitors from search engines. Monitor SEO growth." },
+      { title: "Direct Traffic", desc: "Visitors typing URL directly. Analyze brand awareness." },
+      { title: "Referral Traffic", desc: "Visitors from other websites. Identify referral opportunities." },
+      { title: "Social Traffic", desc: "Visitors from social media. Measure social performance." },
+      { title: "Email Traffic", desc: "Visitors from email campaigns. Use UTM tracking." },
+      { title: "Paid Traffic", desc: "Visitors from ads. Connect Google Ads." }
+    ])
+  },
+  {
+    id: 508,
+    title: "GA4 8: User Engagement",
+    category: "ga4",
+    description: "Assess overall user attention metrics, session durations, page visit depths, and content retention metrics.",
+    difficulty: "Beginner",
+    estimatedMinutes: 20,
+    businessImpact: "Identifies whether your published articles resonate with real visitors or trigger quick screen dismissals.",
+    bestPractice: "Design internal links in short-engagement directories to encourage deeper path exploration.",
+    details: "Engagement metrics evaluate real session activity (lasting longer than 10 seconds or containing 2 or more page views).",
+    checklistItems: createItems(508, [
+      { title: "Engagement Rate", desc: "Measures meaningful visits. Monitor engagement trends." },
+      { title: "Average Engagement Time", desc: "Tracks time users spend actively. Compare top pages." },
+      { title: "Pages Per Session", desc: "Measures content exploration. Improve internal linking." },
+      { title: "Scroll Depth", desc: "Tracks content consumption. Review long-form content performance." },
+      { title: "Exit Pages", desc: "Pages where users leave. Identify improvement opportunities." },
+      { title: "Returning Users", desc: "Measures loyalty and retention. Analyze repeat visitor behavior." }
+    ])
+  },
+  {
+    id: 509,
+    title: "GA4 9: Landing Page Analysis",
+    category: "ga4",
+    description: "Isolate entry page performance, cross-reference conversion metrics, and optimize high-bounce landing paths.",
+    difficulty: "Intermediate",
+    estimatedMinutes: 25,
+    businessImpact: "Prevents leaks in organic traffic campaigns by highlighting poor-UX layouts that fail to convert incoming traffic.",
+    bestPractice: "A/B test high-traffic low-converting layouts proactively to improve direct lead velocity.",
+    details: "Evaluating primary entry pages helps SEOs focus content optimization where it has the highest financial impact.",
+    checklistItems: createItems(509, [
+      { title: "Top Landing Pages", desc: "Most visited entry pages. Identify high-performing pages." },
+      { title: "Low Conversion Pages", desc: "Traffic pages with poor conversions. Improve CTAs." },
+      { title: "High Bounce Pages", desc: "Pages losing visitors quickly. Improve relevance and UX." },
+      { title: "SEO Landing Pages", desc: "Pages receiving organic traffic. Optimize rankings further." },
+      { title: "Campaign Landing Pages", desc: "Pages used in marketing campaigns. Measure campaign ROI." }
+    ])
+  },
+  {
+    id: 510,
+    title: "GA4 10: SEO & Search Console",
+    category: "ga4",
+    description: "Synchronize Search Console query data into your standard GA4 widgets for seamless cross-dashboard ranking analysis.",
+    difficulty: "Beginner",
+    estimatedMinutes: 15,
+    businessImpact: "Piles keyword demand data right next to user behavior metrics, ensuring rapid, keyword-informed layouts.",
+    bestPractice: "Configure specific organic segmentation rules to track conversions back to target keywords.",
+    details: "GSC integration unlocks standard reports within GA4, keeping SEO performance central in marketing reviews.",
+    checklistItems: createItems(510, [
+      { title: "Search Console Integration", desc: "Connects keyword and traffic data. Link GA4 and Search Console." },
+      { title: "Organic Landing Page Review", desc: "Analyze SEO-driven traffic. Review top-performing pages." },
+      { title: "Query Performance Analysis", desc: "Understand search demand. Review keyword reports." },
+      { title: "SEO Conversion Tracking", desc: "Measure organic lead generation. Segment organic conversions." }
+    ])
+  },
+  {
+    id: 511,
+    title: "GA4 11: Audience Analysis",
+    category: "ga4",
+    description: "Audit demographic summaries, geographic coordinates, hardware device categories, and user retention cycles.",
+    difficulty: "Beginner",
+    estimatedMinutes: 20,
+    businessImpact: "Reveals device configurations and regional locations of high-intent cohorts to inform target product designs.",
+    bestPractice: "Analyze mobile browser layouts when mobile visitors constitute more than 60% of traffic.",
+    details: "Audience dimensions help teams adapt content tone, localizations, and browser priorities to real user profiles.",
+    checklistItems: createItems(511, [
+      { title: "Demographics", desc: "Age and gender insights. Understand audience profile." },
+      { title: "Geographic Data", desc: "Visitor locations. Identify key markets." },
+      { title: "Device Analysis", desc: "Desktop vs mobile usage. Optimize top devices." },
+      { title: "Browser Analysis", desc: "Browser usage trends. Test top browsers." },
+      { title: "New vs Returning Users", desc: "Visitor loyalty analysis. Improve retention strategies." }
+    ])
+  },
+  {
+    id: 512,
+    title: "GA4 12: Funnel Analysis",
+    category: "ga4",
+    description: "Construct precise conversion funnels to isolate checkout drop-off coordinates and optimize step-by-step conversion paths.",
+    difficulty: "Advanced",
+    estimatedMinutes: 35,
+    businessImpact: "Visualizes leaks in multistep transactions, showing exactly where users quit to guide targeted UX audits.",
+    bestPractice: "Enable path exploration diagrams in GA4 to discover unexpected pages users visit before checking out.",
+    details: "Funnels detail exact transition percentages between page steps, identifying clear spots for interface fixes.",
+    checklistItems: createItems(512, [
+      { title: "Lead Funnel Tracking", desc: "Tracks lead journey. Build funnel reports." },
+      { title: "Ecommerce Funnel", desc: "Tracks purchase process. Analyze checkout stages." },
+      { title: "Drop-Off Analysis", desc: "Identifies abandonment points. Improve weak funnel stages." },
+      { title: "User Path Analysis", desc: "Shows navigation behavior. Optimize user journeys." }
+    ])
+  },
+  {
+    id: 513,
+    title: "GA4 13: Reporting & Dashboards",
+    category: "ga4",
+    description: "Design clean executive dashboards, channel ROI dashboards, and targeted lead summary layouts.",
+    difficulty: "Intermediate",
+    estimatedMinutes: 30,
+    businessImpact: "Empowers executive decision making by distilling thousands of raw interactions into neat, scannable summaries.",
+    bestPractice: "Include high-contrast KPIs at the top of your custom dashboards to ensure rapid executive reviews.",
+    details: "Dashboards keep focus on critical numbers (conversions, acquisition channels, revenues), avoiding visual clutters.",
+    checklistItems: createItems(513, [
+      { title: "SEO Dashboard", desc: "SEO performance overview. Connect Search Console." },
+      { title: "Marketing Dashboard", desc: "Campaign performance summary. Track all channels." },
+      { title: "Lead Dashboard", desc: "Lead generation reporting. Monitor conversions." },
+      { title: "Ecommerce Dashboard", desc: "Revenue reporting. Analyze sales performance." },
+      { title: "Executive Dashboard", desc: "High-level KPIs. Share with stakeholders." }
+    ])
+  },
+  {
+    id: 514,
+    title: "GA4 14: Privacy & Compliance",
+    category: "ga4",
+    description: "Verify privacy controls, configure user Consent Modes, and adjust standard data-retention schedules.",
+    difficulty: "Intermediate",
+    estimatedMinutes: 25,
+    businessImpact: "Ensures compliance with global privacy mandates like GDPR and CCPA, preventing costly compliance audits.",
+    bestPractice: "Set raw GA4 event retention to 14 months (maximum defaults) inside properties to enable year-over-year explorations.",
+    details: "Implementing proper cookie approvals ensures tracking occurs ethically and respects localized privacy expectations.",
+    checklistItems: createItems(514, [
+      { title: "Consent Mode", desc: "Respects user privacy choices. Configure consent management." },
+      { title: "Cookie Banner", desc: "Collects tracking consent. Ensure proper implementation." },
+      { title: "Data Retention Settings", desc: "Controls data storage period. Configure according to policy." },
+      { title: "GDPR Compliance", desc: "Meets privacy regulations. Review legal requirements." }
+    ])
+  },
+  {
+    id: 515,
+    title: "GA4 15: Advanced & AI Tracking",
+    category: "ga4",
+    description: "Harness next-generation analytics integrations like big data exports (BigQuery), custom dimensions, and AI citation tracking.",
+    difficulty: "Expert",
+    estimatedMinutes: 40,
+    businessImpact: "Establishes a future-proof tracking matrix that captures next-gen conversational engine referrals (ChatGPT, Claude) and maps multi-touch paths.",
+    bestPractice: "Segment and monitor ChatGPT, Gemini, and Claude source referrers continuously to evaluate your GEO strategies.",
+    details: "Advanced modules integrate GA4 data into external cloud warehouses, unlocking deep user database modeling.",
+    checklistItems: createItems(515, [
+      { title: "Custom Dimensions", desc: "Tracks custom user data. Create additional attributes." },
+      { title: "BigQuery Integration", desc: "Enables advanced analysis. Connect GA4 to BigQuery." },
+      { title: "Looker Studio Integration", desc: "Creates custom reports. Build automated dashboards." },
+      { title: "CRM Integration", desc: "Connects sales and analytics. Sync lead data." },
+      { title: "AI Search Traffic Tracking", desc: "Measures AI-driven visitors. Track ChatGPT, Gemini, Claude referrals." },
+      { title: "AI Conversion Tracking", desc: "Measures AI-generated leads. Segment AI traffic conversions." },
+      { title: "Customer Journey Mapping", desc: "Tracks complete user journey. Analyze multi-touch attribution." }
     ])
   }
 ];

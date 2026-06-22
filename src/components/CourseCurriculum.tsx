@@ -29,7 +29,8 @@ import {
   Code,
   Store,
   Globe,
-  MapPin
+  MapPin,
+  BarChart3
 } from "lucide-react";
 import { motion } from "motion/react";
 
@@ -162,6 +163,15 @@ const PATH_DETAILS: Record<string, { icon: React.ReactNode; color: string; bg: s
     textClass: "text-sky-900 border-sky-500/30",
     border: "border-sky-200/60",
     accentBorder: "border-sky-500"
+  },
+  "ga4": {
+    icon: <BarChart3 className="text-orange-600 shrink-0" size={16} />,
+    color: "bg-orange-600",
+    bg: "bg-orange-50/45",
+    activeBg: "bg-orange-600 text-white",
+    textClass: "text-orange-900 border-orange-500/30",
+    border: "border-orange-200/60",
+    accentBorder: "border-orange-500"
   }
 };
 
