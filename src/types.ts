@@ -89,3 +89,25 @@ export interface CRMLead {
   serviceType?: "training" | "consulting" | "services";
 }
 
+export interface LessonContentBlock {
+  type: "text" | "callout" | "quiz";
+  text?: string;
+  calloutType?: "info" | "warning" | "success" | "tip" | string;
+  quiz?: {
+    question: string;
+    options: string[];
+    correctAnswerIndex: number;
+    explanation: string;
+  };
+}
+
+export type LessonContent = LessonContentBlock[];
+
+export interface DynamicLesson {
+  id: string;
+  number: number;
+  title: string;
+  goal: string;
+  content: LessonContent;
+}
+

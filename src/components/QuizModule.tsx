@@ -6,6 +6,7 @@
 import React, { useState } from "react";
 import { QuizQuestion, Level, CustomCourse } from "../types";
 import { LEVEL_QUIZZES } from "../data/checklist";
+import { SEO_COURSE_QUIZZES } from "../data/seoQuizzes";
 import { Award, Check, X, HelpCircle, ArrowRight, RotateCcw, AlertCircle, BookOpen, Star } from "lucide-react";
 import { motion } from "motion/react";
 
@@ -31,17 +32,40 @@ export default function QuizModule({
       const cc = customCourses.find(c => c.id === id);
       return cc ? cc.quizQuestions : [];
     }
-    // Check from standard database
-    return LEVEL_QUIZZES[Number(id)] || [];
+    // Check from standard database and SEO course database
+    return LEVEL_QUIZZES[Number(id)] || SEO_COURSE_QUIZZES[Number(id)] || [];
   };
 
   // State
-  const [activeLevelId, setActiveLevelId] = useState<number | string>(selectedLevelId || 1);
+  const [activeLevelId, setActiveLevelId] = useState<number | string>(() => {
+    if (selectedLevelId !== null) return selectedLevelId;
+    return levels.length > 0 ? levels[0].id : 1;
+  });
+
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOptionIndex, setSelectedOptionIndex] = useState<number | null>(null);
   const [hasAnswered, setHasAnswered] = useState(false);
   const [correctAnswersCount, setCorrectAnswersCount] = useState(0);
   const [isQuizFinished, setIsQuizFinished] = useState(false);
+
+  // Sync activeLevelId when course or selectedLevelId updates
+  React.useEffect(() => {
+    if (selectedLevelId !== null) {
+      setActiveLevelId(selectedLevelId);
+      setCurrentQuestionIndex(0);
+      setSelectedOptionIndex(null);
+      setHasAnswered(false);
+      setCorrectAnswersCount(0);
+      setIsQuizFinished(false);
+    } else if (levels.length > 0 && !levels.some(l => l.id === activeLevelId)) {
+      setActiveLevelId(levels[0].id);
+      setCurrentQuestionIndex(0);
+      setSelectedOptionIndex(null);
+      setHasAnswered(false);
+      setCorrectAnswersCount(0);
+      setIsQuizFinished(false);
+    }
+  }, [levels, selectedLevelId]);
 
   // Quizzes list for active select option
   const activeQuizzes = getQuizzesForLevel(activeLevelId);

@@ -4,8 +4,9 @@
  */
 
 import React from "react";
-import { UserProgress, Level } from "../types";
+import { UserProgress, Level, Track } from "../types";
 import { INITIAL_TRACKS } from "../data/checklist";
+import { LMS_COURSES, getAllTracks } from "../data/coursesData";
 import { Award, Zap, CheckCircle, BarChart3, Star, Sparkles, BookOpen, Cpu, Layers, Globe, SlidersHorizontal, Trophy, Lock, Smile, ArrowRight, Share2, Check, Clock, Bell, Search, Network, MapPin } from "lucide-react";
 import { motion } from "motion/react";
 
@@ -17,6 +18,9 @@ interface DashboardProps {
   tabChanger: (tab: "curriculum" | "creator" | "quiz") => void;
   onOpenConsulting?: () => void;
   onToggleItem?: (itemId: string) => void;
+  selectedCourseId?: string;
+  setSelectedCourseId?: (courseId: string) => void;
+  allLevels?: Level[];
 }
 
 export default function Dashboard({
@@ -26,8 +30,15 @@ export default function Dashboard({
   onSelectLevel,
   tabChanger,
   onOpenConsulting,
-  onToggleItem
+  onToggleItem,
+  selectedCourseId,
+  setSelectedCourseId,
+  allLevels = []
  }: DashboardProps) {
+  const activeCourseId = selectedCourseId || "complete-seo-2026";
+  const activeCourse = LMS_COURSES.find(c => c.id === activeCourseId) || LMS_COURSES[0];
+  const activeTracks = getAllTracks().filter(t => activeCourse.trackIds.includes(t.id));
+
   const [selectedCategory, setSelectedCategory] = React.useState<"all" | "tech" | "content" | "growth" | "wordpress" | "gsc" | "sxo" | "gbp" | "ga4">("all");
   const [viewingAward, setViewingAward] = React.useState<any | null>(null);
   const [isEditingName, setIsEditingName] = React.useState(false);
@@ -571,6 +582,87 @@ export default function Dashboard({
           </div>
         </div>
       </div>
+
+      {/* 🎓 LMS Course Catalog Hub */}
+      <div className="space-y-4" id="lms-course-catalog-hub">
+        <div className="relative pl-5 border-l-4 border-indigo-500 py-1.5 space-y-1">
+          <h2 className="text-xl font-sans font-bold text-neutral-900 tracking-tight flex items-center gap-2">
+            <BookOpen className="text-indigo-600" size={20} />
+            <span>Select Your Active Specialization Course</span>
+          </h2>
+          <p className="text-xs text-neutral-500 font-medium">
+            Switching courses adapts the complete LMS progress metrics, curriculum sitemaps, study lists, and diagnostics quizzes instantly.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+          {LMS_COURSES.map(course => {
+            const isActive = course.id === activeCourseId;
+            // Calculate progress for this course specifically using allLevels list
+            const courseLevelsList = allLevels.filter(l => course.levelIds.includes(l.id));
+            const courseItems = courseLevelsList.flatMap(l => l.checklistItems);
+            const courseCompletedCount = courseItems.filter(item => progress.completedItemIds.includes(item.id)).length;
+            const coursePercent = courseItems.length > 0 ? Math.round((courseCompletedCount / courseItems.length) * 100) : 0;
+
+            return (
+              <div
+                key={course.id}
+                onClick={() => setSelectedCourseId && setSelectedCourseId(course.id)}
+                className={`p-5 rounded-2xl border transition-all cursor-pointer relative overflow-hidden group flex flex-col justify-between h-[190px] ${
+                  isActive
+                    ? "bg-white border-neutral-950 shadow-sm ring-1 ring-neutral-900"
+                    : "bg-white/85 hover:bg-white border-neutral-200/80 hover:border-neutral-400 hover:shadow-2xs"
+                }`}
+              >
+                {/* Active Indicator Pin */}
+                {isActive && (
+                  <div className="absolute top-0 right-0 bg-neutral-900 text-white text-[8px] font-mono font-black uppercase px-2.5 py-1 rounded-bl-xl tracking-wider z-10">
+                    CURRENTLY STUDYING
+                  </div>
+                )}
+
+                <div className="space-y-2 relative z-10">
+                  <span className={`px-2 py-0.5 rounded-md text-[8.5px] font-mono font-black uppercase tracking-wider ${
+                    course.colorTheme === "indigo" ? "bg-indigo-50 text-indigo-700 border border-indigo-100" :
+                    course.colorTheme === "emerald" ? "bg-emerald-50 text-emerald-700 border border-emerald-100" :
+                    course.colorTheme === "sky" ? "bg-sky-50 text-sky-700 border border-sky-100" :
+                    "bg-orange-50 text-orange-700 border border-orange-100"
+                  }`}>
+                    {course.difficulty} • {course.estimatedHours} Hours
+                  </span>
+                  
+                  <h3 className="text-sm font-sans font-extrabold text-neutral-900 tracking-tight leading-snug line-clamp-2">
+                    {course.title}
+                  </h3>
+                  
+                  <p className="text-[10px] text-neutral-500 font-semibold leading-relaxed line-clamp-3">
+                    {course.description}
+                  </p>
+                </div>
+
+                <div className="space-y-1.5 pt-3 border-t border-neutral-100 relative z-10">
+                  <div className="flex items-center justify-between text-[9px] font-mono font-bold">
+                    <span className="text-neutral-400 uppercase">COURSE PROGRESS:</span>
+                    <span className="text-neutral-800">{coursePercent}%</span>
+                  </div>
+                  <div className="w-full bg-neutral-100 h-1 rounded-full overflow-hidden">
+                    <div
+                      className={`h-full transition-all duration-300 ${
+                        course.colorTheme === "indigo" ? "bg-indigo-600" :
+                        course.colorTheme === "emerald" ? "bg-emerald-500" :
+                        course.colorTheme === "sky" ? "bg-sky-400" :
+                        "bg-orange-500"
+                      }`}
+                      style={{ width: `${coursePercent}%` }}
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
 
       {/* 🕒 Suggested Daily Study Task Banner for Inactivity (Re-engagement nudges) */}
       {hasInactivity && !isTaskBannerDismissed && suggestedStudyTask && (

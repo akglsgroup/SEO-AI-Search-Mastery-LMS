@@ -5,7 +5,8 @@
 
 import React, { useState } from "react";
 import { Level, Track, CustomCourse, UserProgress } from "../types";
-import { INITIAL_TRACKS } from "../data/checklist";
+import { getAllTracks } from "../data/coursesData";
+const INITIAL_TRACKS = getAllTracks();
 import { 
   Check, 
   Search, 
@@ -172,6 +173,15 @@ const PATH_DETAILS: Record<string, { icon: React.ReactNode; color: string; bg: s
     textClass: "text-orange-900 border-orange-500/30",
     border: "border-orange-200/60",
     accentBorder: "border-orange-500"
+  },
+  "seo-course": {
+    icon: <GraduationCap className="text-indigo-500 shrink-0" size={16} />,
+    color: "bg-indigo-500",
+    bg: "bg-indigo-50/45",
+    activeBg: "bg-indigo-600 text-white",
+    textClass: "text-indigo-900 border-indigo-500/30",
+    border: "border-indigo-200/60",
+    accentBorder: "border-indigo-500"
   }
 };
 

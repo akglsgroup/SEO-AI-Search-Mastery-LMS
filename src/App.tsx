@@ -6,6 +6,7 @@
 import React, { useState, useEffect } from "react";
 import { UserProgress, Level, CustomCourse, ChecklistItem, MasteryAward } from "./types";
 import { INITIAL_TRACKS, MASTER_LEVELS } from "./data/checklist";
+import { getAllLevels, getAllTracks } from "./data/coursesData";
 import Dashboard from "./components/Dashboard";
 import CourseCurriculum from "./components/CourseCurriculum";
 import ModuleDetails from "./components/ModuleDetails";
@@ -25,7 +26,12 @@ export default function App() {
   const [selectedTrackId, setSelectedTrackId] = useState<string>("all");
   const [selectedLevelId, setSelectedLevelId] = useState<number | string | null>(null);
   const [isLeadModalOpen, setIsLeadModalOpen] = useState(false);
-
+  
+  // Selected course state
+  const [selectedCourseId, setSelectedCourseId] = useState<string>(() => {
+    const saved = localStorage.getItem("lms_selected_course");
+    return saved || "complete-seo-2026";
+  });
 
   // Completed item IDs tracker
   const [completedItemIds, setCompletedItemIds] = useState<string[]>(() => {
@@ -71,27 +77,28 @@ export default function App() {
   // Store standard levels in state to allow dynamic appending of checklist items!
   const [allLevels, setAllLevels] = useState<Level[]>(() => {
     const saved = localStorage.getItem("lms_modified_levels");
+    const freshLevels = getAllLevels();
     if (saved) {
       try {
         const parsed: Level[] = JSON.parse(saved);
-        // Reconcile saved levels with fresh MASTER_LEVELS to prevent stale cache
-        return MASTER_LEVELS.map(masterLevel => {
-          const savedLevel = parsed.find(l => l.id === masterLevel.id);
+        // Reconcile saved levels with fresh levels to prevent stale cache
+        return freshLevels.map(freshLevel => {
+          const savedLevel = parsed.find(l => l.id === freshLevel.id);
           if (savedLevel) {
             // Pick up any custom-added items from the saved level
             const savedCustomItems = savedLevel.checklistItems.filter(item => item.isCustom);
             return {
-              ...masterLevel,
-              checklistItems: [...masterLevel.checklistItems, ...savedCustomItems]
+              ...freshLevel,
+              checklistItems: [...freshLevel.checklistItems, ...savedCustomItems]
             };
           }
-          return masterLevel;
+          return freshLevel;
         });
       } catch (e) {
-        return MASTER_LEVELS;
+        return freshLevels;
       }
     }
-    return MASTER_LEVELS;
+    return freshLevels;
   });
 
   // Daily engagement streak counters
@@ -133,6 +140,10 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem("lms_user_awards", JSON.stringify(awards));
   }, [awards]);
+
+  useEffect(() => {
+    localStorage.setItem("lms_selected_course", selectedCourseId);
+  }, [selectedCourseId]);
 
   // --- Celebration State ---
   const [celebratedIds, setCelebratedIds] = useState<string[]>(() => {
@@ -389,7 +400,8 @@ export default function App() {
         setQuizScores({});
         setCustomCourses([]);
         setAwards([]);
-        setAllLevels(MASTER_LEVELS);
+        setAllLevels(getAllLevels());
+        setSelectedCourseId("complete-seo-2026");
         setStreakCount(1);
         setLastActiveDate(new Date().toDateString());
         setSelectedLevelId(null);
@@ -571,6 +583,9 @@ export default function App() {
               tabChanger={(tab) => setActiveTab(tab)}
               onOpenConsulting={() => setIsLeadModalOpen(true)}
               onToggleItem={handleToggleItem}
+              selectedCourseId={selectedCourseId}
+              setSelectedCourseId={setSelectedCourseId}
+              allLevels={allLevels}
             />
           )}
 
