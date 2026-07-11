@@ -14,15 +14,20 @@ import CourseCreator from "./components/CourseCreator";
 import QuizModule from "./components/QuizModule";
 import CRMConsole, { LeadFormModal } from "./components/CRMConsole";
 import CelebrationConfetti from "./components/CelebrationConfetti";
+import AskAIHelpHub from "./components/AskAIHelpHub";
+import BookConsultation from "./components/BookConsultation";
+import AskCommunity from "./components/AskCommunity";
+import GamificationRewards from "./components/GamificationRewards";
+import FloatingAskButton from "./components/FloatingAskButton";
 import { 
   BookOpen, Award, LayoutDashboard, Layers, Sparkles, 
   Settings, Flame, CheckCircle, RefreshCw, Star, ArrowRight,
-  AlertTriangle, Linkedin, Shield
+  AlertTriangle, Linkedin, Shield, MessageSquare, Gift, Users, Calendar, Trophy
 } from "lucide-react";
 
 export default function App() {
   // --- STATE LAYER WITH PERSISTED MEMORY DEFAULTS ---
-  const [activeTab, setActiveTab ] = useState<"dashboard" | "curriculum" | "quiz" | "creator" | "details" | "crm">("dashboard");
+  const [activeTab, setActiveTab ] = useState<"dashboard" | "curriculum" | "quiz" | "creator" | "details" | "crm" | "help" | "consultation" | "community" | "rewards">("dashboard");
   const [selectedTrackId, setSelectedTrackId] = useState<string>("all");
   const [selectedLevelId, setSelectedLevelId] = useState<number | string | null>(null);
   const [isLeadModalOpen, setIsLeadModalOpen] = useState(false);
@@ -109,6 +114,54 @@ export default function App() {
   const [lastActiveDate, setLastActiveDate] = useState<string | null>(() => {
     return localStorage.getItem("lms_last_active_date");
   });
+
+  // Gamification user points & transaction logs
+  const [userPoints, setUserPoints] = useState<number>(() => {
+    const saved = localStorage.getItem("lms_user_points");
+    return saved ? Number(saved) : 50; // starts with 50 default XP
+  });
+
+  const [pointLogs, setPointLogs] = useState<Array<{ id: string; points: number; reason: string; timestamp: string }>>(() => {
+    const saved = localStorage.getItem("lms_point_logs");
+    return saved ? JSON.parse(saved) : [
+      { id: "log-init", points: 50, reason: "Welcome Milestone bonus", timestamp: new Date().toLocaleTimeString() }
+    ];
+  });
+
+  useEffect(() => {
+    localStorage.setItem("lms_user_points", String(userPoints));
+  }, [userPoints]);
+
+  useEffect(() => {
+    localStorage.setItem("lms_point_logs", JSON.stringify(pointLogs));
+  }, [pointLogs]);
+
+  const handleAwardPoints = (points: number, reason: string) => {
+    setUserPoints(prev => Math.max(0, prev + points));
+    setPointLogs(prev => [
+      {
+        id: `log-${Date.now()}`,
+        points,
+        reason,
+        timestamp: new Date().toLocaleTimeString()
+      },
+      ...prev
+    ]);
+  };
+
+  const handleAddLeadSimulated = (newLead: any) => {
+    try {
+      const saved = localStorage.getItem("lms_crm_leads");
+      const currentLeads = saved ? JSON.parse(saved) : [];
+      const updatedLeads = [newLead, ...currentLeads];
+      localStorage.setItem("lms_crm_leads", JSON.stringify(updatedLeads));
+      
+      // Let other parts know leads updated
+      window.dispatchEvent(new Event("storage"));
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   // --- EFFECT WRITERS TO SECURE BROWSER PERSISTENCE ---
   useEffect(() => {
@@ -273,12 +326,15 @@ export default function App() {
         if (lastActiveDate === yesterdayStr) {
           // Increment streak on back-to-back logins
           setStreakCount(prev => prev + 1);
+          handleAwardPoints(5, "Daily active learning streak maintained!");
         } else {
           // Reset streak on missing day
           setStreakCount(1);
+          handleAwardPoints(5, "Daily login bonus");
         }
       } else {
         setStreakCount(1);
+        handleAwardPoints(5, "First-time login bonus");
       }
       setLastActiveDate(today);
     }
@@ -288,14 +344,22 @@ export default function App() {
 
   // Toggle checklist item progress
   const handleToggleItem = (itemId: string) => {
+    let wasAdded = false;
     setCompletedItemIds(prev => {
       const isCompleted = prev.includes(itemId);
       if (isCompleted) {
         return prev.filter(id => id !== itemId);
       } else {
+        wasAdded = true;
         return [...prev, itemId];
       }
     });
+
+    if (wasAdded) {
+      handleAwardPoints(50, "Completed course lesson item");
+    } else {
+      handleAwardPoints(-50, "Unchecked course lesson item");
+    }
 
     // Touch daily activity
     const today = new Date().toDateString();
@@ -519,48 +583,107 @@ export default function App() {
             <nav className="flex items-center gap-1 min-w-max bg-neutral-150/40 p-1 rounded-xl border border-neutral-200/30" id="nav-tabs">
               <button
                 onClick={() => setActiveTab("dashboard")}
-                className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs font-sans font-bold transition-all duration-150 whitespace-nowrap cursor-pointer ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-sans font-bold transition-all duration-150 whitespace-nowrap cursor-pointer flex items-center gap-1 ${
                   activeTab === "dashboard"
                     ? "bg-white text-neutral-900 shadow-sm border border-neutral-200/30 font-extrabold"
                     : "text-neutral-500 hover:text-neutral-900 hover:bg-white/45"
                 }`}
               >
-                Dashboard
+                <LayoutDashboard size={12} className="text-neutral-400" />
+                <span>Dashboard</span>
               </button>
+
+              <button
+                onClick={() => setActiveTab("help")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-sans font-bold transition-all duration-150 whitespace-nowrap cursor-pointer flex items-center gap-1 ${
+                  activeTab === "help"
+                    ? "bg-white text-indigo-900 shadow-sm border border-indigo-200 font-extrabold"
+                    : "text-neutral-500 hover:text-neutral-900 hover:bg-white/45"
+                }`}
+              >
+                <MessageSquare size={12} className="text-indigo-500" />
+                <span>💬 Ask AI Hub</span>
+              </button>
+
+              <button
+                onClick={() => setActiveTab("consultation")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-sans font-bold transition-all duration-150 whitespace-nowrap cursor-pointer flex items-center gap-1 ${
+                  activeTab === "consultation"
+                    ? "bg-white text-neutral-900 shadow-sm border border-neutral-200/30 font-extrabold"
+                    : "text-neutral-500 hover:text-neutral-900 hover:bg-white/45"
+                }`}
+              >
+                <Calendar size={12} className="text-amber-500" />
+                <span>Book 1-on-1 Call</span>
+              </button>
+
+              <button
+                onClick={() => setActiveTab("community")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-sans font-bold transition-all duration-150 whitespace-nowrap cursor-pointer flex items-center gap-1 ${
+                  activeTab === "community"
+                    ? "bg-white text-neutral-900 shadow-sm border border-neutral-200/30 font-extrabold"
+                    : "text-neutral-500 hover:text-neutral-900 hover:bg-white/45"
+                }`}
+              >
+                <Users size={12} className="text-indigo-400" />
+                <span>Ask Community</span>
+              </button>
+
+              <button
+                onClick={() => setActiveTab("rewards")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-sans font-bold transition-all duration-150 whitespace-nowrap cursor-pointer flex items-center gap-1 ${
+                  activeTab === "rewards"
+                    ? "bg-white text-amber-950 shadow-sm border border-amber-300 font-extrabold"
+                    : "text-neutral-500 hover:text-neutral-900 hover:bg-white/45"
+                }`}
+              >
+                <Gift size={12} className="text-amber-500" />
+                <span className="flex items-center gap-1">
+                  <span>Rewards Center</span>
+                  <span className="px-1 py-0.2 bg-amber-150 text-amber-800 text-[8.5px] font-mono rounded font-black">{userPoints} XP</span>
+                </span>
+              </button>
+
               <button
                 onClick={() => setActiveTab("curriculum")}
-                className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs font-sans font-bold transition-all duration-150 whitespace-nowrap cursor-pointer ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-sans font-bold transition-all duration-150 whitespace-nowrap cursor-pointer flex items-center gap-1 ${
                   activeTab === "curriculum" || activeTab === "details"
                     ? "bg-white text-neutral-900 shadow-sm border border-neutral-200/30 font-extrabold"
                     : "text-neutral-500 hover:text-neutral-900 hover:bg-white/45"
                 }`}
               >
-                Curriculum Syllabus
+                <BookOpen size={12} className="text-neutral-400" />
+                <span>Curriculum Syllabus</span>
               </button>
+
               <button
                 onClick={() => setActiveTab("quiz")}
-                className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs font-sans font-bold transition-all duration-150 whitespace-nowrap cursor-pointer ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-sans font-bold transition-all duration-150 whitespace-nowrap cursor-pointer flex items-center gap-1 ${
                   activeTab === "quiz"
                     ? "bg-white text-neutral-900 shadow-sm border border-neutral-200/30 font-extrabold"
                     : "text-neutral-500 hover:text-neutral-900 hover:bg-white/45"
                 }`}
               >
-                Diagnostics Quizzes
+                <Trophy size={12} className="text-neutral-400" />
+                <span>Diagnostics Quizzes</span>
               </button>
+
               <button
                 onClick={() => setActiveTab("creator")}
-                className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs font-sans font-bold transition-all duration-150 whitespace-nowrap cursor-pointer ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-sans font-bold transition-all duration-150 whitespace-nowrap cursor-pointer flex items-center gap-1 ${
                   activeTab === "creator"
                     ? "bg-white text-neutral-900 shadow-sm border border-neutral-200/30 font-extrabold"
                     : "text-neutral-500 hover:text-neutral-900 hover:bg-white/45"
                 }`}
               >
-                Custom Course Builder
+                <Sparkles size={12} className="text-neutral-400" />
+                <span>Custom Course Builder</span>
               </button>
+
               {activeTab === "crm" && (
                 <button
                   onClick={() => setActiveTab("crm")}
-                  className="px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs font-sans font-bold transition-all duration-150 whitespace-nowrap bg-neutral-900 text-white shadow-sm font-extrabold cursor-pointer border border-neutral-800"
+                  className="px-3 py-1.5 rounded-lg text-xs font-sans font-extrabold transition-all duration-150 whitespace-nowrap bg-neutral-900 text-white shadow-sm cursor-pointer border border-neutral-800"
                 >
                   Leads CRM Console 🛡️
                 </button>
@@ -641,6 +764,41 @@ export default function App() {
 
           {activeTab === "crm" && (
             <CRMConsole onClose={() => setActiveTab("dashboard")} />
+          )}
+
+          {activeTab === "help" && (
+            <AskAIHelpHub
+              onAwardPoints={handleAwardPoints}
+              onNavigateTab={(tab) => {
+                setActiveTab(tab);
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
+              onAddLeadSimulated={handleAddLeadSimulated}
+            />
+          )}
+
+          {activeTab === "consultation" && (
+            <BookConsultation
+              onAwardPoints={handleAwardPoints}
+              onAddLeadSimulated={handleAddLeadSimulated}
+              userPoints={userPoints}
+            />
+          )}
+
+          {activeTab === "community" && (
+            <AskCommunity
+              onAwardPoints={handleAwardPoints}
+              userPoints={userPoints}
+            />
+          )}
+
+          {activeTab === "rewards" && (
+            <GamificationRewards
+              userPoints={userPoints}
+              streakCount={streakCount}
+              onAwardPoints={handleAwardPoints}
+              pointLogs={pointLogs}
+            />
           )}
         </div>
       </main>
@@ -754,6 +912,15 @@ export default function App() {
       <LeadFormModal 
         isOpen={isLeadModalOpen} 
         onClose={() => setIsLeadModalOpen(false)} 
+      />
+
+      {/* Global Floating Help Bubble */}
+      <FloatingAskButton
+        onAwardPoints={handleAwardPoints}
+        onNavigateTab={(tab) => {
+          setActiveTab(tab);
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }}
       />
     </div>
   );

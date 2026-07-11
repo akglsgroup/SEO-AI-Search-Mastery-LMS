@@ -15,7 +15,7 @@ interface DashboardProps {
   levels: Level[];
   onChangeTrack: (trackId: string) => void;
   onSelectLevel: (levelId: number | string) => void;
-  tabChanger: (tab: "curriculum" | "creator" | "quiz") => void;
+  tabChanger: (tab: "dashboard" | "curriculum" | "quiz" | "creator" | "details" | "crm" | "help" | "consultation" | "community" | "rewards") => void;
   onOpenConsulting?: () => void;
   onToggleItem?: (itemId: string) => void;
   selectedCourseId?: string;
@@ -580,6 +580,60 @@ export default function Dashboard({
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* 💬 Ask Me Anything Section */}
+      <div className="p-6 md:p-8 bg-neutral-50 border border-neutral-250/90 rounded-3xl space-y-6" id="ama-section">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-neutral-150 pb-5">
+          <div className="space-y-1 max-w-xl">
+            <h2 className="text-xl font-sans font-extrabold text-neutral-955 tracking-tight flex items-center gap-2">
+              <Sparkles className="text-amber-500 animate-pulse" size={20} />
+              <span>Ask Me Anything</span>
+            </h2>
+            <p className="text-xs text-neutral-500 leading-relaxed">
+              Have an urgent challenge? I personally help students, marketers, founders, and developers with custom advice. Type a question to get an immediate AI answer, or jump straight to consultation.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
+            <button
+              onClick={() => tabChanger("help")}
+              className="px-4 py-2.5 bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-bold rounded-xl shadow-xs cursor-pointer transition-all flex items-center gap-1.5"
+            >
+              <span>💬 Ask Amrish AI</span>
+              <ArrowRight size={13} />
+            </button>
+            <button
+              onClick={() => tabChanger("consultation")}
+              className="px-4 py-2.5 bg-white hover:bg-neutral-50 text-neutral-800 border border-neutral-250 text-xs font-bold rounded-xl shadow-3xs cursor-pointer transition-all flex items-center gap-1.5"
+            >
+              <span>📅 Book 1-on-1 Call</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Dynamic FAQ examples */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[
+            { q: "Which career path is best for me?", desc: "Analyze skills to transition into high-paying SEO roles.", tab: "help" },
+            { q: "Google Ads not generating leads?", desc: "Get structural audit points on landing page CRO.", tab: "help" },
+            { q: "My WordPress site is extremely slow", desc: "Key checklist steps to optimize Core Web Vitals.", tab: "help" },
+            { q: "What is Generative Engine Optimization?", desc: "Learn to optimize schemas to rank inside ChatGPT.", tab: "help" },
+          ].map((faq, idx) => (
+            <div
+              key={idx}
+              onClick={() => tabChanger(faq.tab as any)}
+              className="p-4 bg-white hover:bg-neutral-50 border border-neutral-200 hover:border-neutral-450 rounded-2xl cursor-pointer transition-all space-y-1.5 shadow-3xs hover:shadow-xs group"
+            >
+              <h3 className="text-xs font-extrabold text-neutral-950 group-hover:text-amber-700 leading-snug flex items-center justify-between gap-2">
+                <span>{faq.q}</span>
+                <ArrowRight size={11} className="text-neutral-400 shrink-0" />
+              </h3>
+              <p className="text-[10px] text-neutral-400 leading-relaxed font-semibold">
+                {faq.desc}
+              </p>
+            </div>
+          ))}
         </div>
       </div>
 
