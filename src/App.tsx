@@ -25,6 +25,10 @@ import {
   Settings, Flame, CheckCircle, RefreshCw, Star, ArrowRight,
   AlertTriangle, Linkedin, Shield, MessageSquare, Gift, Users, Calendar, Trophy, Key
 } from "lucide-react";
+import { getFirebaseAuth, isFirebaseConfigured } from "./lib/firebase";
+import { onAuthStateChanged } from "firebase/auth";
+import { loadUserProgressFromFirestore, syncUserProfileToFirestore, submitLeadToFirestore } from "./lib/firebaseSync";
+
 
 export default function App() {
   // --- STATE LAYER WITH PERSISTED MEMORY DEFAULTS ---
@@ -181,13 +185,22 @@ export default function App() {
     ]);
   };
 
-  const handleAddLeadSimulated = (newLead: any) => {
+  const handleAddLeadSimulated = async (newLead: any) => {
     try {
       const saved = localStorage.getItem("lms_crm_leads");
       const currentLeads = saved ? JSON.parse(saved) : [];
       const updatedLeads = [newLead, ...currentLeads];
       localStorage.setItem("lms_crm_leads", JSON.stringify(updatedLeads));
       
+      // Submit to Firestore in parallel if configured
+      if (isFirebaseConfigured()) {
+        try {
+          await submitLeadToFirestore(newLead);
+        } catch (dbError) {
+          console.warn("Could not save lead to Firestore, stored locally:", dbError);
+        }
+      }
+
       // Let other parts know leads updated
       window.dispatchEvent(new Event("storage"));
     } catch (e) {
@@ -371,6 +384,61 @@ export default function App() {
       setLastActiveDate(today);
     }
   }, []);
+
+  // --- FIREBASE REALTIME SYNCHRONIZATION ENGINES ---
+  useEffect(() => {
+    if (isFirebaseConfigured()) {
+      try {
+        const auth = getFirebaseAuth();
+        const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+          if (firebaseUser) {
+            // User is signed in with Firebase
+            const data = await loadUserProgressFromFirestore(firebaseUser.uid);
+            if (data) {
+              setCurrentUser({
+                isLoggedIn: true,
+                name: data.name || firebaseUser.displayName || "",
+                email: data.email || firebaseUser.email || "",
+                phone: data.phone || "",
+                role: data.role || "Student",
+                linkedin: data.linkedin || "",
+                avatarUrl: data.avatarUrl || firebaseUser.photoURL || "",
+                isAdmin: data.isAdmin || false
+              });
+              if (data.userPoints !== undefined) setUserPoints(data.userPoints);
+              if (data.streakCount !== undefined) setStreakCount(data.streakCount);
+              if (data.completedItemIds !== undefined) setCompletedItemIds(data.completedItemIds);
+              if (data.pointLogs !== undefined) setPointLogs(data.pointLogs);
+            }
+          }
+        });
+        return () => unsubscribe();
+      } catch (e) {
+        console.warn("Firebase Auth listener failed to initialize:", e);
+      }
+    }
+  }, []);
+
+  // Synchronize user progress metrics to Firestore in real-time
+  useEffect(() => {
+    if (currentUser.isLoggedIn && isFirebaseConfigured()) {
+      try {
+        const auth = getFirebaseAuth();
+        const uid = auth.currentUser?.uid;
+        if (uid) {
+          syncUserProfileToFirestore(uid, {
+            ...currentUser,
+            userPoints,
+            streakCount,
+            completedItemIds,
+            pointLogs
+          });
+        }
+      } catch (e) {
+        console.error("Failed to sync user profile to Firestore:", e);
+      }
+    }
+  }, [currentUser, userPoints, streakCount, completedItemIds, pointLogs]);
 
   // --- ACTION CONTROLLERS AND MUTATIONS ---
 

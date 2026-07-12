@@ -4,6 +4,8 @@ import {
   Lock, Mail, User, Phone, Linkedin, LogOut, Sparkles, 
   Shield, Check, UserCheck, Key, Globe, ArrowRight, Zap 
 } from "lucide-react";
+import { signInWithGoogle, isFirebaseConfigured } from "../lib/firebaseSync";
+
 
 interface LockedTabScreenProps {
   tabName: string;
@@ -96,6 +98,23 @@ export function GoogleLoginModal({ onClose, onLoginSuccess, suggestedEmail }: Go
   const [role, setRole] = useState("Student");
   const [showAdvancedForm, setShowAdvancedForm] = useState(false);
   const [step, setStep] = useState<1 | 2>(1);
+  const [errorText, setErrorText] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+    setErrorText("");
+    try {
+      const { profile } = await signInWithGoogle();
+      onLoginSuccess(profile);
+      onClose();
+    } catch (e: any) {
+      console.error(e);
+      setErrorText("Google Sign-In failed. Please verify configurations or try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSelectQuickAccount = (selectedEmail: string, selectedName: string, selectedRole: string, isAdmin: boolean) => {
     const defaultProfile: UserProfile = {
@@ -162,6 +181,28 @@ export function GoogleLoginModal({ onClose, onLoginSuccess, suggestedEmail }: Go
             <div className="text-center space-y-1">
               <h3 className="text-base font-extrabold text-neutral-900">Choose an Account</h3>
               <p className="text-[11px] text-neutral-400">to continue to AskAmrish Platform</p>
+            </div>
+
+            {/* Primary Google Auth Button */}
+            <button
+              onClick={handleGoogleSignIn}
+              disabled={loading}
+              className="w-full p-4 bg-neutral-900 hover:bg-neutral-800 disabled:bg-neutral-600 text-white border border-neutral-800 rounded-2xl flex items-center justify-center gap-3 transition-all cursor-pointer hover:scale-[1.01] shadow-md font-bold text-xs"
+            >
+              <div className="w-5 h-5 bg-white text-neutral-900 rounded-lg flex items-center justify-center font-black text-xs shrink-0">
+                G
+              </div>
+              <span>{loading ? "Connecting securely..." : "Sign In with Google (Database Sync)"}</span>
+            </button>
+
+            {errorText && (
+              <p className="text-[10px] text-red-600 font-mono text-center font-semibold bg-red-50 p-2 rounded-lg border border-red-100">{errorText}</p>
+            )}
+
+            <div className="relative flex py-1 items-center">
+              <div className="flex-grow border-t border-neutral-150"></div>
+              <span className="flex-shrink mx-4 text-[9px] font-mono font-bold uppercase text-neutral-400 tracking-wider">OR QUICK LOGINS</span>
+              <div className="flex-grow border-t border-neutral-150"></div>
             </div>
 
             {/* Quick Select Accounts */}

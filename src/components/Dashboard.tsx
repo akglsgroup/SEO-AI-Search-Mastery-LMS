@@ -8,7 +8,7 @@ import { UserProgress, Level, Track } from "../types";
 import { INITIAL_TRACKS } from "../data/checklist";
 import { LMS_COURSES, getAllTracks } from "../data/coursesData";
 import { Award, Zap, CheckCircle, BarChart3, Star, Sparkles, BookOpen, Cpu, Layers, Globe, SlidersHorizontal, Trophy, Lock, Smile, ArrowRight, Share2, Check, Clock, Bell, Search, Network, MapPin } from "lucide-react";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 
 interface DashboardProps {
   progress: UserProgress;
@@ -69,6 +69,167 @@ export default function Dashboard({
   }, [graduateName]);
 
   const [sharingAwardId, setSharingAwardId] = React.useState<string | null>(null);
+
+  // --- Daily Learning Goal Tracker State & Logic ---
+  const [dailyTarget, setDailyTarget] = React.useState<number>(() => {
+    try {
+      const saved = localStorage.getItem("lms_daily_target_value");
+      return saved ? Number(saved) : 3; // default: 3 lessons
+    } catch {
+      return 3;
+    }
+  });
+
+  const [dailyCompletedIds, setDailyCompletedIds] = React.useState<string[]>(() => {
+    try {
+      const savedDate = localStorage.getItem("lms_daily_target_date");
+      const today = new Date().toDateString();
+      if (savedDate === today) {
+        const savedIds = localStorage.getItem("lms_daily_completed_ids");
+        return savedIds ? JSON.parse(savedIds) : [];
+      }
+    } catch {}
+    return [];
+  });
+
+  const [showGoalNotification, setShowGoalNotification] = React.useState<boolean>(false);
+  
+  const [hasBeenNotifiedToday, setHasBeenNotifiedToday] = React.useState<boolean>(() => {
+    try {
+      const savedDate = localStorage.getItem("lms_daily_target_notified_date");
+      const savedTarget = localStorage.getItem("lms_daily_target_notified_val");
+      const today = new Date().toDateString();
+      return savedDate === today && Number(savedTarget) === dailyTarget;
+    } catch {
+      return false;
+    }
+  });
+
+  // Sync target and date changes
+  React.useEffect(() => {
+    try {
+      localStorage.setItem("lms_daily_target_value", String(dailyTarget));
+    } catch {}
+  }, [dailyTarget]);
+
+  React.useEffect(() => {
+    try {
+      const today = new Date().toDateString();
+      localStorage.setItem("lms_daily_target_date", today);
+      localStorage.setItem("lms_daily_completed_ids", JSON.stringify(dailyCompletedIds));
+    } catch {}
+  }, [dailyCompletedIds]);
+
+  // Track lesson completions incrementally in real-time
+  const prevCompletedIdsRef = React.useRef<string[]>(progress.completedItemIds);
+
+  React.useEffect(() => {
+    const prevCompleted = prevCompletedIdsRef.current;
+    const currentCompleted = progress.completedItemIds;
+    
+    const newlyAdded = currentCompleted.filter(id => !prevCompleted.includes(id));
+    const newlyRemoved = prevCompleted.filter(id => !currentCompleted.includes(id));
+    
+    if (newlyAdded.length > 0 || newlyRemoved.length > 0) {
+      setDailyCompletedIds(prev => {
+        let updated = [...prev];
+        newlyAdded.forEach(id => {
+          if (!updated.includes(id)) {
+            updated.push(id);
+          }
+        });
+        updated = updated.filter(id => currentCompleted.includes(id) && !newlyRemoved.includes(id));
+        return updated;
+      });
+    }
+    
+    prevCompletedIdsRef.current = currentCompleted;
+  }, [progress.completedItemIds]);
+
+  // Audio goal chime synthesizer using Web Audio API
+  const playGoalChime = () => {
+    try {
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioContextClass) return;
+      const ctx = new AudioContextClass();
+      const now = ctx.currentTime;
+      
+      const playTone = (freq: number, startTime: number, duration: number, type: OscillatorType = "sine") => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, startTime);
+        gain.gain.setValueAtTime(0, startTime);
+        gain.gain.linearRampToValueAtTime(0.15, startTime + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(startTime);
+        osc.stop(startTime + duration + 0.1);
+      };
+      
+      // Play a delightful, happy ascending major chime (C5 -> E5 -> G5 -> C6)
+      playTone(523.25, now, 0.5, "sine"); // C5
+      playTone(659.25, now + 0.12, 0.5, "sine"); // E5
+      playTone(783.99, now + 0.24, 0.5, "sine"); // G5
+      playTone(1046.50, now + 0.36, 0.9, "sine"); // C6
+    } catch (e) {
+      console.warn("Could not start audio context chime:", e);
+    }
+  };
+
+  // Evaluate goal completion trigger
+  React.useEffect(() => {
+    if (dailyTarget > 0 && dailyCompletedIds.length >= dailyTarget) {
+      if (!hasBeenNotifiedToday) {
+        setShowGoalNotification(true);
+        setHasBeenNotifiedToday(true);
+        playGoalChime();
+        try {
+          const today = new Date().toDateString();
+          localStorage.setItem("lms_daily_target_notified_date", today);
+          localStorage.setItem("lms_daily_target_notified_val", String(dailyTarget));
+        } catch {}
+      }
+    } else {
+      if (hasBeenNotifiedToday) {
+        setHasBeenNotifiedToday(false);
+        try {
+          localStorage.removeItem("lms_daily_target_notified_date");
+          localStorage.removeItem("lms_daily_target_notified_val");
+        } catch {}
+      }
+    }
+  }, [dailyCompletedIds, dailyTarget, hasBeenNotifiedToday]);
+
+  // Lookup full details of lessons completed today for display in the notification card
+  const completedTodayItems = React.useMemo(() => {
+    const list: { id: string; title: string; points: number }[] = [];
+    
+    levels.forEach(level => {
+      if (level.checklistItems) {
+        level.checklistItems.forEach(item => {
+          if (dailyCompletedIds.includes(item.id)) {
+            list.push({ id: item.id, title: item.title, points: item.points });
+          }
+        });
+      }
+    });
+
+    if (progress.customCourses) {
+      progress.customCourses.forEach(course => {
+        if (course.checklistItems) {
+          course.checklistItems.forEach(item => {
+            if (dailyCompletedIds.includes(item.id)) {
+              list.push({ id: item.id, title: item.title, points: item.points });
+            }
+          });
+        }
+      });
+    }
+
+    return list;
+  }, [levels, progress.customCourses, dailyCompletedIds]);
 
   // --- Daily Study Task State & Inactivity Detection ---
   const [simulateInactivity, setSimulateInactivity] = React.useState<boolean>(() => {
@@ -582,6 +743,203 @@ export default function Dashboard({
           </div>
         </div>
       </div>
+
+      {/* 🎯 Daily Learning Goal Tracker */}
+      <div className="p-6 md:p-8 bg-white border border-neutral-200/90 rounded-3xl space-y-6 relative overflow-hidden shadow-xs" id="daily-learning-goal-tracker">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div className="space-y-1">
+            <h2 className="text-xl font-sans font-bold text-neutral-900 tracking-tight flex items-center gap-2">
+              <span className="text-2xl animate-bounce">🎯</span>
+              <span>Daily Study Target &amp; Momentum</span>
+            </h2>
+            <p className="text-xs text-neutral-500 font-medium leading-relaxed max-w-xl">
+              Set a daily goal for lesson completion to build your optimization momentum. Check off checklist items anywhere across standard or custom tracks to power up!
+            </p>
+          </div>
+          
+          <div className="flex items-center gap-3 bg-neutral-50 border border-neutral-200 px-4 py-2 rounded-2xl shadow-3xs">
+            <span className="text-xs font-mono font-bold text-neutral-400 uppercase">Set Lesson Target:</span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setDailyTarget(prev => Math.max(1, prev - 1))}
+                className="w-7 h-7 flex items-center justify-center bg-white hover:bg-neutral-100 border border-neutral-250 text-neutral-700 hover:text-neutral-950 font-bold rounded-lg transition-all cursor-pointer text-sm shadow-3xs"
+                title="Decrease daily target"
+              >
+                —
+              </button>
+              <span className="w-8 text-center font-mono font-black text-sm text-neutral-900">{dailyTarget}</span>
+              <button
+                onClick={() => setDailyTarget(prev => Math.min(15, prev + 1))}
+                className="w-7 h-7 flex items-center justify-center bg-white hover:bg-neutral-100 border border-neutral-250 text-neutral-700 hover:text-neutral-950 font-bold rounded-lg transition-all cursor-pointer text-sm shadow-3xs"
+                title="Increase daily target"
+              >
+                +
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Progress Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+          {/* Target preset buttons */}
+          <div className="md:col-span-4 space-y-2">
+            <span className="text-[10px] font-mono font-bold text-neutral-400 tracking-wider uppercase block">Quick Goal Presets</span>
+            <div className="flex flex-wrap gap-2">
+              {[
+                { label: "Casual", value: 1 },
+                { label: "Recommended", value: 3 },
+                { label: "Intense", value: 5 },
+                { label: "Marathon", value: 8 }
+              ].map((preset) => {
+                const isSelected = dailyTarget === preset.value;
+                return (
+                  <button
+                    key={preset.value}
+                    onClick={() => setDailyTarget(preset.value)}
+                    className={`flex-1 min-w-[75px] p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                      isSelected
+                        ? "bg-neutral-950 text-white border-neutral-950 shadow-sm"
+                        : "bg-white hover:bg-neutral-50 text-neutral-700 border-neutral-200"
+                    }`}
+                  >
+                    <div className="text-[10px] font-sans font-bold leading-none">{preset.label}</div>
+                    <div className="text-xs font-mono font-extrabold mt-1">{preset.value} Lesson{preset.value > 1 ? 's' : ''}</div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Progress bar visualizer */}
+          <div className="md:col-span-5 space-y-3 p-4 bg-neutral-50/50 rounded-2xl border border-neutral-150 relative">
+            <div className="flex items-center justify-between text-xs font-mono font-bold">
+              <span className="text-neutral-400 uppercase tracking-wide">Today's Progress</span>
+              <span className={`px-2.5 py-0.5 rounded-md text-[11px] font-extrabold ${
+                dailyCompletedIds.length >= dailyTarget
+                  ? "bg-emerald-50 border border-emerald-200 text-emerald-800"
+                  : "bg-neutral-100 border border-neutral-200 text-neutral-700"
+              }`}>
+                {dailyCompletedIds.length} / {dailyTarget} Lessons
+              </span>
+            </div>
+
+            {/* Horizontal progress bar */}
+            <div className="w-full bg-neutral-200/60 h-4 rounded-full overflow-hidden p-[1px] relative shadow-inner">
+              <div
+                className={`h-full rounded-full transition-all duration-300 ${
+                  dailyCompletedIds.length >= dailyTarget
+                    ? "bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 shadow-md animate-pulse"
+                    : "bg-gradient-to-r from-indigo-500 to-indigo-600 shadow-md"
+                }`}
+                style={{ width: `${Math.min(100, (dailyCompletedIds.length / dailyTarget) * 100)}%` }}
+              ></div>
+            </div>
+
+            {/* Subtext info */}
+            <div className="text-[10px] font-sans font-medium text-neutral-500 leading-snug">
+              {dailyCompletedIds.length === 0 ? (
+                <span>💡 Complete lessons by checking checklist items in the <strong>Curriculum Syllabus</strong> or the recommended tasks below.</span>
+              ) : dailyCompletedIds.length < dailyTarget ? (
+                <span>🎯 Keep it up! <strong>{dailyTarget - dailyCompletedIds.length}</strong> more lesson{dailyTarget - dailyCompletedIds.length > 1 ? 's' : ''} to complete your target and gain momentum!</span>
+              ) : (
+                <span className="text-emerald-700 font-extrabold flex items-center gap-1.5">
+                  <span>🏆 Daily Target Achieved! Unbelievable study momentum today! (+25 Bonus XP)</span>
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Momentum Motivation Badge */}
+          <div className="md:col-span-3 flex flex-col justify-center items-center text-center p-4 bg-gradient-to-b from-white to-neutral-50/50 border border-neutral-200 rounded-2xl h-full shadow-3xs">
+            <div className={`w-11 h-11 rounded-full flex items-center justify-center border text-base ${
+              dailyCompletedIds.length >= dailyTarget
+                ? "bg-amber-50 border-amber-200 text-amber-600 animate-bounce"
+                : "bg-neutral-50 border-neutral-150 text-neutral-400"
+            }`}>
+              {dailyCompletedIds.length >= dailyTarget ? "🔥" : "💤"}
+            </div>
+            <div className="mt-2 space-y-0.5">
+              <span className="text-[9px] font-mono font-extrabold text-neutral-400 tracking-wider uppercase block">Momentum Status</span>
+              <p className="text-xs font-bold text-neutral-800 leading-tight">
+                {dailyCompletedIds.length >= dailyTarget ? "Fire Streak Unlocked!" : "Warm Up Phase"}
+              </p>
+              <p className="text-[10px] text-neutral-400 leading-none">
+                {dailyCompletedIds.length} lessons mastered today
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 🏆 Celebration Goal Achieved Overlay Notification */}
+      <AnimatePresence>
+        {showGoalNotification && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-950/60 backdrop-blur-xs"
+            id="goal-celebration-backdrop"
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 30 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 30 }}
+              transition={{ type: "spring", damping: 25, stiffness: 350 }}
+              className="bg-white border border-neutral-200 rounded-3xl p-6 md:p-8 max-w-md w-full shadow-2xl relative overflow-hidden text-center space-y-6"
+              id="goal-celebration-dialog"
+            >
+              <div className="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500"></div>
+              
+              <div className="relative">
+                <div className="w-16 h-16 bg-amber-50 border border-amber-200 text-amber-500 rounded-2xl flex items-center justify-center mx-auto text-3xl shadow-md animate-pulse">
+                  🏆
+                </div>
+                <span className="absolute top-0 right-12 text-lg animate-bounce delay-100">✨</span>
+                <span className="absolute bottom-2 left-12 text-lg animate-bounce delay-300">🎉</span>
+              </div>
+
+              <div className="space-y-2">
+                <span className="text-[10px] font-mono font-black text-amber-700 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full uppercase tracking-widest">
+                  DAILY GOAL MET
+                </span>
+                <h3 className="text-xl font-sans font-black text-neutral-900 tracking-tight leading-tight">
+                  Momentum Target Secured!
+                </h3>
+                <p className="text-xs text-neutral-500 leading-relaxed font-sans font-semibold">
+                  Outstanding job! You set a target of <strong className="text-neutral-900">{dailyTarget}</strong> lesson{dailyTarget > 1 ? 's' : ''} and completed {dailyCompletedIds.length} checklist milestones today. Your search engine mechanics mastery is rapidly accelerating!
+                </p>
+              </div>
+
+              {completedTodayItems.length > 0 && (
+                <div className="p-3.5 bg-neutral-50 border border-neutral-150 rounded-2xl text-left space-y-2.5">
+                  <span className="text-[8.5px] font-mono font-bold text-neutral-400 tracking-wider uppercase block">Conquered Lessons Today:</span>
+                  <div className="max-h-[140px] overflow-y-auto space-y-1.5 scrollbar-thin pr-1">
+                    {completedTodayItems.map((item) => (
+                      <div key={item.id} className="flex items-start gap-2 text-[11px] text-neutral-700 font-semibold font-sans">
+                        <span className="text-emerald-500 shrink-0 font-bold">✓</span>
+                        <div className="flex-1 leading-snug">
+                          {item.title}
+                          <span className="text-[8.5px] font-mono text-neutral-400 block mt-0.5">+{item.points} XP Earned</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="pt-2">
+                <button
+                  onClick={() => setShowGoalNotification(false)}
+                  className="w-full py-3 bg-neutral-900 hover:bg-neutral-800 text-white font-bold text-xs rounded-2xl shadow-md transition-all hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
+                >
+                  Keep Learning &amp; Accumulating XP
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* 💬 Ask Me Anything Section */}
       <div className="p-6 md:p-8 bg-neutral-50 border border-neutral-250/90 rounded-3xl space-y-6" id="ama-section">

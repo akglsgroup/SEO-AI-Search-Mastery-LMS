@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { MessageSquare, ThumbsUp, Send, Search, Users, Sparkles, HelpCircle, AlertCircle, CheckCircle } from "lucide-react";
 import { UserProfile } from "../types";
+import { 
+  isFirebaseConfigured, 
+  subscribeToCommunityQuestions, 
+  saveQuestionToFirestore 
+} from "../lib/firebaseSync";
+
 
 interface CommunityQuestion {
   id: string;
@@ -105,34 +111,60 @@ export default function AskCommunity({ onAwardPoints, userPoints, currentUser }:
     localStorage.setItem("lms_community_questions", JSON.stringify(questions));
   }, [questions]);
 
-  const handleUpvote = (e: React.MouseEvent, qId: string) => {
+  // Real-time Firestore synchronizer for community Q&As
+  useEffect(() => {
+    if (isFirebaseConfigured()) {
+      const unsubscribe = subscribeToCommunityQuestions((dbQuestions) => {
+        if (dbQuestions && dbQuestions.length > 0) {
+          setQuestions(dbQuestions);
+        } else {
+          // If Firestore collection is empty, seed it asynchronously with the initial data set
+          const seedCommunity = async () => {
+            for (const q of INITIAL_COMMUNITY_QUESTIONS) {
+              await saveQuestionToFirestore(q);
+            }
+          };
+          seedCommunity();
+        }
+      });
+      return () => unsubscribe();
+    }
+  }, []);
+
+  const handleUpvote = async (e: React.MouseEvent, qId: string) => {
     e.stopPropagation();
-    setQuestions(prev => prev.map(q => {
+    let updatedQ: CommunityQuestion | null = null;
+    
+    const updatedQuestions = questions.map(q => {
       if (q.id === qId) {
         if (q.voted) {
-          return { ...q, votes: q.votes - 1, voted: false };
+          updatedQ = { ...q, votes: q.votes - 1, voted: false };
         } else {
           onAwardPoints(2, "Upvoted a community question");
-          return { ...q, votes: q.votes + 1, voted: true };
+          updatedQ = { ...q, votes: q.votes + 1, voted: true };
         }
+        return updatedQ;
       }
       return q;
-    }));
+    });
+
+    setQuestions(updatedQuestions);
+
+    if (updatedQ && isFirebaseConfigured()) {
+      try {
+        await saveQuestionToFirestore(updatedQ);
+      } catch (err) {
+        console.error("Failed to save upvote in Firestore:", err);
+      }
+    }
 
     // Update selected question if it's currently open
-    if (selectedQuestion && selectedQuestion.id === qId) {
-      setSelectedQuestion(prev => {
-        if (!prev) return null;
-        return {
-          ...prev,
-          votes: prev.voted ? prev.votes - 1 : prev.votes + 1,
-          voted: !prev.voted
-        };
-      });
+    if (selectedQuestion && selectedQuestion.id === qId && updatedQ) {
+      setSelectedQuestion(updatedQ);
     }
   };
 
-  const handleAskQuestion = (e: React.FormEvent) => {
+  const handleAskQuestion = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTitle.trim() || !newContent.trim()) return;
 
@@ -152,13 +184,21 @@ export default function AskCommunity({ onAwardPoints, userPoints, currentUser }:
     setQuestions(prev => [newQuestion, ...prev]);
     onAwardPoints(10, "Published a public Q&A question");
     
+    if (isFirebaseConfigured()) {
+      try {
+        await saveQuestionToFirestore(newQuestion);
+      } catch (err) {
+        console.error("Failed to save question to Firestore:", err);
+      }
+    }
+
     // Reset form
     setNewTitle("");
     setNewContent("");
     setAskModalOpen(false);
   };
 
-  const handleAddReply = (e: React.FormEvent) => {
+  const handleAddReply = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!replyText.trim() || !selectedQuestion) return;
 
@@ -171,10 +211,15 @@ export default function AskCommunity({ onAwardPoints, userPoints, currentUser }:
 
     const updatedQuestions = questions.map(q => {
       if (q.id === selectedQuestion.id) {
-        return {
+        const updatedQ = {
           ...q,
           replies: [...q.replies, newReply]
         };
+        // Save to Firestore asynchronously
+        if (isFirebaseConfigured()) {
+          saveQuestionToFirestore(updatedQ).catch(err => console.error("Failed to save reply in Firestore:", err));
+        }
+        return updatedQ;
       }
       return q;
     });

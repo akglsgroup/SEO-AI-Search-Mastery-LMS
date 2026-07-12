@@ -1,0 +1,82 @@
+{
+  "collections": {
+    "users": {
+      "path": "users/{userId}",
+      "description": "User profiles, gamification points, streak counts, and learning progress.",
+      "fields": {
+        "isLoggedIn": { "type": "boolean" },
+        "name": { "type": "string", "maxLength": 100 },
+        "email": { "type": "string", "maxLength": 100 },
+        "phone": { "type": "string", "maxLength": 30 },
+        "role": { "type": "string", "maxLength": 50 },
+        "linkedin": { "type": "string", "maxLength": 150 },
+        "avatarUrl": { "type": "string", "maxLength": 250 },
+        "isAdmin": { "type": "boolean" },
+        "userPoints": { "type": "number" },
+        "streakCount": { "type": "number" },
+        "completedItemIds": { "type": "array", "maxSize": 500 },
+        "pointLogs": { "type": "array", "maxSize": 1000 }
+      },
+      "rules": {
+        "read": "request.auth.uid == userId || isAdmin()",
+        "write": "request.auth.uid == userId || isAdmin()"
+      }
+    },
+    "leads": {
+      "path": "leads/{leadId}",
+      "description": "Consultation booking and AI assistance leads with client context.",
+      "fields": {
+        "id": { "type": "string", "maxLength": 100 },
+        "name": { "type": "string", "maxLength": 100 },
+        "email": { "type": "string", "maxLength": 100 },
+        "organization": { "type": "string", "maxLength": 150 },
+        "website": { "type": "string", "maxLength": 200 },
+        "interest": { "type": "string", "maxLength": 50 },
+        "message": { "type": "string", "maxLength": 2000 },
+        "status": { "type": "string", "maxLength": 50 },
+        "createdAt": { "type": "string", "maxLength": 50 },
+        "notes": { "type": "string", "maxLength": 2000 }
+      },
+      "rules": {
+        "create": "true",
+        "read": "isAdmin()",
+        "update": "isAdmin()",
+        "delete": "isAdmin()"
+      }
+    },
+    "community_questions": {
+      "path": "community_questions/{questionId}",
+      "description": "Public community questions, replies, categories, and vote states.",
+      "fields": {
+        "id": { "type": "string", "maxLength": 100 },
+        "title": { "type": "string", "maxLength": 250 },
+        "category": { "type": "string", "maxLength": 50 },
+        "author": { "type": "string", "maxLength": 100 },
+        "role": { "type": "string", "maxLength": 50 },
+        "content": { "type": "string", "maxLength": 2000 },
+        "votes": { "type": "number" },
+        "votedUsers": { "type": "array", "maxSize": 1000 },
+        "replies": { "type": "array", "maxSize": 100 },
+        "createdAt": { "type": "string", "maxLength": 50 }
+      },
+      "rules": {
+        "read": "true",
+        "create": "request.auth != null",
+        "update": "request.auth != null",
+        "delete": "isAdmin()"
+      }
+    },
+    "admins": {
+      "path": "admins/{adminId}",
+      "description": "Admin roles mapping to enable verified access for Amrish Kumar Singh.",
+      "fields": {
+        "email": { "type": "string", "maxLength": 100 },
+        "enabled": { "type": "boolean" }
+      },
+      "rules": {
+        "read": "request.auth != null",
+        "write": "false"
+      }
+    }
+  }
+}

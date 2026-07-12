@@ -12,6 +12,14 @@ import {
   MapPin, CheckSquare, Clock, Globe, HelpCircle, Star, Phone, 
   MessageSquare, User, Building, Mail, ChevronRight, Download, PlusCircle
 } from "lucide-react";
+import { 
+  isFirebaseConfigured, 
+  loadLeadsFromFirestore, 
+  updateLeadInFirestore, 
+  deleteLeadInFirestore,
+  submitLeadToFirestore
+} from "../lib/firebaseSync";
+
 
 // Initial realistic enterprise leads to showcase CRM beauty on first view
 const SEED_LEADS: CRMLead[] = [
@@ -100,6 +108,30 @@ export default function CRMConsole({ onClose }: CRMConsoleProps) {
     localStorage.setItem("lms_crm_leads", JSON.stringify(leads));
   }, [leads]);
 
+  // Load real leads from Firestore on admin authorization
+  useEffect(() => {
+    if (isAuthenticated && isFirebaseConfigured()) {
+      const fetchLeads = async () => {
+        try {
+          const dbLeads = await loadLeadsFromFirestore();
+          if (dbLeads && dbLeads.length > 0) {
+            setLeads(dbLeads);
+          } else {
+            // Seed Firestore with the initial SEED_LEADS if Firestore collection is empty!
+            for (const lead of SEED_LEADS) {
+              await submitLeadToFirestore(lead);
+            }
+            const reloaded = await loadLeadsFromFirestore();
+            setLeads(reloaded);
+          }
+        } catch (err) {
+          console.error("Failed to load leads from Firestore:", err);
+        }
+      };
+      fetchLeads();
+    }
+  }, [isAuthenticated]);
+
   // Handle password submission (Passcode changed to 8366)
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -120,32 +152,53 @@ export default function CRMConsole({ onClose }: CRMConsoleProps) {
   };
 
   // Status updates
-  const handleUpdateStatus = (id: string, newStatus: CRMLead["status"]) => {
+  const handleUpdateStatus = async (id: string, newStatus: CRMLead["status"]) => {
     setLeads(prev => prev.map(lead => {
       if (lead.id === id) {
         return { ...lead, status: newStatus };
       }
       return lead;
     }));
+    if (isFirebaseConfigured()) {
+      try {
+        await updateLeadInFirestore(id, { status: newStatus });
+      } catch (err) {
+        console.error("Failed to update status in Firestore:", err);
+      }
+    }
   };
 
   // Add notes
-  const handleSaveNotes = (id: string) => {
+  const handleSaveNotes = async (id: string) => {
     setLeads(prev => prev.map(lead => {
       if (lead.id === id) {
         return { ...lead, notes: newNoteText };
       }
       return lead;
     }));
+    if (isFirebaseConfigured()) {
+      try {
+        await updateLeadInFirestore(id, { notes: newNoteText });
+      } catch (err) {
+        console.error("Failed to update notes in Firestore:", err);
+      }
+    }
     setNewNoteText("");
   };
 
   // Delete lead
-  const handleDeleteLead = (id: string) => {
+  const handleDeleteLead = async (id: string) => {
     if (window.confirm("Are you sure you want to delete this lead record permanently?")) {
       setLeads(prev => prev.filter(l => l.id !== id));
       if (activeLeadId === id) {
         setActiveLeadId(null);
+      }
+      if (isFirebaseConfigured()) {
+        try {
+          await deleteLeadInFirestore(id);
+        } catch (err) {
+          console.error("Failed to delete lead from Firestore:", err);
+        }
       }
     }
   };

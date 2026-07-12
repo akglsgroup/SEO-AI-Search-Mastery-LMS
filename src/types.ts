@@ -120,6 +120,10 @@ export interface UserProfile {
   linkedin: string;
   avatarUrl: string;
   isAdmin: boolean;
+  userPoints?: number;
+  streakCount?: number;
+  completedItemIds?: string[];
+  pointLogs?: any[];
 }
 
 
