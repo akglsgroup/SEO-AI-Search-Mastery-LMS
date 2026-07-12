@@ -114,11 +114,12 @@ export default function BookConsultation({ onAwardPoints, onAddLeadSimulated, us
   const [cardCvv, setCardCvv] = useState("");
   const [bookingConfirmed, setBookingConfirmed] = useState(false);
   const [discountApplied, setDiscountApplied] = useState(false);
+  const [coordinationMethod, setCoordinationMethod] = useState("WhatsApp");
 
   const handlePlanClick = (plan: any) => {
     if (plan.id === "free") {
       // Free plan opens whatsapp immediately!
-      const waUrl = `https://wa.me/919999999999?text=${encodeURIComponent("Hi Amrish, I want to book a Free 10-Min WhatsApp discovery call from AskAmrish.com.")}`;
+      const waUrl = `https://wa.me/918318114492?text=${encodeURIComponent("Hi Amrish, I want to book a Free 10-Min WhatsApp discovery call from AskAmrish.com.")}`;
       window.open(waUrl, "_blank");
       onAwardPoints(plan.xpReward, "Unlocked Free WhatsApp Consulting Session");
       return;
@@ -155,6 +156,11 @@ export default function BookConsultation({ onAwardPoints, onAddLeadSimulated, us
     onAddLeadSimulated(newLead);
     setBookingConfirmed(true);
     
+    // Automatically trigger WhatsApp thread for coordination!
+    const waMsg = `Hi Amrish, I just scheduled a ${selectedPlan.title} (${selectedPlan.duration}) on AskAmrish.com.\n\nDetails:\n- Name: ${bookingName}\n- Email: ${bookingEmail}\n- Phone: ${bookingPhone}\n- Date/Time: ${bookingDate} at ${bookingTime}\n- Coordination: ${coordinationMethod}\n- Price: ${actualPrice}`;
+    const waUrl = `https://wa.me/918318114492?text=${encodeURIComponent(waMsg)}`;
+    window.open(waUrl, "_blank");
+
     // Award the user hefty gamification XP!
     onAwardPoints(selectedPlan.xpReward, `Successfully booked ${selectedPlan.title}`);
 
@@ -366,7 +372,7 @@ export default function BookConsultation({ onAwardPoints, onAddLeadSimulated, us
                       required
                       value={bookingPhone}
                       onChange={(e) => setBookingPhone(e.target.value)}
-                      placeholder="e.g. +91 99999 99999"
+                      placeholder="e.g. +91 831 811 4492"
                       className="w-full bg-neutral-50 border border-neutral-250 focus:border-neutral-900 outline-none rounded-xl px-3.5 py-2.5 text-xs text-neutral-900"
                     />
                   </div>
@@ -395,19 +401,19 @@ export default function BookConsultation({ onAwardPoints, onAddLeadSimulated, us
                   </div>
                 </div>
 
-                {/* Right Panel: Payment & Discount */}
+                {/* Right Panel: Coordination & Discount */}
                 <div className="space-y-4 border-t md:border-t-0 md:border-l border-neutral-100 pt-4 md:pt-0 md:pl-4 flex flex-col justify-between">
                   <div className="space-y-4">
                     <h4 className="text-xs font-mono font-black uppercase text-neutral-400 tracking-wider">
-                      💳 Mock Checkout
+                      💬 Booking Coordination &amp; Verification
                     </h4>
 
                     {/* Gamification Points discount redemption option */}
                     {userPoints >= 300 && !discountApplied ? (
-                      <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl space-y-1.5">
+                      <div className="p-3 bg-amber-50/70 border border-amber-200 rounded-xl space-y-1.5">
                         <div className="flex items-center justify-between">
                           <span className="text-[10px] font-bold text-amber-800 flex items-center gap-1">
-                            <Zap size={11} fill="currentColor" />
+                            <Zap size={11} fill="currentColor" className="text-amber-500" />
                             <span>Redeem 300 XP for Discount</span>
                           </span>
                           <span className="text-[10px] font-mono font-bold text-amber-700">Save ₹500</span>
@@ -431,43 +437,32 @@ export default function BookConsultation({ onAwardPoints, onAddLeadSimulated, us
                     ) : null}
 
                     <div className="space-y-1">
-                      <label className="text-[10px] font-mono font-bold uppercase text-neutral-500">Mock Card Number</label>
-                      <input
-                        type="text"
-                        value={cardNumber}
-                        onChange={(e) => setCardNumber(e.target.value)}
-                        placeholder="4111 2222 3333 4444 (Simulated)"
-                        className="w-full bg-neutral-50 border border-neutral-250 focus:border-neutral-900 outline-none rounded-xl px-3.5 py-2.5 text-xs text-neutral-900"
-                      />
+                      <label className="text-[10px] font-mono font-bold uppercase text-neutral-500">Coordination Channel *</label>
+                      <select
+                        value={coordinationMethod}
+                        onChange={(e) => setCoordinationMethod(e.target.value)}
+                        className="w-full bg-neutral-50 border border-neutral-250 focus:border-neutral-900 outline-none rounded-xl px-3 py-2 text-xs font-semibold text-neutral-800"
+                      >
+                        <option value="WhatsApp">Direct WhatsApp Chat (+91 831 811 4492)</option>
+                        <option value="Phone Call">Direct Voice Call from Amrish</option>
+                        <option value="Email">Email Calendar Link &amp; Details</option>
+                      </select>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="space-y-1">
-                        <label className="text-[10px] font-mono font-bold uppercase text-neutral-500">Expiry</label>
-                        <input
-                          type="text"
-                          value={cardExpiry}
-                          onChange={(e) => setCardExpiry(e.target.value)}
-                          placeholder="MM/YY"
-                          className="w-full bg-neutral-50 border border-neutral-250 focus:border-neutral-900 outline-none rounded-xl px-3 py-2 text-xs text-neutral-900"
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <label className="text-[10px] font-mono font-bold uppercase text-neutral-500">CVV</label>
-                        <input
-                          type="password"
-                          value={cardCvv}
-                          onChange={(e) => setCardCvv(e.target.value)}
-                          placeholder="***"
-                          className="w-full bg-neutral-50 border border-neutral-250 focus:border-neutral-900 outline-none rounded-xl px-3 py-2 text-xs text-neutral-900"
-                        />
-                      </div>
+                    <div className="p-3.5 bg-neutral-50 border border-neutral-150 rounded-2xl text-[11px] text-neutral-600 leading-relaxed space-y-1.5">
+                      <p className="font-extrabold text-neutral-800 flex items-center gap-1">
+                        <Shield size={12} className="text-emerald-600" />
+                        <span>Frictionless Booking:</span>
+                      </p>
+                      <p>
+                        No credit cards required! Confirming your slot instantly logs the request in Amrish's CRM Console. We will coordinate payment (UPI/GPay/Transfer) directly.
+                      </p>
                     </div>
                   </div>
 
                   <div className="pt-4 space-y-2">
                     <div className="flex items-center justify-between text-xs font-bold text-neutral-800 px-1 font-mono">
-                      <span>Total Amount:</span>
+                      <span>Course Member Price:</span>
                       <span>
                         {discountApplied
                           ? `₹${Math.max(0, parseInt(selectedPlan.price.replace(/[^\d]/g, "")) - 500)}`
@@ -477,10 +472,10 @@ export default function BookConsultation({ onAwardPoints, onAddLeadSimulated, us
 
                     <button
                       type="submit"
-                      className="w-full py-3 bg-neutral-900 hover:bg-neutral-805 text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5"
+                      className="w-full py-3 bg-neutral-900 hover:bg-neutral-805 text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
                     >
-                      <CreditCard size={14} />
-                      <span>Complete Mock Payment</span>
+                      <PhoneCall size={14} className="text-emerald-400" />
+                      <span>Confirm &amp; WhatsApp Amrish (+XP)</span>
                     </button>
                   </div>
                 </div>

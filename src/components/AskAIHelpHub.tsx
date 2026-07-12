@@ -313,7 +313,7 @@ export default function AskAIHelpHub({ onAwardPoints, onNavigateTab, onAddLeadSi
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
                 <a
-                  href={`https://wa.me/919999999999?text=${encodeURIComponent(`Hi Amrish, I am learning on AskAmrish.com and wanted to ask about: ${chatHistory[chatHistory.length - 2]?.text || "SEO & Career Growth"}`)}`}
+                  href={`https://wa.me/918318114492?text=${encodeURIComponent(`Hi Amrish, I am learning on AskAmrish.com and wanted to ask about: ${chatHistory[chatHistory.length - 2]?.text || "SEO & Career Growth"}`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => onAwardPoints(15, "Initiated WhatsApp consultation")}

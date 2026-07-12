@@ -137,7 +137,7 @@ export default function FloatingAskButton({ onAwardPoints, onNavigateTab }: Floa
           {/* Escalated CTA Buttons */}
           <div className="px-4 py-2 bg-amber-50/60 border-t border-neutral-150 flex items-center justify-between gap-2">
             <a
-              href="https://wa.me/919999999999"
+              href="https://wa.me/918318114492"
               target="_blank"
               rel="noreferrer"
               onClick={() => onAwardPoints(15, "Initiated WhatsApp chat via float widget")}

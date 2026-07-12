@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from "react";
-import { UserProgress, Level, CustomCourse, ChecklistItem, MasteryAward } from "./types";
+import { UserProgress, Level, CustomCourse, ChecklistItem, MasteryAward, UserProfile } from "./types";
 import { INITIAL_TRACKS, MASTER_LEVELS } from "./data/checklist";
 import { getAllLevels, getAllTracks } from "./data/coursesData";
 import Dashboard from "./components/Dashboard";
@@ -19,15 +19,47 @@ import BookConsultation from "./components/BookConsultation";
 import AskCommunity from "./components/AskCommunity";
 import GamificationRewards from "./components/GamificationRewards";
 import FloatingAskButton from "./components/FloatingAskButton";
+import { LockedTabScreen, GoogleLoginModal, UserProfileModal } from "./components/UserProfileSystem";
 import { 
   BookOpen, Award, LayoutDashboard, Layers, Sparkles, 
   Settings, Flame, CheckCircle, RefreshCw, Star, ArrowRight,
-  AlertTriangle, Linkedin, Shield, MessageSquare, Gift, Users, Calendar, Trophy
+  AlertTriangle, Linkedin, Shield, MessageSquare, Gift, Users, Calendar, Trophy, Key
 } from "lucide-react";
 
 export default function App() {
   // --- STATE LAYER WITH PERSISTED MEMORY DEFAULTS ---
   const [activeTab, setActiveTab ] = useState<"dashboard" | "curriculum" | "quiz" | "creator" | "details" | "crm" | "help" | "consultation" | "community" | "rewards">("dashboard");
+  
+  // Custom user session state
+  const [currentUser, setCurrentUser] = useState<UserProfile>(() => {
+    const saved = localStorage.getItem("lms_current_user");
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        // ignore
+      }
+    }
+    return {
+      isLoggedIn: false,
+      name: "",
+      email: "",
+      phone: "",
+      role: "Student",
+      linkedin: "",
+      avatarUrl: "",
+      isAdmin: false
+    };
+  });
+
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const [profileModalOpen, setProfileModalOpen] = useState(false);
+  const [suggestedLoginEmail, setSuggestedLoginEmail] = useState("");
+
+  useEffect(() => {
+    localStorage.setItem("lms_current_user", JSON.stringify(currentUser));
+  }, [currentUser]);
+
   const [selectedTrackId, setSelectedTrackId] = useState<string>("all");
   const [selectedLevelId, setSelectedLevelId] = useState<number | string | null>(null);
   const [isLeadModalOpen, setIsLeadModalOpen] = useState(false);
@@ -567,6 +599,33 @@ export default function App() {
                 <span>Hire Consultation</span>
               </button>
 
+              {/* Dynamic User Profile / Google Sign-In widget */}
+              {currentUser.isLoggedIn ? (
+                <button
+                  onClick={() => setProfileModalOpen(true)}
+                  className="px-2.5 py-1.5 bg-neutral-100 hover:bg-neutral-150 border border-neutral-250 rounded-xl text-[10px] sm:text-xs font-bold text-neutral-800 transition-all flex items-center gap-1.5 cursor-pointer hover:scale-[1.02]"
+                >
+                  <img src={currentUser.avatarUrl} alt={currentUser.name} referrerPolicy="no-referrer" className="w-4 h-4 rounded" />
+                  <span className="max-w-[70px] sm:max-w-[110px] truncate">{currentUser.name}</span>
+                  {currentUser.isAdmin && (
+                    <span className="px-1 py-0.2 bg-amber-500 text-neutral-950 text-[6.5px] font-mono font-black rounded uppercase">
+                      Admin
+                    </span>
+                  )}
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    setSuggestedLoginEmail("");
+                    setLoginModalOpen(true);
+                  }}
+                  className="px-2.5 py-1.5 bg-white hover:bg-neutral-50 border border-neutral-200 rounded-xl text-[10px] sm:text-xs font-bold text-neutral-700 transition-all flex items-center gap-1.5 cursor-pointer shadow-3xs hover:scale-[1.02]"
+                >
+                  <span className="w-3.5 h-3.5 bg-neutral-950 text-white rounded flex items-center justify-center font-bold text-[8.5px]">G</span>
+                  <span>Connect Gmail</span>
+                </button>
+              )}
+
               {/* Reset App */}
               <button
                 onClick={handleResetApp}
@@ -763,7 +822,31 @@ export default function App() {
           )}
 
           {activeTab === "crm" && (
-            <CRMConsole onClose={() => setActiveTab("dashboard")} />
+            currentUser.isAdmin ? (
+              <CRMConsole onClose={() => setActiveTab("dashboard")} />
+            ) : (
+              <div className="p-8 md:p-12 bg-white border border-neutral-200 rounded-3xl shadow-xs max-w-xl mx-auto text-center space-y-6">
+                <div className="w-16 h-16 bg-neutral-900 text-white rounded-2xl flex items-center justify-center mx-auto shadow-md">
+                  <Shield size={28} className="text-amber-500 animate-pulse" />
+                </div>
+                <div className="space-y-2">
+                  <h2 className="text-lg font-sans font-black text-neutral-900 tracking-tight">Admin Authentication Required</h2>
+                  <p className="text-xs text-neutral-500 leading-relaxed max-w-md mx-auto">
+                    The Leads CRM console is locked. Only Amrish Kumar Singh (Global Administrator) can view inbound client leads, coordinate proposals, and audit study histories.
+                  </p>
+                </div>
+                <button
+                  onClick={() => {
+                    setSuggestedLoginEmail("amrish.singh01@gmail.com");
+                    setLoginModalOpen(true);
+                  }}
+                  className="px-5 py-2.5 bg-neutral-900 hover:bg-neutral-805 text-white text-xs font-bold rounded-xl transition-all shadow-md flex items-center gap-2 mx-auto cursor-pointer hover:scale-[1.02]"
+                >
+                  <Key size={13} className="text-amber-400" />
+                  <span>Authenticate Admin Account</span>
+                </button>
+              </div>
+            )
           )}
 
           {activeTab === "help" && (
@@ -777,28 +860,42 @@ export default function App() {
             />
           )}
 
-          {activeTab === "consultation" && (
-            <BookConsultation
-              onAwardPoints={handleAwardPoints}
-              onAddLeadSimulated={handleAddLeadSimulated}
-              userPoints={userPoints}
+          {/* User Auth Protected Tabs */}
+          {(!currentUser.isLoggedIn && (activeTab === "consultation" || activeTab === "community" || activeTab === "rewards")) ? (
+            <LockedTabScreen 
+              tabName={activeTab} 
+              onInitiateLogin={() => {
+                setSuggestedLoginEmail("");
+                setLoginModalOpen(true);
+              }} 
             />
-          )}
+          ) : (
+            <>
+              {activeTab === "consultation" && (
+                <BookConsultation
+                  onAwardPoints={handleAwardPoints}
+                  onAddLeadSimulated={handleAddLeadSimulated}
+                  userPoints={userPoints}
+                />
+              )}
 
-          {activeTab === "community" && (
-            <AskCommunity
-              onAwardPoints={handleAwardPoints}
-              userPoints={userPoints}
-            />
-          )}
+              {activeTab === "community" && (
+                <AskCommunity
+                  onAwardPoints={handleAwardPoints}
+                  userPoints={userPoints}
+                  currentUser={currentUser}
+                />
+              )}
 
-          {activeTab === "rewards" && (
-            <GamificationRewards
-              userPoints={userPoints}
-              streakCount={streakCount}
-              onAwardPoints={handleAwardPoints}
-              pointLogs={pointLogs}
-            />
+              {activeTab === "rewards" && (
+                <GamificationRewards
+                  userPoints={userPoints}
+                  streakCount={streakCount}
+                  onAwardPoints={handleAwardPoints}
+                  pointLogs={pointLogs}
+                />
+              )}
+            </>
           )}
         </div>
       </main>
@@ -913,6 +1010,46 @@ export default function App() {
         isOpen={isLeadModalOpen} 
         onClose={() => setIsLeadModalOpen(false)} 
       />
+
+      {/* Google Sign-In Account Selection Overlay */}
+      {loginModalOpen && (
+        <GoogleLoginModal
+          suggestedEmail={suggestedLoginEmail}
+          onClose={() => setLoginModalOpen(false)}
+          onLoginSuccess={(user) => {
+            setCurrentUser(user);
+            handleAwardPoints(25, `Authenticated account as ${user.name}`);
+            if (user.isAdmin) {
+              setActiveTab("crm");
+            }
+          }}
+        />
+      )}
+
+      {/* User Profile detailed parameters management */}
+      {profileModalOpen && (
+        <UserProfileModal
+          user={currentUser}
+          onClose={() => setProfileModalOpen(false)}
+          onUpdateUser={(updatedUser) => {
+            setCurrentUser(updatedUser);
+            handleAwardPoints(5, "Updated profile parameters");
+          }}
+          onLogout={() => {
+            setCurrentUser({
+              isLoggedIn: false,
+              name: "",
+              email: "",
+              phone: "",
+              role: "Student",
+              linkedin: "",
+              avatarUrl: "",
+              isAdmin: false
+            });
+            setActiveTab("dashboard");
+          }}
+        />
+      )}
 
       {/* Global Floating Help Bubble */}
       <FloatingAskButton

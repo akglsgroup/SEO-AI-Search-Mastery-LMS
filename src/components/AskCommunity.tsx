@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { MessageSquare, ThumbsUp, Send, Search, Users, Sparkles, HelpCircle, AlertCircle, CheckCircle } from "lucide-react";
+import { UserProfile } from "../types";
 
 interface CommunityQuestion {
   id: string;
@@ -22,6 +23,7 @@ interface CommunityQuestion {
 interface AskCommunityProps {
   onAwardPoints: (points: number, reason: string) => void;
   userPoints: number;
+  currentUser?: UserProfile;
 }
 
 const INITIAL_COMMUNITY_QUESTIONS: CommunityQuestion[] = [
@@ -81,7 +83,7 @@ const INITIAL_COMMUNITY_QUESTIONS: CommunityQuestion[] = [
   }
 ];
 
-export default function AskCommunity({ onAwardPoints, userPoints }: AskCommunityProps) {
+export default function AskCommunity({ onAwardPoints, userPoints, currentUser }: AskCommunityProps) {
   const [questions, setQuestions] = useState<CommunityQuestion[]>(() => {
     const saved = localStorage.getItem("lms_community_questions");
     return saved ? JSON.parse(saved) : INITIAL_COMMUNITY_QUESTIONS;
@@ -138,8 +140,8 @@ export default function AskCommunity({ onAwardPoints, userPoints }: AskCommunity
       id: `q-${Date.now()}`,
       title: newTitle.trim(),
       category: newCategory,
-      author: "Verified Student",
-      role: "SEO Apprentice",
+      author: currentUser?.name || "Verified Student",
+      role: currentUser?.role || "SEO Apprentice",
       content: newContent.trim(),
       votes: 1,
       voted: true,
@@ -161,8 +163,8 @@ export default function AskCommunity({ onAwardPoints, userPoints }: AskCommunity
     if (!replyText.trim() || !selectedQuestion) return;
 
     const newReply = {
-      author: "Verified Apprentice",
-      isAmrish: false,
+      author: currentUser?.name || "Verified Apprentice",
+      isAmrish: currentUser?.isAdmin || false,
       content: replyText.trim(),
       createdAt: new Date().toISOString()
     };

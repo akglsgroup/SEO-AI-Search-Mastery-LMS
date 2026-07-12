@@ -111,3 +111,15 @@ export interface DynamicLesson {
   content: LessonContent;
 }
 
+export interface UserProfile {
+  isLoggedIn: boolean;
+  name: string;
+  email: string;
+  phone: string;
+  role: string;
+  linkedin: string;
+  avatarUrl: string;
+  isAdmin: boolean;
+}
+
+
