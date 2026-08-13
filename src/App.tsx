@@ -18,6 +18,7 @@ import AskAIHelpHub from "./components/AskAIHelpHub";
 import BookConsultation from "./components/BookConsultation";
 import AskCommunity from "./components/AskCommunity";
 import GamificationRewards from "./components/GamificationRewards";
+import TermsGlossary from "./components/TermsGlossary";
 import FloatingAskButton from "./components/FloatingAskButton";
 import { LockedTabScreen, GoogleLoginModal, UserProfileModal } from "./components/UserProfileSystem";
 import { 
@@ -32,7 +33,7 @@ import { loadUserProgressFromFirestore, syncUserProfileToFirestore, submitLeadTo
 
 export default function App() {
   // --- STATE LAYER WITH PERSISTED MEMORY DEFAULTS ---
-  const [activeTab, setActiveTab ] = useState<"dashboard" | "curriculum" | "quiz" | "creator" | "details" | "crm" | "help" | "consultation" | "community" | "rewards">("dashboard");
+  const [activeTab, setActiveTab ] = useState<"dashboard" | "curriculum" | "quiz" | "creator" | "details" | "crm" | "help" | "consultation" | "community" | "rewards" | "glossary">("dashboard");
   
   // Custom user session state
   const [currentUser, setCurrentUser] = useState<UserProfile>(() => {
@@ -784,6 +785,18 @@ export default function App() {
               </button>
 
               <button
+                onClick={() => setActiveTab("glossary")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-sans font-bold transition-all duration-150 whitespace-nowrap cursor-pointer flex items-center gap-1 ${
+                  activeTab === "glossary"
+                    ? "bg-white text-emerald-950 shadow-sm border border-emerald-300 font-extrabold"
+                    : "text-neutral-500 hover:text-neutral-900 hover:bg-white/45"
+                }`}
+              >
+                <BookOpen size={12} className="text-emerald-600" />
+                <span>📖 Terms Taxonomy &amp; Tests</span>
+              </button>
+
+              <button
                 onClick={() => setActiveTab("quiz")}
                 className={`px-3 py-1.5 rounded-lg text-xs font-sans font-bold transition-all duration-150 whitespace-nowrap cursor-pointer flex items-center gap-1 ${
                   activeTab === "quiz"
@@ -915,6 +928,13 @@ export default function App() {
                 </button>
               </div>
             )
+          )}
+
+          {activeTab === "glossary" && (
+            <TermsGlossary
+              onAwardPoints={handleAwardPoints}
+              userPoints={userPoints}
+            />
           )}
 
           {activeTab === "help" && (
