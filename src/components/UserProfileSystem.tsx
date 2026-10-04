@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { UserProfile } from "../types";
 import { 
   Lock, Mail, User, Phone, Linkedin, LogOut, Sparkles, 
@@ -84,6 +85,19 @@ export function GoogleLoginModal({ onClose, onLoginSuccess, suggestedEmail }: Go
     actionableDomain?: string;
   } | null>(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [onClose]);
 
   const handleGoogleSignIn = async () => {
     setLoading(true);
@@ -188,30 +202,47 @@ export function GoogleLoginModal({ onClose, onLoginSuccess, suggestedEmail }: Go
     onClose();
   };
 
-  return (
-    <div className="fixed inset-0 bg-neutral-900/60 backdrop-blur-xs flex items-center justify-center z-55 p-4 animate-fade-in" id="google-login-modal">
-      <div className="bg-white rounded-3xl border border-neutral-200 shadow-xl max-w-md w-full overflow-hidden flex flex-col">
-        
-        {/* Header decoration */}
-        <div className="p-5 border-b border-neutral-100 bg-neutral-50/50 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-5 bg-neutral-900 text-white rounded-md flex items-center justify-center font-bold text-xs">
-              G
+  return createPortal(
+    <div 
+      className="fixed inset-0 z-[9999] overflow-y-auto" 
+      id="google-login-modal"
+      role="dialog"
+      aria-modal="true"
+    >
+      {/* Backdrop */}
+      <div 
+        className="fixed inset-0 bg-neutral-950/70 backdrop-blur-sm transition-opacity" 
+        onClick={onClose}
+        aria-hidden="true"
+      />
+
+      {/* Centering wrapper */}
+      <div className="flex min-h-full items-center justify-center p-3 sm:p-4 text-center">
+        <div 
+          className="relative w-full max-w-md transform overflow-hidden rounded-3xl bg-white text-left shadow-2xl transition-all border border-neutral-200 flex flex-col my-4 sm:my-8 max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-4rem)] animate-scale-up"
+          onClick={(e) => e.stopPropagation()}
+        >
+          
+          {/* Header decoration */}
+          <div className="p-5 border-b border-neutral-100 bg-neutral-50/50 flex items-center justify-between shrink-0">
+            <div className="flex items-center gap-2">
+              <div className="w-5 h-5 bg-neutral-900 text-white rounded-md flex items-center justify-center font-bold text-xs">
+                G
+              </div>
+              <span className="text-[11px] font-mono font-extrabold text-neutral-400 uppercase tracking-wider">
+                Google Account Gateway
+              </span>
             </div>
-            <span className="text-[11px] font-mono font-extrabold text-neutral-400 uppercase tracking-wider">
-              Google Account Gateway
-            </span>
+            <button 
+              onClick={onClose} 
+              className="text-neutral-400 hover:text-neutral-700 font-bold text-xs cursor-pointer p-1"
+            >
+              ✕
+            </button>
           </div>
-          <button 
-            onClick={onClose} 
-            className="text-neutral-400 hover:text-neutral-700 font-bold text-xs"
-          >
-            ✕
-          </button>
-        </div>
 
         {step === 1 ? (
-          <div className="p-6 space-y-5">
+          <div className="p-6 space-y-5 overflow-y-auto">
             <div className="text-center space-y-1">
               <h3 className="text-base font-extrabold text-neutral-900">Sign In to AskAmrish LMS</h3>
               <p className="text-[11px] text-neutral-500">Sync syllabus progress, preserve certifications & access admin tools</p>
@@ -457,8 +488,10 @@ export function GoogleLoginModal({ onClose, onLoginSuccess, suggestedEmail }: Go
             </div>
           </form>
         )}
+        </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
@@ -476,6 +509,19 @@ export function UserProfileModal({ user, onClose, onLogout, onUpdateUser }: User
   const [role, setRole] = useState(user.role);
   const [isSaved, setIsSaved] = useState(false);
 
+  useEffect(() => {
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [onClose]);
+
   const handleUpdate = (e: React.FormEvent) => {
     e.preventDefault();
     onUpdateUser({
@@ -492,25 +538,42 @@ export function UserProfileModal({ user, onClose, onLogout, onUpdateUser }: User
     }, 1500);
   };
 
-  return (
-    <div className="fixed inset-0 bg-neutral-900/60 backdrop-blur-xs flex items-center justify-center z-55 p-4 animate-fade-in" id="user-profile-modal">
-      <div className="bg-white rounded-3xl border border-neutral-200 shadow-xl max-w-md w-full overflow-hidden flex flex-col">
-        <div className="p-5 border-b border-neutral-100 bg-neutral-50/50 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-base">👤</span>
-            <span className="text-[11px] font-mono font-extrabold text-neutral-400 uppercase tracking-wider">
-              Manage Detailed Profile
-            </span>
-          </div>
-          <button 
-            onClick={onClose} 
-            className="text-neutral-400 hover:text-neutral-700 font-bold text-xs"
-          >
-            ✕
-          </button>
-        </div>
+  return createPortal(
+    <div 
+      className="fixed inset-0 z-[9999] overflow-y-auto" 
+      id="user-profile-modal"
+      role="dialog"
+      aria-modal="true"
+    >
+      {/* Backdrop */}
+      <div 
+        className="fixed inset-0 bg-neutral-950/70 backdrop-blur-sm transition-opacity" 
+        onClick={onClose}
+        aria-hidden="true"
+      />
 
-        <form onSubmit={handleUpdate} className="p-6 space-y-4">
+      {/* Centering wrapper */}
+      <div className="flex min-h-full items-center justify-center p-3 sm:p-4 text-center">
+        <div 
+          className="relative w-full max-w-md transform overflow-hidden rounded-3xl bg-white text-left shadow-2xl transition-all border border-neutral-200 flex flex-col my-4 sm:my-8 max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-4rem)] animate-scale-up"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="p-5 border-b border-neutral-100 bg-neutral-50/50 flex items-center justify-between shrink-0">
+            <div className="flex items-center gap-2">
+              <span className="text-base">👤</span>
+              <span className="text-[11px] font-mono font-extrabold text-neutral-400 uppercase tracking-wider">
+                Manage Detailed Profile
+              </span>
+            </div>
+            <button 
+              onClick={onClose} 
+              className="text-neutral-400 hover:text-neutral-700 font-bold text-xs cursor-pointer p-1"
+            >
+              ✕
+            </button>
+          </div>
+
+          <form onSubmit={handleUpdate} className="p-6 space-y-4 overflow-y-auto">
           <div className="flex items-center gap-4 bg-neutral-50 border border-neutral-150 p-3.5 rounded-2xl">
             <img 
               src={user.avatarUrl} 
@@ -609,7 +672,9 @@ export function UserProfileModal({ user, onClose, onLogout, onUpdateUser }: User
             </button>
           </div>
         </form>
+        </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

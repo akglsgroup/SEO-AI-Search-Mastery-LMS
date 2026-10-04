@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { UserProgress, Level, CustomCourse, ChecklistItem, MasteryAward, UserProfile } from "./types";
 import { INITIAL_TRACKS, MASTER_LEVELS } from "./data/checklist";
 import { getAllLevels, getAllTracks } from "./data/coursesData";
@@ -445,6 +446,22 @@ export default function App() {
       }
     }
   }, []);
+
+  // Prevent body scroll when confirmation modal is open
+  useEffect(() => {
+    if (confirmModal.isOpen) {
+      const prevOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "Escape") setConfirmModal(prev => ({ ...prev, isOpen: false }));
+      };
+      window.addEventListener("keydown", handleKeyDown);
+      return () => {
+        document.body.style.overflow = prevOverflow;
+        window.removeEventListener("keydown", handleKeyDown);
+      };
+    }
+  }, [confirmModal.isOpen]);
 
   // Synchronize user progress metrics to Firestore in real-time
   useEffect(() => {
@@ -1047,41 +1064,60 @@ export default function App() {
       </footer>
 
       {/* Custom Confirmation Modal Portal overlay */}
-      {confirmModal.isOpen && (
-        <div className="fixed inset-0 bg-neutral-900/60 backdrop-blur-xs flex items-center justify-center z-50 p-4 animate-fade-in" id="confirm-modal">
-          <div className="bg-white rounded-2xl border border-neutral-200 shadow-xl max-w-md w-full p-6 space-y-4 animate-scale-up">
-            <div className="flex items-start gap-3">
-              <div className="p-2.5 bg-red-50 text-red-600 rounded-xl border border-red-100 shrink-0">
-                <AlertTriangle size={20} />
+      {confirmModal.isOpen && createPortal(
+        <div 
+          className="fixed inset-0 z-[9999] overflow-y-auto" 
+          id="confirm-modal"
+          role="dialog"
+          aria-modal="true"
+        >
+          {/* Backdrop */}
+          <div 
+            className="fixed inset-0 bg-neutral-950/70 backdrop-blur-sm transition-opacity" 
+            onClick={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}
+            aria-hidden="true"
+          />
+
+          {/* Centering wrapper */}
+          <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-6">
+            <div 
+              className="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left shadow-2xl transition-all border border-neutral-200 space-y-4 my-8 animate-scale-up"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-start gap-3">
+                <div className="p-2.5 bg-red-50 text-red-600 rounded-xl border border-red-100 shrink-0">
+                  <AlertTriangle size={20} />
+                </div>
+                <div className="space-y-1.5 flex-1">
+                  <h3 className="font-sans font-extrabold text-neutral-900 text-base leading-snug">
+                    {confirmModal.title}
+                  </h3>
+                  <p className="text-xs text-neutral-500 leading-relaxed">
+                    {confirmModal.message}
+                  </p>
+                </div>
               </div>
-              <div className="space-y-1.5 flex-1">
-                <h3 className="font-sans font-extrabold text-neutral-900 text-base leading-snug">
-                  {confirmModal.title}
-                </h3>
-                <p className="text-xs text-neutral-500 leading-relaxed">
-                  {confirmModal.message}
-                </p>
+              
+              <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-neutral-100">
+                <button
+                  type="button"
+                  onClick={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}
+                  className="px-4 py-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 rounded-xl text-xs font-sans font-semibold transition-all cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={confirmModal.onConfirm}
+                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-sans font-bold transition-all shadow-sm cursor-pointer"
+                >
+                  {confirmModal.confirmText || "Confirm"}
+                </button>
               </div>
-            </div>
-            
-            <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-neutral-100">
-              <button
-                type="button"
-                onClick={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}
-                className="px-4 py-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 rounded-xl text-xs font-sans font-semibold transition-all cursor-pointer"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={confirmModal.onConfirm}
-                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-sans font-bold transition-all shadow-sm cursor-pointer"
-              >
-                {confirmModal.confirmText || "Confirm"}
-              </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* 🏆 Full-screen Celebratory Mastery Award Overlay */}

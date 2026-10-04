@@ -738,14 +738,18 @@ export function LeadFormModal({ isOpen, onClose, onSubmitSuccess }: LeadFormModa
 
   useEffect(() => {
     if (isOpen) {
+      const prevOverflow = document.body.style.overflow;
       document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "Escape") onClose();
+      };
+      window.addEventListener("keydown", handleKeyDown);
+      return () => {
+        document.body.style.overflow = prevOverflow;
+        window.removeEventListener("keydown", handleKeyDown);
+      };
     }
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [isOpen]);
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
@@ -804,24 +808,41 @@ export function LeadFormModal({ isOpen, onClose, onSubmitSuccess }: LeadFormModa
   };
 
   return createPortal(
-    <div className="fixed inset-0 bg-neutral-900/75 backdrop-blur-xs flex items-center justify-center z-50 p-4 animate-fade-in" id="lead-form-modal">
-      <div className="bg-white rounded-2xl border border-neutral-150 shadow-2xl max-w-lg w-full overflow-hidden animate-scale-up text-neutral-900 flex flex-col max-h-[95vh] sm:max-h-[90vh]">
-        
-        {/* Aesthetic design top stripe banner */}
-        <div className="bg-neutral-50 px-6 py-4.5 text-neutral-900 border-b border-neutral-150 flex items-center justify-between shrink-0">
-          <div className="space-y-0.5">
-            <span className="text-[9px] font-mono font-bold tracking-widest text-emerald-700 uppercase">Consultant Engagement Request</span>
-            <h3 className="font-sans font-extrabold text-sm sm:text-base leading-none">
-              Work Directly With Amrish
-            </h3>
+    <div 
+      className="fixed inset-0 z-[9999] overflow-y-auto" 
+      id="lead-form-modal"
+      role="dialog"
+      aria-modal="true"
+    >
+      {/* Backdrop */}
+      <div 
+        className="fixed inset-0 bg-neutral-950/70 backdrop-blur-sm transition-opacity" 
+        onClick={onClose}
+        aria-hidden="true"
+      />
+
+      {/* Centering wrapper */}
+      <div className="flex min-h-full items-center justify-center p-3 sm:p-4 text-center">
+        <div 
+          className="relative w-full max-w-lg transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all border border-neutral-150 text-neutral-900 flex flex-col my-4 sm:my-8 max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-4rem)] animate-scale-up"
+          onClick={(e) => e.stopPropagation()}
+        >
+          
+          {/* Aesthetic design top stripe banner */}
+          <div className="bg-neutral-50 px-6 py-4.5 text-neutral-900 border-b border-neutral-150 flex items-center justify-between shrink-0">
+            <div className="space-y-0.5">
+              <span className="text-[9px] font-mono font-bold tracking-widest text-emerald-700 uppercase">Consultant Engagement Request</span>
+              <h3 className="font-sans font-extrabold text-sm sm:text-base leading-none">
+                Work Directly With Amrish
+              </h3>
+            </div>
+            <button
+              onClick={onClose}
+              className="text-neutral-500 hover:text-neutral-900 transition-all text-xs font-mono p-1 bg-neutral-100 rounded-md border border-neutral-200 cursor-pointer"
+            >
+              Esc
+            </button>
           </div>
-          <button
-            onClick={onClose}
-            className="text-neutral-500 hover:text-neutral-900 transition-all text-xs font-mono p-1 bg-neutral-100 rounded-md border border-neutral-200 cursor-pointer"
-          >
-            Esc
-          </button>
-        </div>
 
         {!isSuccess ? (
           <form onSubmit={handleSubmit} className="p-5 sm:p-6 space-y-4 overflow-y-auto flex-1 scrollbar-none">
@@ -1030,6 +1051,7 @@ export function LeadFormModal({ isOpen, onClose, onSubmitSuccess }: LeadFormModa
           </div>
         )}
 
+        </div>
       </div>
     </div>,
     document.body

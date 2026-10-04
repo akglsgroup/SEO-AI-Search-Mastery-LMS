@@ -3,7 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { UserProfile, Level, CustomCourse, MasteryAward } from "../types";
 import { 
   SYLLABUS_TIERS, 
@@ -54,6 +55,21 @@ export default function StudentDashboard({
 }: StudentDashboardProps) {
   const [activeSubTab, setActiveSubTab] = useState<"syllabus" | "tracks" | "quizzes" | "awards">("syllabus");
   const [viewingAward, setViewingAward] = useState<{ title: string; category: string; date: string } | null>(null);
+
+  useEffect(() => {
+    if (viewingAward) {
+      const prevOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "Escape") setViewingAward(null);
+      };
+      window.addEventListener("keydown", handleKeyDown);
+      return () => {
+        document.body.style.overflow = prevOverflow;
+        window.removeEventListener("keydown", handleKeyDown);
+      };
+    }
+  }, [viewingAward]);
 
   const tracks = getAllTracks();
 
@@ -785,58 +801,77 @@ export default function StudentDashboard({
       )}
 
       {/* 7. Certificate Credential Modal */}
-      {viewingAward && (
-        <div className="fixed inset-0 bg-neutral-900/60 backdrop-blur-xs flex items-center justify-center z-50 p-4 animate-fade-in" id="certificate-modal">
-          <div className="bg-white rounded-3xl border border-neutral-200 shadow-2xl max-w-xl w-full p-8 text-center space-y-6 relative overflow-hidden">
-            <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-emerald-500 via-amber-400 to-indigo-500"></div>
+      {viewingAward && createPortal(
+        <div 
+          className="fixed inset-0 z-[9999] overflow-y-auto" 
+          id="certificate-modal"
+          role="dialog"
+          aria-modal="true"
+        >
+          {/* Backdrop */}
+          <div 
+            className="fixed inset-0 bg-neutral-950/70 backdrop-blur-sm transition-opacity" 
+            onClick={() => setViewingAward(null)}
+            aria-hidden="true"
+          />
 
-            <button 
-              type="button"
-              onClick={() => setViewingAward(null)}
-              className="absolute top-5 right-5 text-neutral-400 hover:text-neutral-700 font-bold text-sm cursor-pointer"
+          {/* Centering wrapper */}
+          <div className="flex min-h-full items-center justify-center p-3 sm:p-4 text-center">
+            <div 
+              className="relative w-full max-w-xl transform overflow-hidden rounded-3xl bg-white p-6 sm:p-8 text-center space-y-6 shadow-2xl transition-all border border-neutral-200 my-4 sm:my-8 max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-4rem)] overflow-y-auto animate-scale-up"
+              onClick={(e) => e.stopPropagation()}
             >
-              ✕
-            </button>
+              <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-emerald-500 via-amber-400 to-indigo-500"></div>
 
-            <div className="w-16 h-16 bg-amber-400 text-neutral-950 rounded-2xl mx-auto flex items-center justify-center text-3xl shadow-md">
-              🏆
-            </div>
-
-            <div className="space-y-1.5">
-              <span className="text-[11px] font-mono font-black uppercase text-amber-800 tracking-widest bg-amber-100 px-2.5 py-0.5 rounded">
-                OFFICIAL DIGITAL CERTIFICATE
-              </span>
-              <h3 className="text-xl font-sans font-black text-neutral-900 tracking-tight pt-2">
-                Certificate of Mastery
-              </h3>
-              <p className="text-xs text-neutral-500 font-sans">
-                This certifies that
-              </p>
-              <h2 className="text-xl font-sans font-extrabold text-neutral-900 py-1 border-b border-neutral-200 inline-block px-4">
-                {user.isLoggedIn ? user.name : "Verified Apprentice"}
-              </h2>
-              <p className="text-xs text-neutral-600 font-sans pt-1">
-                has successfully achieved full competency and rigorous completion of
-              </p>
-              <h3 className="text-base font-sans font-black text-emerald-800">
-                {viewingAward.title}
-              </h3>
-              <p className="text-[11px] font-mono text-neutral-400 pt-1">
-                Issued on {viewingAward.date} • Enterprise Framework ID: AskAmrish-2026
-              </p>
-            </div>
-
-            <div className="pt-4 border-t border-neutral-100 flex items-center justify-center gap-3">
-              <button
+              <button 
                 type="button"
                 onClick={() => setViewingAward(null)}
-                className="px-6 py-2.5 bg-neutral-900 hover:bg-neutral-800 text-white rounded-xl text-xs font-sans font-bold transition-all shadow-md cursor-pointer"
+                className="absolute top-5 right-5 text-neutral-400 hover:text-neutral-700 font-bold text-sm cursor-pointer p-1"
               >
-                Close Certificate
+                ✕
               </button>
+
+              <div className="w-16 h-16 bg-amber-400 text-neutral-950 rounded-2xl mx-auto flex items-center justify-center text-3xl shadow-md">
+                🏆
+              </div>
+
+              <div className="space-y-1.5">
+                <span className="text-[11px] font-mono font-black uppercase text-amber-800 tracking-widest bg-amber-100 px-2.5 py-0.5 rounded">
+                  OFFICIAL DIGITAL CERTIFICATE
+                </span>
+                <h3 className="text-xl font-sans font-black text-neutral-900 tracking-tight pt-2">
+                  Certificate of Mastery
+                </h3>
+                <p className="text-xs text-neutral-500 font-sans">
+                  This certifies that
+                </p>
+                <h2 className="text-xl font-sans font-extrabold text-neutral-900 py-1 border-b border-neutral-200 inline-block px-4">
+                  {user.isLoggedIn ? user.name : "Verified Apprentice"}
+                </h2>
+                <p className="text-xs text-neutral-600 font-sans pt-1">
+                  has successfully achieved full competency and rigorous completion of
+                </p>
+                <h3 className="text-base font-sans font-black text-emerald-800">
+                  {viewingAward.title}
+                </h3>
+                <p className="text-[11px] font-mono text-neutral-400 pt-1">
+                  Issued on {viewingAward.date} • Enterprise Framework ID: AskAmrish-2026
+                </p>
+              </div>
+
+              <div className="pt-4 border-t border-neutral-100 flex items-center justify-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setViewingAward(null)}
+                  className="px-6 py-2.5 bg-neutral-900 hover:bg-neutral-800 text-white rounded-xl text-xs font-sans font-bold transition-all shadow-md cursor-pointer"
+                >
+                  Close Certificate
+                </button>
+              </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
     </div>

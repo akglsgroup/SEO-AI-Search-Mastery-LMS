@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { Trophy, Award, Sparkles, CheckCircle2 } from "lucide-react";
 import { Level, CustomCourse } from "../types";
@@ -103,18 +104,42 @@ export default function CelebrationConfetti({
     setParticles(generated);
   }, [activeCelebrateId]);
 
+  useEffect(() => {
+    if (activeCelebrateId) {
+      const prevOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "Escape") onDismiss(activeCelebrateId);
+      };
+      window.addEventListener("keydown", handleKeyDown);
+      return () => {
+        document.body.style.overflow = prevOverflow;
+        window.removeEventListener("keydown", handleKeyDown);
+      };
+    }
+  }, [activeCelebrateId, onDismiss]);
+
   if (!activeCelebrateId || !celebratedLevel) return null;
 
   const isLevel = "category" in celebratedLevel;
 
-  return (
+  return createPortal(
     <AnimatePresence>
       <div 
-        className="fixed inset-0 z-[120] bg-neutral-950/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto"
+        className="fixed inset-0 z-[9999] overflow-y-auto"
         id="celebrate-badge-modal-container"
+        role="dialog"
+        aria-modal="true"
       >
+        {/* Backdrop */}
+        <div 
+          className="fixed inset-0 bg-neutral-950/70 backdrop-blur-sm transition-opacity"
+          onClick={() => onDismiss(activeCelebrateId)}
+          aria-hidden="true"
+        />
+
         {/* Floating Confetti Layer */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="fixed inset-0 pointer-events-none overflow-hidden z-10">
           {particles.map((p) => {
             const shapeStyle: React.CSSProperties = {
               backgroundColor: p.shape === "triangle" ? "transparent" : p.color,
@@ -169,80 +194,85 @@ export default function CelebrationConfetti({
           })}
         </div>
 
-        {/* Celebratory Banner Modal */}
-        <motion.div
-          initial={{ scale: 0.9, y: 15, opacity: 0 }}
-          animate={{ scale: 1, y: 0, opacity: 1 }}
-          exit={{ scale: 0.95, y: -10, opacity: 0 }}
-          transition={{ type: "spring", stiffness: 300, damping: 24 }}
-          className="bg-white text-neutral-900 rounded-3xl p-6 sm:p-8 max-w-lg w-full text-center relative overflow-hidden shadow-2xl border border-neutral-200/90 z-[122]"
-        >
-          {/* Radial Decorative Glow */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-amber-100/30 rounded-full blur-3xl -z-10 animate-pulse"></div>
+        {/* Centering wrapper */}
+        <div className="flex min-h-full items-center justify-center p-3 sm:p-4 text-center relative z-20">
+          {/* Celebratory Banner Modal */}
+          <motion.div
+            initial={{ scale: 0.9, y: 15, opacity: 0 }}
+            animate={{ scale: 1, y: 0, opacity: 1 }}
+            exit={{ scale: 0.95, y: -10, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 24 }}
+            className="bg-white text-neutral-900 rounded-3xl p-6 sm:p-8 max-w-lg w-full text-center relative overflow-hidden shadow-2xl border border-neutral-200/90 my-4 sm:my-8 max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-4rem)] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Radial Decorative Glow */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-amber-100/30 rounded-full blur-3xl -z-10 animate-pulse"></div>
 
-          <div className="space-y-6">
-            {/* Pulsing Trophy Shield */}
-            <div className="inline-flex relative">
-              <div className="absolute inset-0 bg-amber-500/10 blur-xl rounded-full scale-125 animate-ping"></div>
-              <motion.div
-                initial={{ scale: 0.8 }}
-                animate={{ scale: [1, 1.06, 1], rotate: [0, -4, 4, -4, 0] }}
-                transition={{ duration: 3, repeat: Infinity }}
-                className="bg-amber-50 p-5 rounded-2xl border border-amber-200 text-amber-600 shadow-3xs relative"
-              >
-                <Trophy size={48} className="animate-pulse" />
-              </motion.div>
-              <div className="absolute -top-1 -right-1 text-2xl animate-bounce">✨</div>
-              <div className="absolute -bottom-1 -left-1 text-2xl animate-bounce delay-150">🎉</div>
-            </div>
-
-            <div className="space-y-2">
-              <span className="text-[10px] font-mono tracking-widest text-amber-800 font-extrabold uppercase bg-amber-100/80 border border-amber-200 px-3.5 py-1 rounded-full inline-flex items-center gap-1.5 justify-center">
-                <Sparkles size={11} className="text-amber-600" />
-                <span>NEW ACHIEVEMENT UNLOCKED!</span>
-              </span>
-              <h3 className="text-2xl sm:text-3xl font-sans font-extrabold tracking-tight text-neutral-950 leading-normal">
-                {celebratedLevel.id ? `Module ${celebratedLevel.id} Mastered!` : "Custom Module Mastered!"}
-              </h3>
-              <p className="text-amber-800 font-sans font-bold text-sm sm:text-base">
-                {celebratedLevel.title}
-              </p>
-            </div>
-
-            {/* Curriculum Competency Summary Card */}
-            <div className="p-4 bg-neutral-50 border border-neutral-200 rounded-2xl text-left space-y-2 relative">
-              <div className="flex items-center justify-between">
-                <span className="text-[8px] font-mono font-bold text-neutral-400 uppercase tracking-wider block">UNLOCKED COMPETENCY</span>
-                <span className="text-[10px] font-mono font-bold text-emerald-600 flex items-center gap-1">
-                  <CheckCircle2 size={10} /> Verified Complete
-                </span>
+            <div className="space-y-6">
+              {/* Pulsing Trophy Shield */}
+              <div className="inline-flex relative">
+                <div className="absolute inset-0 bg-amber-500/10 blur-xl rounded-full scale-125 animate-ping"></div>
+                <motion.div
+                  initial={{ scale: 0.8 }}
+                  animate={{ scale: [1, 1.06, 1], rotate: [0, -4, 4, -4, 0] }}
+                  transition={{ duration: 3, repeat: Infinity }}
+                  className="bg-amber-50 p-5 rounded-2xl border border-amber-200 text-amber-600 shadow-3xs relative"
+                >
+                  <Trophy size={48} className="animate-pulse" />
+                </motion.div>
+                <div className="absolute -top-1 -right-1 text-2xl animate-bounce">✨</div>
+                <div className="absolute -bottom-1 -left-1 text-2xl animate-bounce delay-150">🎉</div>
               </div>
-              <p className="text-xs text-neutral-600 leading-relaxed font-sans font-medium">
-                {celebratedLevel.description}
-              </p>
-              {isLevel && (celebratedLevel as Level).businessImpact && (
-                <div className="pt-2 border-t border-neutral-200 text-[11px] text-emerald-600 font-bold">
-                  🎯 Business Impact: {(celebratedLevel as Level).businessImpact}
-                </div>
-              )}
-            </div>
 
-            <div className="space-y-3">
-              <p className="text-neutral-500 text-xs font-mono">
-                You successfully verified 100% of the checklist items in this path. Your digital credentials are now printed and ready.
-              </p>
-              
-              <button
-                type="button"
-                onClick={() => onDismiss(activeCelebrateId)}
-                className="w-full py-4 bg-amber-500 hover:bg-amber-600 text-white font-sans font-extrabold text-sm rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer transform hover:scale-[1.01]"
-              >
-                Claim Mastery Certificate &amp; Badge
-              </button>
+              <div className="space-y-2">
+                <span className="text-[10px] font-mono tracking-widest text-amber-800 font-extrabold uppercase bg-amber-100/80 border border-amber-200 px-3.5 py-1 rounded-full inline-flex items-center gap-1.5 justify-center">
+                  <Sparkles size={11} className="text-amber-600" />
+                  <span>NEW ACHIEVEMENT UNLOCKED!</span>
+                </span>
+                <h3 className="text-2xl sm:text-3xl font-sans font-extrabold tracking-tight text-neutral-950 leading-normal">
+                  {celebratedLevel.id ? `Module ${celebratedLevel.id} Mastered!` : "Custom Module Mastered!"}
+                </h3>
+                <p className="text-amber-800 font-sans font-bold text-sm sm:text-base">
+                  {celebratedLevel.title}
+                </p>
+              </div>
+
+              {/* Curriculum Competency Summary Card */}
+              <div className="p-4 bg-neutral-50 border border-neutral-200 rounded-2xl text-left space-y-2 relative">
+                <div className="flex items-center justify-between">
+                  <span className="text-[8px] font-mono font-bold text-neutral-400 uppercase tracking-wider block">UNLOCKED COMPETENCY</span>
+                  <span className="text-[10px] font-mono font-bold text-emerald-600 flex items-center gap-1">
+                    <CheckCircle2 size={10} /> Verified Complete
+                  </span>
+                </div>
+                <p className="text-xs text-neutral-600 leading-relaxed font-sans font-medium">
+                  {celebratedLevel.description}
+                </p>
+                {isLevel && (celebratedLevel as Level).businessImpact && (
+                  <div className="pt-2 border-t border-neutral-200 text-[11px] text-emerald-600 font-bold">
+                    🎯 Business Impact: {(celebratedLevel as Level).businessImpact}
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-3">
+                <p className="text-neutral-500 text-xs font-mono">
+                  You successfully verified 100% of the checklist items in this path. Your digital credentials are now printed and ready.
+                </p>
+                
+                <button
+                  type="button"
+                  onClick={() => onDismiss(activeCelebrateId)}
+                  className="w-full py-4 bg-amber-500 hover:bg-amber-600 text-white font-sans font-extrabold text-sm rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer transform hover:scale-[1.01]"
+                >
+                  Claim Mastery Certificate &amp; Badge
+                </button>
+              </div>
             </div>
-          </div>
-        </motion.div>
+          </motion.div>
+        </div>
       </div>
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }

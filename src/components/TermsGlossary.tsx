@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { 
   Search, BookOpen, Brain, Sparkles, Trophy, CheckCircle, Star, 
   HelpCircle, ChevronRight, Filter, Award, Zap, RefreshCw, Bookmark,
@@ -516,6 +517,21 @@ export default function TermsGlossary({ onAwardPoints, userPoints = 0 }: TermsGl
   
   // Selected Term Detail Modal
   const [activeModalTerm, setActiveModalTerm] = useState<TermItem | null>(null);
+
+  useEffect(() => {
+    if (activeModalTerm) {
+      const prevOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "Escape") setActiveModalTerm(null);
+      };
+      window.addEventListener("keydown", handleKeyDown);
+      return () => {
+        document.body.style.overflow = prevOverflow;
+        window.removeEventListener("keydown", handleKeyDown);
+      };
+    }
+  }, [activeModalTerm]);
   
   // Mastered & Bookmarked terms state
   const [masteredTerms, setMasteredTerms] = useState<string[]>(() => {
@@ -1175,101 +1191,115 @@ export default function TermsGlossary({ onAwardPoints, userPoints = 0 }: TermsGl
 
       {/* --- TERM DETAILS MODAL --- */}
       <AnimatePresence>
-        {activeModalTerm && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-950/60 backdrop-blur-xs"
-            onClick={() => setActiveModalTerm(null)}
+        {activeModalTerm && createPortal(
+          <div 
+            className="fixed inset-0 z-[9999] overflow-y-auto"
+            id="term-details-modal"
+            role="dialog"
+            aria-modal="true"
           >
+            {/* Backdrop */}
             <motion.div
-              initial={{ scale: 0.95, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.95, y: 20 }}
-              onClick={(e) => e.stopPropagation()}
-              className="bg-white border border-neutral-200 rounded-3xl p-6 md:p-8 max-w-lg w-full shadow-2xl relative space-y-5"
-            >
-              <div className="flex items-start justify-between gap-4 border-b border-neutral-100 pb-4">
-                <div className="space-y-1">
-                  <span className="text-[9.5px] font-mono font-black text-indigo-700 bg-indigo-50 border border-indigo-200 px-2.5 py-0.5 rounded uppercase tracking-wider">
-                    {activeModalTerm.category}
-                  </span>
-                  <h3 className="text-lg font-sans font-extrabold text-neutral-900 pt-1">
-                    {activeModalTerm.term}
-                  </h3>
-                </div>
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-neutral-950/70 backdrop-blur-sm transition-opacity"
+              onClick={() => setActiveModalTerm(null)}
+              aria-hidden="true"
+            />
 
-                <button
-                  onClick={() => setActiveModalTerm(null)}
-                  className="text-neutral-400 hover:text-neutral-700 font-bold text-base p-1"
-                >
-                  ✕
-                </button>
-              </div>
-
-              {/* Definition */}
-              <div className="space-y-1.5">
-                <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-wider block">Plain-English Definition:</span>
-                <p className="text-xs text-neutral-800 leading-relaxed font-sans font-medium bg-neutral-50 p-3.5 rounded-2xl border border-neutral-150">
-                  {activeModalTerm.definition}
-                </p>
-              </div>
-
-              {/* Real World Example */}
-              <div className="space-y-1.5">
-                <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-wider block">Real-World Marketing Execution:</span>
-                <p className="text-xs text-neutral-700 leading-relaxed font-sans bg-amber-50/60 p-3.5 rounded-2xl border border-amber-200/80">
-                  💡 {activeModalTerm.example}
-                </p>
-              </div>
-
-              {/* KPI Impact */}
-              {activeModalTerm.kpiImpact && (
-                <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-2.5 text-xs text-emerald-900 font-bold font-sans">
-                  <Trophy size={16} className="text-emerald-600 shrink-0" />
-                  <span>Expected Growth Outcome: {activeModalTerm.kpiImpact}</span>
-                </div>
-              )}
-
-              {/* Associated Tools */}
-              {activeModalTerm.tools && activeModalTerm.tools.length > 0 && (
-                <div className="space-y-1.5">
-                  <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-wider block">Associated Tool Stack:</span>
-                  <div className="flex flex-wrap gap-1.5">
-                    {activeModalTerm.tools.map((tool, idx) => (
-                      <span key={idx} className="px-2.5 py-1 bg-neutral-900 text-white font-mono text-[10.5px] font-bold rounded-lg">
-                        {tool}
-                      </span>
-                    ))}
+            {/* Centering wrapper */}
+            <div className="flex min-h-full items-center justify-center p-3 sm:p-4 text-center">
+              <motion.div
+                initial={{ scale: 0.95, opacity: 0, y: 10 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.95, opacity: 0, y: 10 }}
+                transition={{ type: "spring", stiffness: 350, damping: 25 }}
+                onClick={(e) => e.stopPropagation()}
+                className="relative w-full max-w-lg transform overflow-hidden rounded-3xl bg-white p-6 md:p-8 text-left shadow-2xl transition-all border border-neutral-200 space-y-5 my-4 sm:my-8 max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-4rem)] overflow-y-auto"
+              >
+                <div className="flex items-start justify-between gap-4 border-b border-neutral-100 pb-4">
+                  <div className="space-y-1">
+                    <span className="text-[9.5px] font-mono font-black text-indigo-700 bg-indigo-50 border border-indigo-200 px-2.5 py-0.5 rounded uppercase tracking-wider">
+                      {activeModalTerm.category}
+                    </span>
+                    <h3 className="text-lg font-sans font-extrabold text-neutral-900 pt-1">
+                      {activeModalTerm.term}
+                    </h3>
                   </div>
+
+                  <button
+                    onClick={() => setActiveModalTerm(null)}
+                    className="text-neutral-400 hover:text-neutral-700 font-bold text-base p-1 cursor-pointer"
+                  >
+                    ✕
+                  </button>
                 </div>
-              )}
 
-              <div className="pt-2 flex items-center gap-3">
-                <button
-                  onClick={() => {
-                    toggleMastered(activeModalTerm.id);
-                  }}
-                  className={`flex-1 py-3 text-xs font-bold rounded-2xl transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
-                    masteredTerms.includes(activeModalTerm.id)
-                      ? "bg-emerald-600 text-white shadow-md"
-                      : "bg-neutral-900 hover:bg-neutral-800 text-white shadow-md"
-                  }`}
-                >
-                  <CheckCircle size={14} />
-                  <span>{masteredTerms.includes(activeModalTerm.id) ? "Mastered Term ✓" : "Mark as Mastered (+15 XP)"}</span>
-                </button>
+                {/* Definition */}
+                <div className="space-y-1.5">
+                  <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-wider block">Plain-English Definition:</span>
+                  <p className="text-xs text-neutral-800 leading-relaxed font-sans font-medium bg-neutral-50 p-3.5 rounded-2xl border border-neutral-150">
+                    {activeModalTerm.definition}
+                  </p>
+                </div>
 
-                <button
-                  onClick={() => setActiveModalTerm(null)}
-                  className="px-5 py-3 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 font-bold text-xs rounded-2xl transition-all cursor-pointer"
-                >
-                  Close
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
+                {/* Real World Example */}
+                <div className="space-y-1.5">
+                  <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-wider block">Real-World Marketing Execution:</span>
+                  <p className="text-xs text-neutral-700 leading-relaxed font-sans bg-amber-50/60 p-3.5 rounded-2xl border border-amber-200/80">
+                    💡 {activeModalTerm.example}
+                  </p>
+                </div>
+
+                {/* KPI Impact */}
+                {activeModalTerm.kpiImpact && (
+                  <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-2.5 text-xs text-emerald-900 font-bold font-sans">
+                    <Trophy size={16} className="text-emerald-600 shrink-0" />
+                    <span>Expected Growth Outcome: {activeModalTerm.kpiImpact}</span>
+                  </div>
+                )}
+
+                {/* Associated Tools */}
+                {activeModalTerm.tools && activeModalTerm.tools.length > 0 && (
+                  <div className="space-y-1.5">
+                    <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-wider block">Associated Tool Stack:</span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {activeModalTerm.tools.map((tool, idx) => (
+                        <span key={idx} className="px-2.5 py-1 bg-neutral-900 text-white font-mono text-[10.5px] font-bold rounded-lg">
+                          {tool}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="pt-2 flex items-center gap-3">
+                  <button
+                    onClick={() => {
+                      toggleMastered(activeModalTerm.id);
+                    }}
+                    className={`flex-1 py-3 text-xs font-bold rounded-2xl transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                      masteredTerms.includes(activeModalTerm.id)
+                        ? "bg-emerald-600 text-white shadow-md"
+                        : "bg-neutral-900 hover:bg-neutral-800 text-white shadow-md"
+                    }`}
+                  >
+                    <CheckCircle size={14} />
+                    <span>{masteredTerms.includes(activeModalTerm.id) ? "Mastered Term ✓" : "Mark as Mastered (+15 XP)"}</span>
+                  </button>
+
+                  <button
+                    onClick={() => setActiveModalTerm(null)}
+                    className="px-5 py-3 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 font-bold text-xs rounded-2xl transition-all cursor-pointer"
+                  >
+                    Close
+                  </button>
+                </div>
+              </motion.div>
+            </div>
+          </div>,
+          document.body
         )}
       </AnimatePresence>
     </div>
