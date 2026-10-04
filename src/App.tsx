@@ -7,24 +7,19 @@ import React, { useState, useEffect } from "react";
 import { UserProgress, Level, CustomCourse, ChecklistItem, MasteryAward, UserProfile } from "./types";
 import { INITIAL_TRACKS, MASTER_LEVELS } from "./data/checklist";
 import { getAllLevels, getAllTracks } from "./data/coursesData";
-import Dashboard from "./components/Dashboard";
 import CourseCurriculum from "./components/CourseCurriculum";
 import ModuleDetails from "./components/ModuleDetails";
 import CourseCreator from "./components/CourseCreator";
 import QuizModule from "./components/QuizModule";
 import CRMConsole, { LeadFormModal } from "./components/CRMConsole";
 import CelebrationConfetti from "./components/CelebrationConfetti";
-import AskAIHelpHub from "./components/AskAIHelpHub";
-import BookConsultation from "./components/BookConsultation";
-import AskCommunity from "./components/AskCommunity";
-import GamificationRewards from "./components/GamificationRewards";
 import TermsGlossary from "./components/TermsGlossary";
-import FloatingAskButton from "./components/FloatingAskButton";
+import StudentDashboard from "./components/StudentDashboard";
 import { LockedTabScreen, GoogleLoginModal, UserProfileModal } from "./components/UserProfileSystem";
 import { 
-  BookOpen, Award, LayoutDashboard, Layers, Sparkles, 
+  BookOpen, Award, Layers, Sparkles, 
   Settings, Flame, CheckCircle, RefreshCw, Star, ArrowRight,
-  AlertTriangle, Linkedin, Shield, MessageSquare, Gift, Users, Calendar, Trophy, Key
+  AlertTriangle, Linkedin, Shield, Trophy, Key, Home, LayoutDashboard
 } from "lucide-react";
 import { getFirebaseAuth, isFirebaseConfigured } from "./lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
@@ -33,7 +28,7 @@ import { loadUserProgressFromFirestore, syncUserProfileToFirestore, submitLeadTo
 
 export default function App() {
   // --- STATE LAYER WITH PERSISTED MEMORY DEFAULTS ---
-  const [activeTab, setActiveTab ] = useState<"dashboard" | "curriculum" | "quiz" | "creator" | "details" | "crm" | "help" | "consultation" | "community" | "rewards" | "glossary">("dashboard");
+  const [activeTab, setActiveTab ] = useState<"curriculum" | "dashboard" | "quiz" | "creator" | "details" | "crm" | "glossary">("curriculum");
   
   // Custom user session state
   const [currentUser, setCurrentUser] = useState<UserProfile>(() => {
@@ -570,7 +565,7 @@ export default function App() {
         setStreakCount(1);
         setLastActiveDate(new Date().toDateString());
         setSelectedLevelId(null);
-        setActiveTab("dashboard");
+        setActiveTab("curriculum");
         setConfirmModal(prev => ({ ...prev, isOpen: false }));
       }
     });
@@ -626,7 +621,7 @@ export default function App() {
           {/* Top Row: Logo & Actions / Stats */}
           <div className="flex items-center justify-between gap-4 w-full">
             {/* Logo */}
-            <div className="flex items-center gap-2 sm:gap-2.5 cursor-pointer group" onClick={() => setActiveTab("dashboard")}>
+            <div className="flex items-center gap-2 sm:gap-2.5 cursor-pointer group" onClick={() => setActiveTab("curriculum")}>
               <div className="p-1.5 sm:p-2 border border-neutral-200 bg-neutral-900 text-white rounded-xl shadow-md transform group-hover:rotate-6 transition-all duration-300 shrink-0">
                 <Layers className="size-[15px] sm:size-[18px]" />
               </div>
@@ -642,10 +637,14 @@ export default function App() {
 
             {/* Actions Panel (Fully responsive alignment) */}
             <div className="flex items-center gap-2 sm:gap-3.5 shrink-0">
-              {/* Stats - Hidden on tiny mobile screens, beautiful on sm+ */}
-              <div className="hidden md:flex items-center gap-2.5">
+              {/* Stats - Clickable to open Dashboard */}
+              <div 
+                onClick={() => setActiveTab("dashboard")}
+                className="hidden md:flex items-center gap-2.5 cursor-pointer group hover:bg-neutral-50 px-2 py-1 rounded-xl transition-all"
+                title="View Detailed Syllabus & Progress Dashboard"
+              >
                 <div className="text-right leading-none">
-                  <span className="text-[7.5px] text-neutral-400 font-mono block tracking-widest uppercase font-bold">COMPLETION</span>
+                  <span className="text-[7.5px] text-neutral-400 font-mono block tracking-widest uppercase font-bold group-hover:text-emerald-700">COMPLETION</span>
                   <span className="text-[10px] sm:text-xs font-mono font-extrabold text-neutral-800">{completedCount}/{totalCheckpoints.length} Items</span>
                 </div>
                 <div className="w-14 sm:w-16 bg-neutral-100 h-1.5 rounded-full overflow-hidden border border-neutral-200/60 p-[1px]">
@@ -659,7 +658,7 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Hire Consultation Button - Always elegant & accessible */}
+              {/* Hire Consultation Button */}
               <button
                 onClick={() => setIsLeadModalOpen(true)}
                 className="px-2 py-1.5 sm:px-3 sm:py-1.5 bg-neutral-900 hover:bg-neutral-805 text-white text-[10px] sm:text-xs font-sans font-bold rounded-xl transition-all shadow-xs flex items-center gap-1 cursor-pointer hover:scale-[1.02]"
@@ -671,7 +670,8 @@ export default function App() {
               {/* Dynamic User Profile / Google Sign-In widget */}
               {currentUser.isLoggedIn ? (
                 <button
-                  onClick={() => setProfileModalOpen(true)}
+                  onClick={() => setActiveTab("dashboard")}
+                  title="Open Learner Dashboard"
                   className="px-2.5 py-1.5 bg-neutral-100 hover:bg-neutral-150 border border-neutral-250 rounded-xl text-[10px] sm:text-xs font-bold text-neutral-800 transition-all flex items-center gap-1.5 cursor-pointer hover:scale-[1.02]"
                 >
                   <img src={currentUser.avatarUrl} alt={currentUser.name} referrerPolicy="no-referrer" className="w-4 h-4 rounded" />
@@ -710,122 +710,72 @@ export default function App() {
           <div className="w-full overflow-x-auto scrollbar-none border-t border-neutral-100 pt-2 -mx-4 px-4 sm:mx-0 sm:px-0">
             <nav className="flex items-center gap-1 min-w-max bg-neutral-150/40 p-1 rounded-xl border border-neutral-200/30" id="nav-tabs">
               <button
-                onClick={() => setActiveTab("dashboard")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-sans font-bold transition-all duration-150 whitespace-nowrap cursor-pointer flex items-center gap-1 ${
-                  activeTab === "dashboard"
-                    ? "bg-white text-neutral-900 shadow-sm border border-neutral-200/30 font-extrabold"
-                    : "text-neutral-500 hover:text-neutral-900 hover:bg-white/45"
-                }`}
-              >
-                <LayoutDashboard size={12} className="text-neutral-400" />
-                <span>Dashboard</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab("help")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-sans font-bold transition-all duration-150 whitespace-nowrap cursor-pointer flex items-center gap-1 ${
-                  activeTab === "help"
-                    ? "bg-white text-indigo-900 shadow-sm border border-indigo-200 font-extrabold"
-                    : "text-neutral-500 hover:text-neutral-900 hover:bg-white/45"
-                }`}
-              >
-                <MessageSquare size={12} className="text-indigo-500" />
-                <span>💬 Ask AI Hub</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab("consultation")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-sans font-bold transition-all duration-150 whitespace-nowrap cursor-pointer flex items-center gap-1 ${
-                  activeTab === "consultation"
-                    ? "bg-white text-neutral-900 shadow-sm border border-neutral-200/30 font-extrabold"
-                    : "text-neutral-500 hover:text-neutral-900 hover:bg-white/45"
-                }`}
-              >
-                <Calendar size={12} className="text-amber-500" />
-                <span>Book 1-on-1 Call</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab("community")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-sans font-bold transition-all duration-150 whitespace-nowrap cursor-pointer flex items-center gap-1 ${
-                  activeTab === "community"
-                    ? "bg-white text-neutral-900 shadow-sm border border-neutral-200/30 font-extrabold"
-                    : "text-neutral-500 hover:text-neutral-900 hover:bg-white/45"
-                }`}
-              >
-                <Users size={12} className="text-indigo-400" />
-                <span>Ask Community</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab("rewards")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-sans font-bold transition-all duration-150 whitespace-nowrap cursor-pointer flex items-center gap-1 ${
-                  activeTab === "rewards"
-                    ? "bg-white text-amber-950 shadow-sm border border-amber-300 font-extrabold"
-                    : "text-neutral-500 hover:text-neutral-900 hover:bg-white/45"
-                }`}
-              >
-                <Gift size={12} className="text-amber-500" />
-                <span className="flex items-center gap-1">
-                  <span>Rewards Center</span>
-                  <span className="px-1 py-0.2 bg-amber-150 text-amber-800 text-[8.5px] font-mono rounded font-black">{userPoints} XP</span>
-                </span>
-              </button>
-
-              <button
                 onClick={() => setActiveTab("curriculum")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-sans font-bold transition-all duration-150 whitespace-nowrap cursor-pointer flex items-center gap-1 ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-sans font-bold transition-all duration-150 whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
                   activeTab === "curriculum" || activeTab === "details"
-                    ? "bg-white text-neutral-900 shadow-sm border border-neutral-200/30 font-extrabold"
+                    ? "bg-white text-neutral-950 shadow-sm border border-neutral-200/80 font-extrabold"
                     : "text-neutral-500 hover:text-neutral-900 hover:bg-white/45"
                 }`}
               >
-                <BookOpen size={12} className="text-neutral-400" />
+                <Home size={13} className={activeTab === "curriculum" || activeTab === "details" ? "text-emerald-600" : "text-neutral-400"} />
                 <span>Curriculum Syllabus</span>
               </button>
 
               <button
+                onClick={() => setActiveTab("dashboard")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-sans font-bold transition-all duration-150 whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
+                  activeTab === "dashboard"
+                    ? "bg-white text-neutral-950 shadow-sm border border-neutral-200/80 font-extrabold"
+                    : "text-neutral-500 hover:text-neutral-900 hover:bg-white/45"
+                }`}
+              >
+                <LayoutDashboard size={13} className={activeTab === "dashboard" ? "text-emerald-600" : "text-neutral-400"} />
+                <span>Learner Dashboard</span>
+              </button>
+
+              <button
                 onClick={() => setActiveTab("glossary")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-sans font-bold transition-all duration-150 whitespace-nowrap cursor-pointer flex items-center gap-1 ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-sans font-bold transition-all duration-150 whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
                   activeTab === "glossary"
                     ? "bg-white text-emerald-950 shadow-sm border border-emerald-300 font-extrabold"
                     : "text-neutral-500 hover:text-neutral-900 hover:bg-white/45"
                 }`}
               >
-                <BookOpen size={12} className="text-emerald-600" />
+                <BookOpen size={13} className="text-emerald-600" />
                 <span>📖 Terms Taxonomy &amp; Tests</span>
               </button>
 
               <button
                 onClick={() => setActiveTab("quiz")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-sans font-bold transition-all duration-150 whitespace-nowrap cursor-pointer flex items-center gap-1 ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-sans font-bold transition-all duration-150 whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
                   activeTab === "quiz"
                     ? "bg-white text-neutral-900 shadow-sm border border-neutral-200/30 font-extrabold"
                     : "text-neutral-500 hover:text-neutral-900 hover:bg-white/45"
                 }`}
               >
-                <Trophy size={12} className="text-neutral-400" />
+                <Trophy size={13} className="text-amber-500" />
                 <span>Diagnostics Quizzes</span>
               </button>
 
               <button
                 onClick={() => setActiveTab("creator")}
-                className={`px-3 py-1.5 rounded-lg text-xs font-sans font-bold transition-all duration-150 whitespace-nowrap cursor-pointer flex items-center gap-1 ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-sans font-bold transition-all duration-150 whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
                   activeTab === "creator"
                     ? "bg-white text-neutral-900 shadow-sm border border-neutral-200/30 font-extrabold"
                     : "text-neutral-500 hover:text-neutral-900 hover:bg-white/45"
                 }`}
               >
-                <Sparkles size={12} className="text-neutral-400" />
+                <Sparkles size={13} className="text-indigo-500" />
                 <span>Custom Course Builder</span>
               </button>
 
               {activeTab === "crm" && (
                 <button
                   onClick={() => setActiveTab("crm")}
-                  className="px-3 py-1.5 rounded-lg text-xs font-sans font-extrabold transition-all duration-150 whitespace-nowrap bg-neutral-900 text-white shadow-sm cursor-pointer border border-neutral-800"
+                  className="px-3 py-1.5 rounded-lg text-xs font-sans font-extrabold transition-all duration-150 whitespace-nowrap bg-neutral-900 text-white shadow-sm cursor-pointer border border-neutral-800 flex items-center gap-1.5"
                 >
-                  Leads CRM Console 🛡️
+                  <Shield size={13} className="text-amber-400" />
+                  <span>Leads CRM Console</span>
                 </button>
               )}
             </nav>
@@ -837,22 +787,7 @@ export default function App() {
       {/* Main Content Area */}
       <main className="flex-1 w-full max-w-7xl mx-auto px-6 py-8" id="main-content">
         <div className="fade-in">
-          {activeTab === "dashboard" && (
-            <Dashboard
-              progress={userProgressInstance}
-              levels={allLevels}
-              onChangeTrack={setSelectedTrackId}
-              onSelectLevel={handleSelectLevel}
-              tabChanger={(tab) => setActiveTab(tab)}
-              onOpenConsulting={() => setIsLeadModalOpen(true)}
-              onToggleItem={handleToggleItem}
-              selectedCourseId={selectedCourseId}
-              setSelectedCourseId={setSelectedCourseId}
-              allLevels={allLevels}
-            />
-          )}
-
-          {activeTab === "curriculum" && (
+          {(activeTab === "curriculum" || !activeTab) && (
             <CourseCurriculum
               levels={allLevels}
               progress={userProgressInstance}
@@ -862,6 +797,39 @@ export default function App() {
               onDeleteCustomCourse={handleDeleteCustomCourse}
               onEditCustomCourse={handleEditCustomCourse}
               onOpenConsulting={() => setIsLeadModalOpen(true)}
+            />
+          )}
+
+          {activeTab === "dashboard" && (
+            <StudentDashboard
+              user={currentUser}
+              completedItemIds={completedItemIds}
+              allLevels={allLevels}
+              quizScores={quizScores}
+              streakCount={streakCount}
+              userPoints={userPoints}
+              customCourses={customCourses}
+              awards={awards}
+              onOpenLogin={() => {
+                setSuggestedLoginEmail("");
+                setLoginModalOpen(true);
+              }}
+              onOpenProfile={() => setProfileModalOpen(true)}
+              onNavigateToCurriculum={() => setActiveTab("curriculum")}
+              onNavigateToTrack={(trackId) => {
+                setSelectedTrackId(trackId);
+                setActiveTab("curriculum");
+              }}
+              onNavigateToLevel={(levelId) => {
+                handleSelectLevel(levelId);
+              }}
+              onNavigateToQuiz={(levelId) => {
+                if (levelId !== undefined) {
+                  setSelectedLevelId(levelId);
+                }
+                setActiveTab("quiz");
+              }}
+              onNavigateToCreator={() => setActiveTab("creator")}
             />
           )}
 
@@ -904,7 +872,7 @@ export default function App() {
 
           {activeTab === "crm" && (
             currentUser.isAdmin ? (
-              <CRMConsole onClose={() => setActiveTab("dashboard")} />
+              <CRMConsole onClose={() => setActiveTab("curriculum")} />
             ) : (
               <div className="p-8 md:p-12 bg-white border border-neutral-200 rounded-3xl shadow-xs max-w-xl mx-auto text-center space-y-6">
                 <div className="w-16 h-16 bg-neutral-900 text-white rounded-2xl flex items-center justify-center mx-auto shadow-md">
@@ -935,55 +903,6 @@ export default function App() {
               onAwardPoints={handleAwardPoints}
               userPoints={userPoints}
             />
-          )}
-
-          {activeTab === "help" && (
-            <AskAIHelpHub
-              onAwardPoints={handleAwardPoints}
-              onNavigateTab={(tab) => {
-                setActiveTab(tab);
-                window.scrollTo({ top: 0, behavior: "smooth" });
-              }}
-              onAddLeadSimulated={handleAddLeadSimulated}
-            />
-          )}
-
-          {/* User Auth Protected Tabs */}
-          {(!currentUser.isLoggedIn && (activeTab === "consultation" || activeTab === "community" || activeTab === "rewards")) ? (
-            <LockedTabScreen 
-              tabName={activeTab} 
-              onInitiateLogin={() => {
-                setSuggestedLoginEmail("");
-                setLoginModalOpen(true);
-              }} 
-            />
-          ) : (
-            <>
-              {activeTab === "consultation" && (
-                <BookConsultation
-                  onAwardPoints={handleAwardPoints}
-                  onAddLeadSimulated={handleAddLeadSimulated}
-                  userPoints={userPoints}
-                />
-              )}
-
-              {activeTab === "community" && (
-                <AskCommunity
-                  onAwardPoints={handleAwardPoints}
-                  userPoints={userPoints}
-                  currentUser={currentUser}
-                />
-              )}
-
-              {activeTab === "rewards" && (
-                <GamificationRewards
-                  userPoints={userPoints}
-                  streakCount={streakCount}
-                  onAwardPoints={handleAwardPoints}
-                  pointLogs={pointLogs}
-                />
-              )}
-            </>
           )}
         </div>
       </main>
@@ -1134,19 +1053,10 @@ export default function App() {
               avatarUrl: "",
               isAdmin: false
             });
-            setActiveTab("dashboard");
+            setActiveTab("curriculum");
           }}
         />
       )}
-
-      {/* Global Floating Help Bubble */}
-      <FloatingAskButton
-        onAwardPoints={handleAwardPoints}
-        onNavigateTab={(tab) => {
-          setActiveTab(tab);
-          window.scrollTo({ top: 0, behavior: "smooth" });
-        }}
-      />
     </div>
   );
 }

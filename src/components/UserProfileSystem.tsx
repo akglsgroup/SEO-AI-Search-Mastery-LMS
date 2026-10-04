@@ -14,32 +14,11 @@ interface LockedTabScreenProps {
 
 export function LockedTabScreen({ tabName, onInitiateLogin }: LockedTabScreenProps) {
   const getTabDetails = () => {
-    switch (tabName) {
-      case "consultation":
-        return {
-          title: "Verify Identity to Book Free Consultation",
-          desc: "To coordinate calendar slots, prevent spam bookings, and sync with Amrish's CRM board, please authenticate your professional Gmail profile.",
-          benefit: "Secure direct calendar coordination & instant CRM logging"
-        };
-      case "community":
-        return {
-          title: "Public Q&A Access Requires Verification",
-          desc: "Connect with students, founders, and technical SEO professionals. Public posting and replying require a verified profile to ensure discussions remain high-quality.",
-          benefit: "Post custom challenges, ask questions, and reply to earn community XP"
-        };
-      case "rewards":
-        return {
-          title: "Sign In with Gmail to Redeem Rewards",
-          desc: "Your gamification points (XP) are saved locally, but to redeem coupon codes, certification badges, and professional audits, you must bind your points to a secure email.",
-          benefit: "Save streaks permanently and redeem premium discount coupons"
-        };
-      default:
-        return {
-          title: "Sign In to Access Advanced Features",
-          desc: "Secure your workspace progress, coordinate with mentors, and publish comments under your verified name.",
-          benefit: "Unlock the full power of AskAmrish LMS"
-        };
-    }
+    return {
+      title: "Sign In to Access Advanced Features",
+      desc: "Secure your workspace progress, save custom learning tracks, and sync course completions across devices.",
+      benefit: "Unlock the full power of AskAmrish LMS"
+    };
   };
 
   const details = getTabDetails();

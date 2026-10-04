@@ -351,7 +351,7 @@ export function ModuleAssessment({
                 <CheckCircle className="text-emerald-500" size={20} />
                 <div>
                   <h4 className="text-xs font-sans font-extrabold text-neutral-900 leading-none">Capstone Report Logged successfully!</h4>
-                  <p className="text-[10px] text-emerald-700 font-medium">Your SEO audit report has been submitted to your local dashboard workspace.</p>
+                  <p className="text-[10px] text-emerald-700 font-medium">Your SEO audit report has been submitted to your local curriculum workspace.</p>
                 </div>
               </div>
               <div className="p-3 bg-white border border-emerald-100 rounded-xl text-xs font-mono whitespace-pre-wrap max-h-40 overflow-y-auto">
