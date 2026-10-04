@@ -15,11 +15,13 @@ import CRMConsole, { LeadFormModal } from "./components/CRMConsole";
 import CelebrationConfetti from "./components/CelebrationConfetti";
 import TermsGlossary from "./components/TermsGlossary";
 import StudentDashboard from "./components/StudentDashboard";
+import VisualSearchDiagrams from "./components/VisualSearchDiagrams";
 import { LockedTabScreen, GoogleLoginModal, UserProfileModal } from "./components/UserProfileSystem";
 import { 
   BookOpen, Award, Layers, Sparkles, 
   Settings, Flame, CheckCircle, RefreshCw, Star, ArrowRight,
-  AlertTriangle, Linkedin, Shield, Trophy, Key, Home, LayoutDashboard
+  AlertTriangle, Linkedin, Shield, Trophy, Key, Home, LayoutDashboard,
+  Sun, Moon, Network
 } from "lucide-react";
 import { getFirebaseAuth, isFirebaseConfigured } from "./lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
@@ -28,8 +30,26 @@ import { loadUserProgressFromFirestore, syncUserProfileToFirestore, submitLeadTo
 
 export default function App() {
   // --- STATE LAYER WITH PERSISTED MEMORY DEFAULTS ---
-  const [activeTab, setActiveTab ] = useState<"curriculum" | "dashboard" | "quiz" | "creator" | "details" | "crm" | "glossary">("curriculum");
+  const [activeTab, setActiveTab ] = useState<"curriculum" | "dashboard" | "diagrams" | "quiz" | "creator" | "details" | "crm" | "glossary">("curriculum");
   
+  // Theme state: dark / light
+  const [theme, setTheme] = useState<"light" | "dark">(() => {
+    return (localStorage.getItem("lms_theme") as "light" | "dark") || "light";
+  });
+
+  useEffect(() => {
+    localStorage.setItem("lms_theme", theme);
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => prev === "light" ? "dark" : "light");
+  };
+
   // Custom user session state
   const [currentUser, setCurrentUser] = useState<UserProfile>(() => {
     const saved = localStorage.getItem("lms_current_user");
@@ -163,6 +183,17 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem("lms_user_points", String(userPoints));
   }, [userPoints]);
+
+  // Gamification Rank calculation based on XP
+  const getUserRank = (points: number) => {
+    if (points >= 2000) return { rank: "Master Architect", tier: 5, badge: "👑", color: "text-amber-500" };
+    if (points >= 1000) return { rank: "Search Engineer", tier: 4, badge: "⚡", color: "text-purple-500" };
+    if (points >= 500) return { rank: "SEO Specialist", tier: 3, badge: "🎯", color: "text-indigo-500" };
+    if (points >= 200) return { rank: "Practitioner", tier: 2, badge: "🚀", color: "text-blue-500" };
+    return { rank: "Apprentice", tier: 1, badge: "🌱", color: "text-emerald-500" };
+  };
+
+  const userRankInfo = getUserRank(userPoints);
 
   useEffect(() => {
     localStorage.setItem("lms_point_logs", JSON.stringify(pointLogs));
@@ -547,6 +578,11 @@ export default function App() {
     });
   };
 
+  // Claim Daily Quest or Activity Bonus XP
+  const handleClaimDailyBonus = (bonusXP: number) => {
+    handleAwardPoints(bonusXP, "Daily Quest Completed! 🎯");
+  };
+
   // Reset entire browser progress metrics to original defaults
   const handleResetApp = () => {
     setConfirmModal({
@@ -613,23 +649,23 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-50/50 text-neutral-900 font-sans flex flex-col justify-between animate-fade-in" id="app-wrapper">
+    <div className={`min-h-screen ${theme === "dark" ? "dark bg-neutral-950 text-neutral-100" : "bg-neutral-50/50 text-neutral-900"} font-sans flex flex-col justify-between transition-colors duration-200 animate-fade-in`} id="app-wrapper">
       {/* Upper Navigation Bar */}
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-neutral-200/80 shadow-xs px-4 sm:px-6 py-2.5 sm:py-3.5" id="app-header">
+      <header className="sticky top-0 z-40 bg-white/95 dark:bg-neutral-900/95 backdrop-blur-md border-b border-neutral-200/80 dark:border-neutral-800 shadow-xs px-4 sm:px-6 py-2.5 sm:py-3.5 transition-colors duration-200" id="app-header">
         <div className="max-w-7xl mx-auto flex flex-col gap-3">
           
           {/* Top Row: Logo & Actions / Stats */}
           <div className="flex items-center justify-between gap-4 w-full">
             {/* Logo */}
             <div className="flex items-center gap-2 sm:gap-2.5 cursor-pointer group" onClick={() => setActiveTab("curriculum")}>
-              <div className="p-1.5 sm:p-2 border border-neutral-200 bg-neutral-900 text-white rounded-xl shadow-md transform group-hover:rotate-6 transition-all duration-300 shrink-0">
+              <div className="p-1.5 sm:p-2 border border-neutral-200 dark:border-neutral-700 bg-neutral-900 dark:bg-neutral-800 text-white rounded-xl shadow-md transform group-hover:rotate-6 transition-all duration-300 shrink-0">
                 <Layers className="size-[15px] sm:size-[18px]" />
               </div>
               <div className="min-w-0">
-                <h1 className="text-[11px] sm:text-xs md:text-sm font-sans font-extrabold tracking-tight text-neutral-900 leading-none truncate pr-1">
+                <h1 className="text-[11px] sm:text-xs md:text-sm font-sans font-extrabold tracking-tight text-neutral-900 dark:text-white leading-none truncate pr-1">
                   SEO &amp; AI Search Mastery LMS
                 </h1>
-                <p className="text-[7.5px] sm:text-[9px] text-emerald-600 font-mono mt-0.5 tracking-wider uppercase font-extrabold leading-none">
+                <p className="text-[7.5px] sm:text-[9px] text-emerald-600 dark:text-emerald-400 font-mono mt-0.5 tracking-wider uppercase font-extrabold leading-none">
                   ENTERPRISE CHECKLIST ENGINE
                 </p>
               </div>
@@ -637,23 +673,37 @@ export default function App() {
 
             {/* Actions Panel (Fully responsive alignment) */}
             <div className="flex items-center gap-2 sm:gap-3.5 shrink-0">
+              
+              {/* Gamification Level & XP Badge */}
+              <div 
+                onClick={() => setActiveTab("dashboard")} 
+                className="hidden lg:flex items-center gap-2 px-2.5 py-1.5 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-850 cursor-pointer hover:border-neutral-300 dark:hover:border-neutral-700 transition-all"
+                title="View Rank & XP in Learner Dashboard"
+              >
+                <span className="text-sm">{userRankInfo.badge}</span>
+                <div className="leading-none text-left">
+                  <span className="text-[9px] font-mono font-black text-neutral-800 dark:text-neutral-200 block">{userRankInfo.rank}</span>
+                  <span className="text-[8px] font-mono text-neutral-400">{userPoints} XP • 🔥 {streakCount}d</span>
+                </div>
+              </div>
+
               {/* Stats - Clickable to open Dashboard */}
               <div 
                 onClick={() => setActiveTab("dashboard")}
-                className="hidden md:flex items-center gap-2.5 cursor-pointer group hover:bg-neutral-50 px-2 py-1 rounded-xl transition-all"
+                className="hidden md:flex items-center gap-2.5 cursor-pointer group hover:bg-neutral-50 dark:hover:bg-neutral-800 px-2 py-1 rounded-xl transition-all"
                 title="View Detailed Syllabus & Progress Dashboard"
               >
                 <div className="text-right leading-none">
-                  <span className="text-[7.5px] text-neutral-400 font-mono block tracking-widest uppercase font-bold group-hover:text-emerald-700">COMPLETION</span>
-                  <span className="text-[10px] sm:text-xs font-mono font-extrabold text-neutral-800">{completedCount}/{totalCheckpoints.length} Items</span>
+                  <span className="text-[7.5px] text-neutral-400 font-mono block tracking-widest uppercase font-bold group-hover:text-emerald-600">COMPLETION</span>
+                  <span className="text-[10px] sm:text-xs font-mono font-extrabold text-neutral-800 dark:text-neutral-200">{completedCount}/{totalCheckpoints.length} Items</span>
                 </div>
-                <div className="w-14 sm:w-16 bg-neutral-100 h-1.5 rounded-full overflow-hidden border border-neutral-200/60 p-[1px]">
+                <div className="w-14 sm:w-16 bg-neutral-100 dark:bg-neutral-800 h-1.5 rounded-full overflow-hidden border border-neutral-200/60 dark:border-neutral-700 p-[1px]">
                   <div 
-                    className="bg-neutral-900 h-full rounded-full transition-all duration-500" 
+                    className="bg-neutral-900 dark:bg-emerald-500 h-full rounded-full transition-all duration-500" 
                     style={{ width: `${overallPercentage}%` }}
                   ></div>
                 </div>
-                <div className="bg-emerald-50 text-emerald-700 border border-emerald-200/40 text-[9px] sm:text-[10px] font-mono font-extrabold px-1.5 py-0.5 rounded shadow-3xs leading-none">
+                <div className="bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200/40 dark:border-emerald-800 text-[9px] sm:text-[10px] font-mono font-extrabold px-1.5 py-0.5 rounded shadow-3xs leading-none">
                   {overallPercentage}%
                 </div>
               </div>
@@ -661,10 +711,20 @@ export default function App() {
               {/* Hire Consultation Button */}
               <button
                 onClick={() => setIsLeadModalOpen(true)}
-                className="px-2 py-1.5 sm:px-3 sm:py-1.5 bg-neutral-900 hover:bg-neutral-805 text-white text-[10px] sm:text-xs font-sans font-bold rounded-xl transition-all shadow-xs flex items-center gap-1 cursor-pointer hover:scale-[1.02]"
+                className="px-2 py-1.5 sm:px-3 sm:py-1.5 bg-neutral-900 hover:bg-neutral-805 dark:bg-white dark:hover:bg-neutral-100 dark:text-neutral-950 text-white text-[10px] sm:text-xs font-sans font-bold rounded-xl transition-all shadow-xs flex items-center gap-1 cursor-pointer hover:scale-[1.02]"
               >
-                <Sparkles size={11} className="text-emerald-400 animate-pulse shrink-0" />
+                <Sparkles size={11} className="text-emerald-400 dark:text-emerald-600 animate-pulse shrink-0" />
                 <span>Hire Consultation</span>
+              </button>
+
+              {/* Theme Toggle Button */}
+              <button
+                type="button"
+                onClick={toggleTheme}
+                title={`Switch to ${theme === "light" ? "Dark" : "Light"} Mode`}
+                className="p-1.5 rounded-xl border border-neutral-200 dark:border-neutral-800 text-neutral-500 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all cursor-pointer shrink-0"
+              >
+                {theme === "light" ? <Moon size={13} className="text-neutral-700" /> : <Sun size={13} className="text-amber-400" />}
               </button>
 
               {/* Dynamic User Profile / Google Sign-In widget */}
@@ -672,7 +732,7 @@ export default function App() {
                 <button
                   onClick={() => setActiveTab("dashboard")}
                   title="Open Learner Dashboard"
-                  className="px-2.5 py-1.5 bg-neutral-100 hover:bg-neutral-150 border border-neutral-250 rounded-xl text-[10px] sm:text-xs font-bold text-neutral-800 transition-all flex items-center gap-1.5 cursor-pointer hover:scale-[1.02]"
+                  className="px-2.5 py-1.5 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-150 dark:hover:bg-neutral-750 border border-neutral-250 dark:border-neutral-700 rounded-xl text-[10px] sm:text-xs font-bold text-neutral-800 dark:text-neutral-200 transition-all flex items-center gap-1.5 cursor-pointer hover:scale-[1.02]"
                 >
                   <img src={currentUser.avatarUrl} alt={currentUser.name} referrerPolicy="no-referrer" className="w-4 h-4 rounded" />
                   <span className="max-w-[70px] sm:max-w-[110px] truncate">{currentUser.name}</span>
@@ -688,10 +748,10 @@ export default function App() {
                     setSuggestedLoginEmail("");
                     setLoginModalOpen(true);
                   }}
-                  className="px-2.5 py-1.5 bg-white hover:bg-neutral-50 border border-neutral-200 rounded-xl text-[10px] sm:text-xs font-bold text-neutral-700 transition-all flex items-center gap-1.5 cursor-pointer shadow-3xs hover:scale-[1.02]"
+                  className="px-2.5 py-1.5 bg-white dark:bg-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-750 border border-neutral-200 dark:border-neutral-700 rounded-xl text-[10px] sm:text-xs font-bold text-neutral-700 dark:text-neutral-200 transition-all flex items-center gap-1.5 cursor-pointer shadow-3xs hover:scale-[1.02]"
                 >
-                  <span className="w-3.5 h-3.5 bg-neutral-950 text-white rounded flex items-center justify-center font-bold text-[8.5px]">G</span>
-                  <span>Connect Gmail</span>
+                  <span className="w-3.5 h-3.5 bg-neutral-950 dark:bg-white text-white dark:text-neutral-950 rounded flex items-center justify-center font-bold text-[8.5px]">G</span>
+                  <span>Connect Account</span>
                 </button>
               )}
 
@@ -699,7 +759,7 @@ export default function App() {
               <button
                 onClick={handleResetApp}
                 title="Reset all diagnostics metrics"
-                className="p-1.5 hover:bg-red-50 hover:text-red-650 hover:border-red-200 rounded-xl border border-neutral-200 text-neutral-400 hover:text-neutral-800 transition-all cursor-pointer shrink-0"
+                className="p-1.5 hover:bg-red-50 dark:hover:bg-red-950/40 hover:text-red-650 hover:border-red-200 rounded-xl border border-neutral-200 dark:border-neutral-800 text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200 transition-all cursor-pointer shrink-0"
               >
                 <RefreshCw size={12} className="sm:size-3.5" />
               </button>
@@ -707,17 +767,17 @@ export default function App() {
           </div>
 
           {/* Bottom Row: Navigation Tabs with clean horizontal swiping */}
-          <div className="w-full overflow-x-auto scrollbar-none border-t border-neutral-100 pt-2 -mx-4 px-4 sm:mx-0 sm:px-0">
-            <nav className="flex items-center gap-1 min-w-max bg-neutral-150/40 p-1 rounded-xl border border-neutral-200/30" id="nav-tabs">
+          <div className="w-full overflow-x-auto scrollbar-none border-t border-neutral-100 dark:border-neutral-800 pt-2 -mx-4 px-4 sm:mx-0 sm:px-0">
+            <nav className="flex items-center gap-1 min-w-max bg-neutral-150/40 dark:bg-neutral-850/60 p-1 rounded-xl border border-neutral-200/30 dark:border-neutral-800" id="nav-tabs">
               <button
                 onClick={() => setActiveTab("curriculum")}
                 className={`px-3 py-1.5 rounded-lg text-xs font-sans font-bold transition-all duration-150 whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
                   activeTab === "curriculum" || activeTab === "details"
-                    ? "bg-white text-neutral-950 shadow-sm border border-neutral-200/80 font-extrabold"
-                    : "text-neutral-500 hover:text-neutral-900 hover:bg-white/45"
+                    ? "bg-white dark:bg-neutral-900 text-neutral-950 dark:text-white shadow-sm border border-neutral-200/80 dark:border-neutral-700 font-extrabold"
+                    : "text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white hover:bg-white/45 dark:hover:bg-neutral-800/40"
                 }`}
               >
-                <Home size={13} className={activeTab === "curriculum" || activeTab === "details" ? "text-emerald-600" : "text-neutral-400"} />
+                <Home size={13} className={activeTab === "curriculum" || activeTab === "details" ? "text-emerald-600 dark:text-emerald-400" : "text-neutral-400"} />
                 <span>Curriculum Syllabus</span>
               </button>
 
@@ -725,23 +785,35 @@ export default function App() {
                 onClick={() => setActiveTab("dashboard")}
                 className={`px-3 py-1.5 rounded-lg text-xs font-sans font-bold transition-all duration-150 whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
                   activeTab === "dashboard"
-                    ? "bg-white text-neutral-950 shadow-sm border border-neutral-200/80 font-extrabold"
-                    : "text-neutral-500 hover:text-neutral-900 hover:bg-white/45"
+                    ? "bg-white dark:bg-neutral-900 text-neutral-950 dark:text-white shadow-sm border border-neutral-200/80 dark:border-neutral-700 font-extrabold"
+                    : "text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white hover:bg-white/45 dark:hover:bg-neutral-800/40"
                 }`}
               >
-                <LayoutDashboard size={13} className={activeTab === "dashboard" ? "text-emerald-600" : "text-neutral-400"} />
+                <LayoutDashboard size={13} className={activeTab === "dashboard" ? "text-emerald-600 dark:text-emerald-400" : "text-neutral-400"} />
                 <span>Learner Dashboard</span>
+              </button>
+
+              <button
+                onClick={() => setActiveTab("diagrams")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-sans font-bold transition-all duration-150 whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
+                  activeTab === "diagrams"
+                    ? "bg-white dark:bg-neutral-900 text-neutral-950 dark:text-white shadow-sm border border-neutral-200/80 dark:border-neutral-700 font-extrabold"
+                    : "text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white hover:bg-white/45 dark:hover:bg-neutral-800/40"
+                }`}
+              >
+                <Network size={13} className={activeTab === "diagrams" ? "text-purple-600 dark:text-purple-400" : "text-neutral-400"} />
+                <span>📐 Visual Schematics</span>
               </button>
 
               <button
                 onClick={() => setActiveTab("glossary")}
                 className={`px-3 py-1.5 rounded-lg text-xs font-sans font-bold transition-all duration-150 whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
                   activeTab === "glossary"
-                    ? "bg-white text-emerald-950 shadow-sm border border-emerald-300 font-extrabold"
-                    : "text-neutral-500 hover:text-neutral-900 hover:bg-white/45"
+                    ? "bg-white dark:bg-neutral-900 text-emerald-950 dark:text-emerald-300 shadow-sm border border-emerald-300 dark:border-emerald-700 font-extrabold"
+                    : "text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white hover:bg-white/45 dark:hover:bg-neutral-800/40"
                 }`}
               >
-                <BookOpen size={13} className="text-emerald-600" />
+                <BookOpen size={13} className="text-emerald-600 dark:text-emerald-400" />
                 <span>📖 Terms Taxonomy &amp; Tests</span>
               </button>
 
@@ -749,8 +821,8 @@ export default function App() {
                 onClick={() => setActiveTab("quiz")}
                 className={`px-3 py-1.5 rounded-lg text-xs font-sans font-bold transition-all duration-150 whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
                   activeTab === "quiz"
-                    ? "bg-white text-neutral-900 shadow-sm border border-neutral-200/30 font-extrabold"
-                    : "text-neutral-500 hover:text-neutral-900 hover:bg-white/45"
+                    ? "bg-white dark:bg-neutral-900 text-neutral-900 dark:text-white shadow-sm border border-neutral-200/30 dark:border-neutral-700 font-extrabold"
+                    : "text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white hover:bg-white/45 dark:hover:bg-neutral-800/40"
                 }`}
               >
                 <Trophy size={13} className="text-amber-500" />
@@ -761,8 +833,8 @@ export default function App() {
                 onClick={() => setActiveTab("creator")}
                 className={`px-3 py-1.5 rounded-lg text-xs font-sans font-bold transition-all duration-150 whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
                   activeTab === "creator"
-                    ? "bg-white text-neutral-900 shadow-sm border border-neutral-200/30 font-extrabold"
-                    : "text-neutral-500 hover:text-neutral-900 hover:bg-white/45"
+                    ? "bg-white dark:bg-neutral-900 text-neutral-900 dark:text-white shadow-sm border border-neutral-200/30 dark:border-neutral-700 font-extrabold"
+                    : "text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white hover:bg-white/45 dark:hover:bg-neutral-800/40"
                 }`}
               >
                 <Sparkles size={13} className="text-indigo-500" />
@@ -797,6 +869,9 @@ export default function App() {
               onDeleteCustomCourse={handleDeleteCustomCourse}
               onEditCustomCourse={handleEditCustomCourse}
               onOpenConsulting={() => setIsLeadModalOpen(true)}
+              userPoints={userPoints}
+              streakCount={streakCount}
+              onClaimDailyBonus={handleClaimDailyBonus}
             />
           )}
 
@@ -831,6 +906,10 @@ export default function App() {
               }}
               onNavigateToCreator={() => setActiveTab("creator")}
             />
+          )}
+
+          {activeTab === "diagrams" && (
+            <VisualSearchDiagrams />
           )}
 
           {activeTab === "details" && activeLevelRecord && (
@@ -908,29 +987,29 @@ export default function App() {
       </main>
 
       {/* Footer block */}
-      <footer className="bg-white border-t border-neutral-200/60 px-6 py-8 text-neutral-500 text-xs font-sans leading-relaxed shadow-3xs" id="app-footer">
+      <footer className="bg-white dark:bg-neutral-900 border-t border-neutral-200/60 dark:border-neutral-800 px-6 py-8 text-neutral-500 dark:text-neutral-400 text-xs font-sans leading-relaxed shadow-3xs transition-colors duration-200" id="app-footer">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="text-center md:text-left space-y-2">
-            <p className="font-extrabold text-neutral-800 flex items-center justify-center md:justify-start gap-1.5 text-[13px]">
+            <p className="font-extrabold text-neutral-800 dark:text-white flex items-center justify-center md:justify-start gap-1.5 text-[13px]">
               <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
               SEO, GEO, AEO &amp; AIO Master Enterprise LMS
             </p>
-            <p className="text-[11px] text-neutral-400 font-medium">
+            <p className="text-[11px] text-neutral-400 dark:text-neutral-500 font-medium">
               &copy; 2026 Enterprise Learning Engine. All rights reserved.
             </p>
             <div className="pt-1 flex flex-wrap gap-2 justify-center md:justify-start text-[11px]">
               <button
                 type="button"
                 onClick={() => setIsLeadModalOpen(true)}
-                className="text-emerald-600 hover:text-emerald-700 font-bold hover:underline transition-all cursor-pointer"
+                className="text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-bold hover:underline transition-all cursor-pointer"
               >
                 ✦ Request Corporate Team Training &amp; Audits
               </button>
-              <span className="text-neutral-300">|</span>
+              <span className="text-neutral-300 dark:text-neutral-700">|</span>
               <button
                 type="button"
                 onClick={() => setActiveTab("crm")}
-                className="text-neutral-500 hover:text-neutral-800 font-bold hover:underline transition-all inline-flex items-center gap-1 cursor-pointer"
+                className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200 font-bold hover:underline transition-all inline-flex items-center gap-1 cursor-pointer"
               >
                 <Shield size={11} className="text-neutral-400" />
                 <span>Admin CRM Console</span>
@@ -939,9 +1018,9 @@ export default function App() {
           </div>
           
           <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 text-center md:text-right">
-            <div className="bg-neutral-50 border border-neutral-150 px-3 py-1.5 rounded-xl flex items-center gap-2">
+            <div className="bg-neutral-50 dark:bg-neutral-850 border border-neutral-150 dark:border-neutral-800 px-3 py-1.5 rounded-xl flex items-center gap-2">
               <span className="text-[10px] uppercase font-mono font-bold text-neutral-400 tracking-wider">Developer:</span>
-              <span className="text-[11px] font-bold text-neutral-800">Amrish Kumar Singh</span>
+              <span className="text-[11px] font-bold text-neutral-800 dark:text-neutral-200">Amrish Kumar Singh</span>
             </div>
             
             <div className="flex items-center gap-4">
@@ -955,10 +1034,10 @@ export default function App() {
                 <Linkedin size={13} className="fill-current" />
                 <span>LinkedIn Profile</span>
               </a>
-              <span className="text-neutral-300 hidden sm:inline">|</span>
+              <span className="text-neutral-300 dark:text-neutral-700 hidden sm:inline">|</span>
               <a 
                 href="mailto:amrish.singh01@gmail.com" 
-                className="text-neutral-500 hover:text-neutral-800 underline underline-offset-4 decoration-neutral-200 transition-all font-semibold"
+                className="text-neutral-500 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200 underline underline-offset-4 decoration-neutral-200 dark:decoration-neutral-700 transition-all font-semibold"
               >
                 amrish.singh01@gmail.com
               </a>

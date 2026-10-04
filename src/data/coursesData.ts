@@ -27,6 +27,10 @@ export interface SyllabusTier {
   difficulty: "Beginner" | "Intermediate" | "Advanced" | "Expert";
   colorTheme: string;
   trackIds: string[];
+  estimatedHours: number;
+  prerequisites: string;
+  conceptSummary: string;
+  keySkills: string[];
 }
 
 export interface RoadmapStep {
@@ -47,22 +51,26 @@ export const SYLLABUS_TIERS: SyllabusTier[] = [
   {
     id: "tier-1-foundations",
     tierNumber: 1,
-    title: "Tier 1: Foundations & Brand Baseline",
+    title: "Tier 1: Foundations, Search Mechanics & Brand Baseline",
     shortTitle: "1. Foundations",
     badge: "Beginner",
     badgeBg: "bg-emerald-100",
     badgeText: "text-emerald-800",
-    description: "Build fundamental understanding of search engine crawling, indexation, entity branding, local Google Business Profile setup, and CMS optimization.",
-    targetAudience: "Beginners, small business owners, and content marketers entering organic search.",
+    description: "Build fundamental understanding of search engine crawling, indexation, entity branding, keyword discovery, and local Google Business Profile setup.",
+    targetAudience: "Beginners, marketing generalists, and founders launching organic search initiatives.",
     difficulty: "Beginner",
     colorTheme: "emerald",
-    trackIds: ["seo-course", "fundamentals", "gbp", "wordpress"]
+    trackIds: ["seo-course", "fundamentals", "gbp"],
+    estimatedHours: 28,
+    prerequisites: "None. Basic web navigation and understanding of digital marketing.",
+    conceptSummary: "Search engines are automated discovery systems. Before you can rank, you must understand the 4 stages of search: crawling, rendering, indexing, and intent-based ranking.",
+    keySkills: ["Crawler Mechanics", "Keyword Research", "Search Intent Mapping", "Local GBP Map 3-Pack", "SSL & Domain Trust Baseline"]
   },
   {
     id: "tier-2-content-semantics",
     tierNumber: 2,
-    title: "Tier 2: Content, Silos & Semantic Architecture",
-    shortTitle: "2. Content & Silos",
+    title: "Tier 2: Content Strategy, Topic Silos & Structured Schema",
+    shortTitle: "2. Content & Schema",
     badge: "Intermediate",
     badgeBg: "bg-blue-100",
     badgeText: "text-blue-800",
@@ -70,49 +78,83 @@ export const SYLLABUS_TIERS: SyllabusTier[] = [
     targetAudience: "Content strategists, copywriters, and SEO practitioners scaling organic traffic.",
     difficulty: "Intermediate",
     colorTheme: "blue",
-    trackIds: ["content-strategy", "entity-graphs", "semantic-markup", "niche-verticals"]
+    trackIds: ["content-strategy", "entity-graphs", "semantic-markup", "niche-verticals"],
+    estimatedHours: 18,
+    prerequisites: "Completion of Tier 1 (understanding search intent and keyword clustering).",
+    conceptSummary: "Google and AI search engines think in entities and relationships, not isolated keywords. Grouping content into rigid thematic silos and tagging with JSON-LD schema unlocks rich snippets and topical authority.",
+    keySkills: ["Topic Clusters & Pillar Pages", "Entity Knowledge Graphs", "JSON-LD Rich Snippets", "Internal Link Silos", "E-E-A-T Optimization"]
   },
   {
-    id: "tier-3-technical-gsc",
+    id: "tier-3-technical-performance",
     tierNumber: 3,
-    title: "Tier 3: Technical SEO & Search Console Engineering",
-    shortTitle: "3. Technical & GSC",
+    title: "Tier 3: Technical SEO & Performance Infrastructure",
+    shortTitle: "3. Technical & Speed",
     badge: "Advanced",
     badgeBg: "bg-amber-100",
     badgeText: "text-amber-800",
-    description: "Audit crawl budgets, resolve server-side errors, optimize Core Web Vitals (INP, LCP, CLS), and master the 20-part Google Search Console diagnostic protocol.",
-    targetAudience: "Technical SEOs, web developers, and engineers managing large-scale websites.",
+    description: "Audit crawl budgets, resolve server-side errors, master Core Web Vitals (INP, LCP, CLS), and optimize WordPress CMS speed and security.",
+    targetAudience: "Technical SEOs, web developers, and performance engineers.",
     difficulty: "Advanced",
     colorTheme: "amber",
-    trackIds: ["tech-eng", "gsc-complete"]
+    trackIds: ["tech-eng", "wordpress"],
+    estimatedHours: 16,
+    prerequisites: "Basic familiarity with HTML/CSS, server response codes (200, 301, 404, 500), and site architecture.",
+    conceptSummary: "Great content cannot rank if search engine bots are trapped in crawl loops, blocked by robots.txt, or throttled by poor Interaction to Next Paint (INP) latency.",
+    keySkills: ["Core Web Vitals (INP, LCP, CLS)", "Crawl Budget Optimization", "Server Log Analysis", "Hreflang & International SEO", "WordPress Caching & Asset Delivery"]
   },
   {
-    id: "tier-4-analytics-cro",
+    id: "tier-4-diagnostics-gsc",
     tierNumber: 4,
-    title: "Tier 4: Analytics, Attribution & Conversion Optimization",
-    shortTitle: "4. Analytics & CRO",
+    title: "Tier 4: Google Search Console 20-Part Diagnostic Protocol",
+    shortTitle: "4. GSC Protocol",
+    badge: "Advanced",
+    badgeBg: "bg-teal-100",
+    badgeText: "text-teal-800",
+    description: "Master the 20-part Google Search Console workflow covering Index Coverage, Core Web Vitals diagnostics, URL inspection, and manual action resolution.",
+    targetAudience: "SEO auditors, agency specialists, and in-house search leaders.",
+    difficulty: "Advanced",
+    colorTheme: "teal",
+    trackIds: ["gsc-complete"],
+    estimatedHours: 12,
+    prerequisites: "Tier 3 Technical SEO & Tier 1 Foundations.",
+    conceptSummary: "Google Search Console is your direct diagnostic hotline into Google's database. Auditing indexing parity, canonical discrepancies, and crawl anomalies provides ground truth for every SEO decision.",
+    keySkills: ["100% Indexing Parity", "Canonical Discrepancy Audits", "Core Web Vitals Field Telemetry", "Sitemap Indexing", "Disavow & Manual Action Recovery"]
+  },
+  {
+    id: "tier-5-analytics-cro",
+    tierNumber: 5,
+    title: "Tier 5: Analytics, Attribution & Conversion Engineering",
+    shortTitle: "5. Analytics & CRO",
     badge: "Advanced",
     badgeBg: "bg-orange-100",
     badgeText: "text-orange-800",
-    description: "Deploy enterprise GA4 measurement pipelines, evaluate organic search ROI, manage digital PR campaigns, and conduct A/B testing on high-intent landing pages.",
-    targetAudience: "Growth marketers, analytics specialists, and marketing directors.",
+    description: "Deploy enterprise GA4 measurement pipelines, calculate true organic search ROI, win tier-1 digital PR editorial backlinks, and conduct conversion A/B testing.",
+    targetAudience: "Growth marketers, analytics directors, and performance leads.",
     difficulty: "Advanced",
     colorTheme: "orange",
-    trackIds: ["ga4", "authority-conversion"]
+    trackIds: ["ga4", "authority-conversion"],
+    estimatedHours: 14,
+    prerequisites: "Google Analytics familiarity and basic digital analytics concepts.",
+    conceptSummary: "Traffic without conversion is vanity. Connecting organic impressions to revenue pipelines through event-driven GA4 models, digital PR authority links, and CRO experiments proves genuine business ROI.",
+    keySkills: ["GA4 Custom Explorations", "Organic Revenue Attribution", "Digital PR Backlink Campaigns", "Landing Page CRO & Heatmaps", "A/B Testing Methodologies"]
   },
   {
-    id: "tier-5-ai-geo-sxo",
-    tierNumber: 5,
-    title: "Tier 5: Next-Gen AI Search, GEO & SXO Mastery",
-    shortTitle: "5. AI, GEO & SXO",
+    id: "tier-6-ai-geo-sxo",
+    tierNumber: 6,
+    title: "Tier 6: Generative Engine Optimization (GEO), AI Search & SXO",
+    shortTitle: "6. AI Search & GEO",
     badge: "Expert",
     badgeBg: "bg-purple-100",
     badgeText: "text-purple-800",
-    description: "Optimize for Generative AI engines (ChatGPT, Gemini, Perplexity), secure featured answers (AEO), and master Search Everywhere Optimization (SXO).",
-    targetAudience: "Senior SEO consultants, AI strategists, and agency leaders building future-proof search operations.",
+    description: "Optimize for Generative AI engines (ChatGPT Search, Google AI Overviews, Perplexity, Gemini), capture zero-click answers, and execute Search Everywhere Optimization (SXO).",
+    targetAudience: "Senior SEO consultants, AI marketing directors, and forward-looking strategists.",
     difficulty: "Expert",
     colorTheme: "purple",
-    trackIds: ["geo", "aeo", "sxo"]
+    trackIds: ["geo", "aeo", "sxo"],
+    estimatedHours: 18,
+    prerequisites: "Comprehensive mastery of Tiers 1 through 5.",
+    conceptSummary: "Search in 2026 is no longer just 10 blue links. Large language models retrieve information via vector embeddings and RAG pipelines. Structuring content for AI citation and cross-platform presence defines modern organic dominance.",
+    keySkills: ["GEO for RAG & LLM Citations", "AI Overview Ingestion Models", "Answer Engine Optimization (AEO)", "Multi-Platform Search (YouTube, TikTok, Reddit)", "Comprehensive Enterprise SEO Capstone"]
   }
 ];
 
@@ -170,23 +212,6 @@ export const LEARNING_ROADMAP_STEPS: RoadmapStep[] = [
   },
   {
     stepNumber: 4,
-    tierId: "tier-1-foundations",
-    title: "WordPress SEO & Speed Protocol",
-    subtitle: "Full 20-part WordPress optimization for caching, speed, and schema",
-    difficulty: "Beginner",
-    estimatedMinutes: 120,
-    trackId: "wordpress",
-    trackName: "WordPress Optimization Checklist",
-    levelIds: [101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120],
-    keyOutcomes: [
-      "Configure modern permalink architecture and database caching",
-      "Implement image compression (WebP/AVIF) and script minification",
-      "Deploy essential SEO plugins and robots/sitemap integrations"
-    ],
-    milestoneBadge: "⚙️ WordPress Craftsman"
-  },
-  {
-    stepNumber: 5,
     tierId: "tier-2-content-semantics",
     title: "On-Page Strategy & E-E-A-T Content",
     subtitle: "Topic clusters, semantic keyword optimization, and author credibility",
@@ -203,7 +228,7 @@ export const LEARNING_ROADMAP_STEPS: RoadmapStep[] = [
     milestoneBadge: "✍️ Content Strategist"
   },
   {
-    stepNumber: 6,
+    stepNumber: 5,
     tierId: "tier-2-content-semantics",
     title: "Information Architecture & Entity Graphs",
     subtitle: "Hub-and-spoke models, silo structures, and knowledge graphs",
@@ -220,7 +245,7 @@ export const LEARNING_ROADMAP_STEPS: RoadmapStep[] = [
     milestoneBadge: "🕸️ Entity Architect"
   },
   {
-    stepNumber: 7,
+    stepNumber: 6,
     tierId: "tier-2-content-semantics",
     title: "Structured Data & Semantic Schema",
     subtitle: "JSON-LD markup for Articles, Products, Organizations, and FAQs",
@@ -237,7 +262,7 @@ export const LEARNING_ROADMAP_STEPS: RoadmapStep[] = [
     milestoneBadge: "🏷️ Schema Engineer"
   },
   {
-    stepNumber: 8,
+    stepNumber: 7,
     tierId: "tier-2-content-semantics",
     title: "E-Commerce & Vertical Search Mastery",
     subtitle: "Product catalogs, facet filtering, reviews, and video optimization",
@@ -254,8 +279,25 @@ export const LEARNING_ROADMAP_STEPS: RoadmapStep[] = [
     milestoneBadge: "🏬 Vertical Specialist"
   },
   {
+    stepNumber: 8,
+    tierId: "tier-3-technical-performance",
+    title: "WordPress SEO & Speed Protocol",
+    subtitle: "Full 20-part WordPress optimization for caching, speed, and schema",
+    difficulty: "Advanced",
+    estimatedMinutes: 120,
+    trackId: "wordpress",
+    trackName: "WordPress Optimization Checklist",
+    levelIds: [101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120],
+    keyOutcomes: [
+      "Configure modern permalink architecture and database caching",
+      "Implement image compression (WebP/AVIF) and script minification",
+      "Deploy essential SEO plugins and robots/sitemap integrations"
+    ],
+    milestoneBadge: "⚙️ WordPress Craftsman"
+  },
+  {
     stepNumber: 9,
-    tierId: "tier-3-technical-gsc",
+    tierId: "tier-3-technical-performance",
     title: "Technical SEO & Crawl Diagnostics",
     subtitle: "Crawl budget management, server logs, robots.txt, and render pipelines",
     difficulty: "Advanced",
@@ -272,7 +314,7 @@ export const LEARNING_ROADMAP_STEPS: RoadmapStep[] = [
   },
   {
     stepNumber: 10,
-    tierId: "tier-3-technical-gsc",
+    tierId: "tier-4-diagnostics-gsc",
     title: "Google Search Console Complete Protocol",
     subtitle: "20-part inspection covering Index Coverage, Core Web Vitals, and Removals",
     difficulty: "Advanced",
@@ -289,7 +331,7 @@ export const LEARNING_ROADMAP_STEPS: RoadmapStep[] = [
   },
   {
     stepNumber: 11,
-    tierId: "tier-4-analytics-cro",
+    tierId: "tier-5-analytics-cro",
     title: "Google Analytics 4 (GA4) Mastery",
     subtitle: "Custom exploration reports, conversion funnels, and organic ROI modeling",
     difficulty: "Advanced",
@@ -306,7 +348,7 @@ export const LEARNING_ROADMAP_STEPS: RoadmapStep[] = [
   },
   {
     stepNumber: 12,
-    tierId: "tier-4-analytics-cro",
+    tierId: "tier-5-analytics-cro",
     title: "Authority, PR & Conversion Optimization (CRO)",
     subtitle: "Digital PR, link acquisition, UX testing, and conversion rate engineering",
     difficulty: "Advanced",
@@ -323,7 +365,7 @@ export const LEARNING_ROADMAP_STEPS: RoadmapStep[] = [
   },
   {
     stepNumber: 13,
-    tierId: "tier-5-ai-geo-sxo",
+    tierId: "tier-6-ai-geo-sxo",
     title: "Generative Engine Optimization (GEO)",
     subtitle: "Formatting for RAG engines, ChatGPT search, Gemini, Claude, and Perplexity",
     difficulty: "Expert",
@@ -340,7 +382,7 @@ export const LEARNING_ROADMAP_STEPS: RoadmapStep[] = [
   },
   {
     stepNumber: 14,
-    tierId: "tier-5-ai-geo-sxo",
+    tierId: "tier-6-ai-geo-sxo",
     title: "Answer Engine Optimization (AEO)",
     subtitle: "Direct answer snippets, Google AI Overviews, and voice search",
     difficulty: "Expert",
@@ -357,7 +399,7 @@ export const LEARNING_ROADMAP_STEPS: RoadmapStep[] = [
   },
   {
     stepNumber: 15,
-    tierId: "tier-5-ai-geo-sxo",
+    tierId: "tier-6-ai-geo-sxo",
     title: "Search Everywhere Optimization (SXO) & Capstone",
     subtitle: "Multi-platform search (YouTube, TikTok, Reddit) + full client audit capstone",
     difficulty: "Expert",
@@ -373,6 +415,8 @@ export const LEARNING_ROADMAP_STEPS: RoadmapStep[] = [
     milestoneBadge: "👑 Search Master"
   }
 ];
+
+export const ROADMAP_STEPS = LEARNING_ROADMAP_STEPS;
 
 export const LMS_COURSES: LMSCourse[] = [
   {

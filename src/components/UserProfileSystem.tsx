@@ -75,21 +75,54 @@ export function GoogleLoginModal({ onClose, onLoginSuccess, suggestedEmail }: Go
   const [phone, setPhone] = useState("");
   const [linkedin, setLinkedin] = useState("");
   const [role, setRole] = useState("Student");
-  const [showAdvancedForm, setShowAdvancedForm] = useState(false);
+  const [quickEmailInput, setQuickEmailInput] = useState(suggestedEmail || "amrish.singh01@gmail.com");
   const [step, setStep] = useState<1 | 2>(1);
-  const [errorText, setErrorText] = useState("");
+  const [authError, setAuthError] = useState<{
+    code: string;
+    title: string;
+    desc: string;
+    actionableDomain?: string;
+  } | null>(null);
   const [loading, setLoading] = useState(false);
 
   const handleGoogleSignIn = async () => {
     setLoading(true);
-    setErrorText("");
+    setAuthError(null);
     try {
       const { profile } = await signInWithGoogle();
       onLoginSuccess(profile);
       onClose();
     } catch (e: any) {
-      console.error(e);
-      setErrorText("Google Sign-In failed. Please verify configurations or try again.");
+      console.error("Google Auth failure:", e);
+      const code = e?.code || "";
+      const currentHost = typeof window !== "undefined" ? window.location.hostname : "";
+      
+      if (code === "auth/unauthorized-domain" || e?.message?.includes("unauthorized-domain") || e?.message?.includes("not authorized")) {
+        setAuthError({
+          code: "auth/unauthorized-domain",
+          title: "Preview Domain Authorization Notice",
+          desc: `The Cloud Run preview host (${currentHost}) is not yet registered in Firebase Console > Authentication > Authorized Domains.`,
+          actionableDomain: currentHost
+        });
+      } else if (code === "auth/popup-blocked" || e?.message?.includes("popup")) {
+        setAuthError({
+          code: "auth/popup-blocked",
+          title: "Browser Blocked Sign-In Popup",
+          desc: "The Google sign-in popup was blocked by your browser or the preview iframe sandbox. Use the instant login below."
+        });
+      } else if (code === "auth/popup-closed-by-user" || code === "auth/cancelled-popup-request") {
+        setAuthError({
+          code: code || "auth/cancelled",
+          title: "Sign-In Popup Closed",
+          desc: "The Google sign-in window was closed before completing. You can retry or log in instantly below."
+        });
+      } else {
+        setAuthError({
+          code: code || "auth/error",
+          title: "OAuth Window Restricted",
+          desc: e?.message || "Google popup authentication could not complete in this preview frame. Please use the instant one-click login below."
+        });
+      }
     } finally {
       setLoading(false);
     }
@@ -101,13 +134,35 @@ export function GoogleLoginModal({ onClose, onLoginSuccess, suggestedEmail }: Go
       name: selectedName,
       email: selectedEmail,
       phone: isAdmin ? "+91 831 811 4492" : "+91 99999 00000",
-      linkedin: isAdmin ? "https://linkedin.com/in/amrish-kumar-singh" : "",
+      linkedin: isAdmin ? "https://linkedin.com/in/amrishkumarsingh/" : "",
       role: selectedRole,
       avatarUrl: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(selectedName)}&backgroundColor=0d0d0d,1a1a1a&textColor=ffffff`,
       isAdmin: isAdmin
     };
     
     onLoginSuccess(defaultProfile);
+    onClose();
+  };
+
+  const handleQuickEmailLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!quickEmailInput.trim()) return;
+    const cleanEmail = quickEmailInput.trim().toLowerCase();
+    const isAdmin = cleanEmail === "amrish.singh01@gmail.com";
+    const defaultName = isAdmin ? "Amrish Kumar Singh" : cleanEmail.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, l => l.toUpperCase());
+    
+    const profile: UserProfile = {
+      isLoggedIn: true,
+      name: defaultName,
+      email: cleanEmail,
+      phone: isAdmin ? "+91 831 811 4492" : "",
+      role: isAdmin ? "Global Admin" : "Student",
+      linkedin: isAdmin ? "https://linkedin.com/in/amrishkumarsingh/" : "",
+      avatarUrl: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(defaultName)}&backgroundColor=0d0d0d,1a1a1a&textColor=ffffff`,
+      isAdmin: isAdmin
+    };
+
+    onLoginSuccess(profile);
     onClose();
   };
 
@@ -156,31 +211,85 @@ export function GoogleLoginModal({ onClose, onLoginSuccess, suggestedEmail }: Go
         </div>
 
         {step === 1 ? (
-          <div className="p-6 space-y-6">
+          <div className="p-6 space-y-5">
             <div className="text-center space-y-1">
-              <h3 className="text-base font-extrabold text-neutral-900">Choose an Account</h3>
-              <p className="text-[11px] text-neutral-400">to continue to AskAmrish Platform</p>
+              <h3 className="text-base font-extrabold text-neutral-900">Sign In to AskAmrish LMS</h3>
+              <p className="text-[11px] text-neutral-500">Sync syllabus progress, preserve certifications & access admin tools</p>
             </div>
 
             {/* Primary Google Auth Button */}
             <button
               onClick={handleGoogleSignIn}
               disabled={loading}
-              className="w-full p-4 bg-neutral-900 hover:bg-neutral-800 disabled:bg-neutral-600 text-white border border-neutral-800 rounded-2xl flex items-center justify-center gap-3 transition-all cursor-pointer hover:scale-[1.01] shadow-md font-bold text-xs"
+              className="w-full p-3.5 bg-neutral-900 hover:bg-neutral-800 disabled:bg-neutral-600 text-white border border-neutral-800 rounded-2xl flex items-center justify-center gap-3 transition-all cursor-pointer hover:scale-[1.01] shadow-md font-bold text-xs"
             >
               <div className="w-5 h-5 bg-white text-neutral-900 rounded-lg flex items-center justify-center font-black text-xs shrink-0">
                 G
               </div>
-              <span>{loading ? "Connecting securely..." : "Sign In with Google (Database Sync)"}</span>
+              <span>{loading ? "Connecting to Google..." : "Sign In with Google"}</span>
             </button>
 
-            {errorText && (
-              <p className="text-[10px] text-red-600 font-mono text-center font-semibold bg-red-50 p-2 rounded-lg border border-red-100">{errorText}</p>
+            {/* Dedicated Diagnostic Box on Auth Failure */}
+            {authError && (
+              <div className="p-4 bg-amber-50/90 border border-amber-200 rounded-2xl text-left space-y-2.5 animate-fade-in shadow-xs">
+                <div className="flex items-start gap-2">
+                  <span className="text-sm">⚠️</span>
+                  <div className="min-w-0">
+                    <h4 className="text-xs font-black text-amber-900 leading-tight">
+                      {authError.title}
+                    </h4>
+                    <p className="text-[10.5px] text-amber-800 leading-snug mt-0.5">
+                      {authError.desc}
+                    </p>
+                  </div>
+                </div>
+
+                {authError.actionableDomain && (
+                  <div className="bg-amber-100/70 p-2 rounded-xl text-[9.5px] font-mono text-amber-950 border border-amber-300/50 break-all">
+                    <b>To Authorize Domain:</b> Firebase Console &gt; Auth &gt; Settings &gt; Authorized Domains &gt; Add: <code>{authError.actionableDomain}</code>
+                  </div>
+                )}
+
+                {/* Instant Bypass Button */}
+                <button
+                  type="button"
+                  onClick={() => handleSelectQuickAccount("amrish.singh01@gmail.com", "Amrish Kumar Singh", "Global Admin", true)}
+                  className="w-full py-2 px-3 bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-black rounded-xl transition-all shadow-sm flex items-center justify-center gap-1.5 cursor-pointer hover:scale-[1.01]"
+                >
+                  <span>⚡ Instant Sign In as Amrish Kumar Singh (Admin)</span>
+                </button>
+              </div>
             )}
+
+            {/* Fast Email Sign-In Option */}
+            <form onSubmit={handleQuickEmailLogin} className="space-y-2 pt-1">
+              <label className="text-[10px] font-mono font-bold uppercase text-neutral-400 tracking-wider block">
+                Direct Email Sign-In (No Popup Required)
+              </label>
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <Mail size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
+                  <input
+                    type="email"
+                    required
+                    value={quickEmailInput}
+                    onChange={(e) => setQuickEmailInput(e.target.value)}
+                    placeholder="name@company.com"
+                    className="w-full bg-neutral-50 border border-neutral-250 focus:border-neutral-900 outline-none rounded-xl pl-8 pr-3 py-2 text-xs text-neutral-900 font-semibold"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-bold rounded-xl transition-all cursor-pointer shrink-0 shadow-3xs"
+                >
+                  Sign In
+                </button>
+              </div>
+            </form>
 
             <div className="relative flex py-1 items-center">
               <div className="flex-grow border-t border-neutral-150"></div>
-              <span className="flex-shrink mx-4 text-[9px] font-mono font-bold uppercase text-neutral-400 tracking-wider">OR QUICK LOGINS</span>
+              <span className="flex-shrink mx-4 text-[9px] font-mono font-bold uppercase text-neutral-400 tracking-wider">OR 1-CLICK SELECT</span>
               <div className="flex-grow border-t border-neutral-150"></div>
             </div>
 
@@ -206,7 +315,7 @@ export function GoogleLoginModal({ onClose, onLoginSuccess, suggestedEmail }: Go
                   </div>
                 </div>
                 <span className="px-2 py-0.5 bg-amber-100 text-amber-800 text-[8px] font-mono font-black uppercase rounded shrink-0 group-hover:scale-105 transition-all">
-                  ADMIN LOGIN
+                  ADMIN 1-CLICK
                 </span>
               </button>
 
@@ -229,7 +338,7 @@ export function GoogleLoginModal({ onClose, onLoginSuccess, suggestedEmail }: Go
                   </div>
                 </div>
                 <span className="px-2 py-0.5 bg-neutral-100 border border-neutral-200 text-neutral-500 text-[8px] font-mono rounded shrink-0">
-                  QUICK GUEST
+                  STUDENT 1-CLICK
                 </span>
               </button>
 
@@ -248,10 +357,6 @@ export function GoogleLoginModal({ onClose, onLoginSuccess, suggestedEmail }: Go
               <UserCheck size={13} className="text-neutral-500" />
               <span>Use Custom Professional Profile</span>
             </button>
-
-            <p className="text-[10px] text-neutral-400 text-center leading-relaxed">
-              We value privacy. Your local storage holds your profile data. If logging in with <b>amrish.singh01@gmail.com</b>, you will automatically switch into Global Administrator mode to manage public submissions and CRM logs.
-            </p>
           </div>
         ) : (
           <form onSubmit={handleSubmitCustomProfile} className="p-6 space-y-4">

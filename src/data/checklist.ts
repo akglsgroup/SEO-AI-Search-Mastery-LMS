@@ -6,41 +6,52 @@
 import { Level, Track, QuizQuestion, ChecklistItem } from "../types";
 
 export const INITIAL_TRACKS: Track[] = [
+  // --- TIER 1: FOUNDATIONS & BRAND BASELINE (BEGINNER) ---
   {
     id: "fundamentals",
-    title: "1. Core Fundamentals & Brand Baseline",
+    title: "1. Core Fundamentals & Search Mechanics",
     description: "Establish official corporate presence models, verify baseline security/protocols, and optimize initial Web Vitals site speed metrics.",
     colorClass: "bg-slate-50 border-slate-200 text-slate-800",
     textColorClass: "text-slate-700",
     levelIds: [1, 2]
   },
   {
-    id: "tech-eng",
-    title: "2. Technical SEO Engineering",
-    description: "Deep crawl budget diagnostics, advanced sitemap routing, robust index coverage checking, international SEO, and schema validation pipelines.",
-    colorClass: "bg-emerald-50 border-emerald-200 text-emerald-800",
-    textColorClass: "text-emerald-700",
-    levelIds: [3, 23, 35]
+    id: "gbp",
+    title: "2. Local SEO & Google Business Profile (GBP)",
+    description: "Fully maximize storefront visibility, configure category & service architecture, optimize engagement media, and increase local trust conversions.",
+    colorClass: "bg-sky-50 border-sky-200 text-sky-800",
+    textColorClass: "text-sky-700",
+    levelIds: [401, 402, 403, 404, 405]
   },
   {
-    id: "entity-graphs",
-    title: "3. IA, Silos & Entity Graphs",
-    description: "Design parent-child directory structures, formulate rigid topic silos, align Wikipedia/Wikidata entity profiles, and balance internal link authority.",
-    colorClass: "bg-blue-50 border-blue-200 text-blue-800",
-    textColorClass: "text-blue-700",
-    levelIds: [4, 7, 8, 16]
+    id: "wordpress",
+    title: "3. CMS & WordPress Speed Protocol",
+    description: "The complete, definitive 20-part WordPress speed, security, Core Web Vitals, schema, and GEO/AI search optimization protocol.",
+    colorClass: "bg-amber-50 border-amber-200 text-amber-800",
+    textColorClass: "text-amber-700",
+    levelIds: [101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120]
   },
+
+  // --- TIER 2: CONTENT STRATEGY, SILOS & SEMANTIC ARCHITECTURE (INTERMEDIATE) ---
   {
     id: "content-strategy",
-    title: "4. Content Strategy & On-Page Mastery",
+    title: "4. Content Strategy & On-Page E-E-A-T",
     description: "Model long-tail intent clusters, optimize on-page headings, construct high-ROI content resources, deploy programmatic layouts, and engineer E-E-A-T trust signals.",
     colorClass: "bg-purple-50 border-purple-200 text-purple-800",
     textColorClass: "text-purple-700",
     levelIds: [5, 10, 11, 12, 27, 33]
   },
   {
+    id: "entity-graphs",
+    title: "5. IA, Topic Silos & Entity Graphs",
+    description: "Design parent-child directory structures, formulate rigid topic silos, align Wikipedia/Wikidata entity profiles, and balance internal link authority.",
+    colorClass: "bg-blue-50 border-blue-200 text-blue-800",
+    textColorClass: "text-blue-700",
+    levelIds: [4, 7, 8, 16]
+  },
+  {
     id: "semantic-markup",
-    title: "5. Structured Data & Semantic Markup",
+    title: "6. Structured Data & JSON-LD Schemas",
     description: "Configure advanced machine-readable JSON-LD schemas, map vocabulary concept indexes, and execute gap audits for conceptual matching.",
     colorClass: "bg-cyan-50 border-cyan-200 text-cyan-800",
     textColorClass: "text-cyan-700",
@@ -48,15 +59,53 @@ export const INITIAL_TRACKS: Track[] = [
   },
   {
     id: "niche-verticals",
-    title: "6. Local, E-commerce & Media Verticals",
+    title: "7. E-Commerce & Media Search Verticals",
     description: "Optimize localized physical business maps, model e-commerce product offers/ratings catalogs, and unlock rich-carousel image & video indexes.",
     colorClass: "bg-orange-50 border-orange-200 text-orange-800",
     textColorClass: "text-orange-700",
     levelIds: [21, 22, 24, 25]
   },
+
+  // --- TIER 3: TECHNICAL SEO & SEARCH CONSOLE ENGINEERING (ADVANCED) ---
+  {
+    id: "tech-eng",
+    title: "8. Technical SEO & Web Engineering",
+    description: "Deep crawl budget diagnostics, advanced sitemap routing, robust index coverage checking, international SEO, and schema validation pipelines.",
+    colorClass: "bg-emerald-50 border-emerald-200 text-emerald-800",
+    textColorClass: "text-emerald-700",
+    levelIds: [3, 23, 35]
+  },
+  {
+    id: "gsc-complete",
+    title: "9. Google Search Console 20-Part Protocol",
+    description: "The complete, definitive 20-part Google Search Console workflow to ensure 100% indexing parity, search visibility tracking, and advanced GEO/AEO optimization.",
+    colorClass: "bg-teal-50 border-teal-200 text-teal-800",
+    textColorClass: "text-teal-700",
+    levelIds: [201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220]
+  },
+
+  // --- TIER 4: ANALYTICS, ATTRIBUTION & CONVERSION OPTIMIZATION (ADVANCED) ---
+  {
+    id: "ga4",
+    title: "10. Google Analytics 4 (GA4) & Measurement",
+    description: "The complete enterprise-grade Google Analytics 4 checklist from setups, event tracking networks, conversion triggers, ecommerce funnels, to AI optimization audits.",
+    colorClass: "bg-amber-50 border-amber-200 text-amber-800",
+    textColorClass: "text-amber-700",
+    levelIds: [501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 512, 513, 514, 515]
+  },
+  {
+    id: "authority-conversion",
+    title: "11. Digital PR, Authority & Conversion Optimization",
+    description: "Formulate digital PR and outreach campaigns, monitor server access logs, construct intuitive UX navigations, and run high-converting A/B audits.",
+    colorClass: "bg-rose-50 border-rose-200 text-rose-800",
+    textColorClass: "text-rose-700",
+    levelIds: [17, 18, 19, 20, 28, 29, 30]
+  },
+
+  // --- TIER 5: NEXT-GEN AI SEARCH, GEO & SXO MASTERY (EXPERT) ---
   {
     id: "geo",
-    title: "7. Generative Engine Optimization (GEO)",
+    title: "12. Generative Engine Optimization (GEO & RAG)",
     description: "Format block-level content for retrieval-augmented generation (RAG) indices, maximize LLM references, and audit visibility inside ChatGPT, Gemini, and Claude.",
     colorClass: "bg-violet-50 border-violet-200 text-violet-800",
     textColorClass: "text-violet-700",
@@ -64,59 +113,19 @@ export const INITIAL_TRACKS: Track[] = [
   },
   {
     id: "aeo",
-    title: "8. AEO & Answer Optimization",
+    title: "13. Answer Engine & Zero-Click Optimization (AEO)",
     description: "Structure crisp, direct Q&A modules to secure Google featured snippets and capture spoken target answers via smart-speaker channels.",
-    colorClass: "bg-amber-50 border-amber-200 text-amber-800",
-    textColorClass: "text-amber-700",
+    colorClass: "bg-indigo-50 border-indigo-200 text-indigo-800",
+    textColorClass: "text-indigo-700",
     levelIds: [14, 26]
   },
   {
-    id: "authority-conversion",
-    title: "9. Authority, PR & Conversion Optimization",
-    description: "Formulate digital PR and outreach campaigns, monitor server access logs, construct intuitive UX navigations, and run high-converting A/B audits.",
-    colorClass: "bg-rose-50 border-rose-200 text-rose-800",
-    textColorClass: "text-rose-700",
-    levelIds: [17, 18, 19, 20, 28, 29, 30]
-  },
-  {
-    id: "wordpress",
-    title: "10. WordPress Optimization Checklist",
-    description: "The complete, definitive 20-part WordPress speed, security, Core Web Vitals, schema, and GEO/AI search optimization protocol.",
-    colorClass: "bg-amber-50 border-amber-200 text-amber-800",
-    textColorClass: "text-amber-700",
-    levelIds: [101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120]
-  },
-  {
-    id: "gsc-complete",
-    title: "11. Google Search Console Complete Checklist (2026-2027)",
-    description: "The complete, definitive 20-part Google Search Console workflow to ensure 100% indexing parity, search visibility tracking, and advanced GEO/AEO optimization.",
-    colorClass: "bg-teal-50 border-teal-200 text-teal-800",
-    textColorClass: "text-teal-700",
-    levelIds: [201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220]
-  },
-  {
     id: "sxo",
-    title: "12. Search Everywhere Optimization (SXO) Mastery",
+    title: "14. Search Everywhere Optimization (SXO) Mastery",
     description: "Optimize brand discoverability and visibility across traditional search, AI engines, chat interfaces, specialized catalogs, and social databases.",
-    colorClass: "bg-indigo-50 border-indigo-200 text-indigo-800",
-    textColorClass: "text-indigo-700",
+    colorClass: "bg-purple-50 border-purple-200 text-purple-800",
+    textColorClass: "text-purple-700",
     levelIds: [301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316]
-  },
-  {
-    id: "gbp",
-    title: "13. Google Business Profile Optimization Checklist",
-    description: "Fully maximize storefront visibility, configure category & service architecture, optimize engagement media, and increase local trust conversions.",
-    colorClass: "bg-sky-50 border-sky-200 text-sky-800",
-    textColorClass: "text-sky-700",
-    levelIds: [401, 402, 403, 404, 405]
-  },
-  {
-    id: "ga4",
-    title: "14. Google Analytics 4 (GA4) Complete Guide",
-    description: "The complete enterprise-grade Google Analytics 4 checklist from setups, event tracking networks, conversion triggers, ecommerce funnels, to AI optimization audits.",
-    colorClass: "bg-orange-50 border-orange-200 text-orange-800",
-    textColorClass: "text-orange-700",
-    levelIds: [501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 512, 513, 514, 515]
   }
 ];
 

@@ -123,9 +123,14 @@ export async function signInWithGoogle(): Promise<{ firebaseUser: FirebaseUser; 
     }
 
     return { firebaseUser, profile };
-  } catch (error) {
-    handleFirestoreError(error, OperationType.GET, "auth/google-sign-in");
-    throw error;
+  } catch (error: any) {
+    console.error("Firebase Google Auth Error:", error);
+    const code = error?.code || "auth/unknown";
+    const message = error?.message || "Failed to authenticate with Google.";
+    const authError: any = new Error(message);
+    authError.code = code;
+    authError.original = error;
+    throw authError;
   }
 }
 

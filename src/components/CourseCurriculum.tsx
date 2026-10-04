@@ -40,9 +40,13 @@ import {
   CheckCircle2,
   Trophy,
   SlidersHorizontal,
-  Flame
+  Flame,
+  Cpu
 } from "lucide-react";
 import { motion } from "motion/react";
+
+import VisualLearningLab from "./VisualLearningLab";
+import GamificationArena from "./GamificationArena";
 
 const ALL_TRACKS = getAllTracks();
 
@@ -55,6 +59,9 @@ interface CourseCurriculumProps {
   onDeleteCustomCourse?: (id: string) => void;
   onEditCustomCourse?: (course: CustomCourse) => void;
   onOpenConsulting?: () => void;
+  userPoints?: number;
+  streakCount?: number;
+  onClaimDailyBonus?: (xp: number) => void;
 }
 
 // Track visual styling map
@@ -106,7 +113,7 @@ const TRACK_STYLING: Record<string, {
     textClass: "text-blue-900 border-blue-500/30",
     border: "border-blue-200/70",
     accentBorder: "border-blue-500",
-    tierNumber: 1
+    tierNumber: 3
   },
   "content-strategy": {
     icon: <BookOpen className="text-purple-600 shrink-0" size={16} />,
@@ -166,7 +173,7 @@ const TRACK_STYLING: Record<string, {
     textClass: "text-teal-900 border-teal-500/30",
     border: "border-teal-200/70",
     accentBorder: "border-teal-500",
-    tierNumber: 3
+    tierNumber: 4
   },
   ga4: {
     icon: <BarChart3 className="text-orange-600 shrink-0" size={16} />,
@@ -176,7 +183,7 @@ const TRACK_STYLING: Record<string, {
     textClass: "text-orange-900 border-orange-500/30",
     border: "border-orange-200/70",
     accentBorder: "border-orange-500",
-    tierNumber: 4
+    tierNumber: 5
   },
   "authority-conversion": {
     icon: <Globe className="text-rose-600 shrink-0" size={16} />,
@@ -186,7 +193,7 @@ const TRACK_STYLING: Record<string, {
     textClass: "text-rose-900 border-rose-500/30",
     border: "border-rose-200/70",
     accentBorder: "border-rose-500",
-    tierNumber: 4
+    tierNumber: 5
   },
   geo: {
     icon: <Zap className="text-violet-600 shrink-0" size={16} />,
@@ -196,7 +203,7 @@ const TRACK_STYLING: Record<string, {
     textClass: "text-violet-900 border-violet-500/30",
     border: "border-violet-200/70",
     accentBorder: "border-violet-500",
-    tierNumber: 5
+    tierNumber: 6
   },
   aeo: {
     icon: <MessageSquare className="text-amber-600 shrink-0" size={16} />,
@@ -206,7 +213,7 @@ const TRACK_STYLING: Record<string, {
     textClass: "text-amber-900 border-amber-500/30",
     border: "border-amber-200/70",
     accentBorder: "border-amber-500",
-    tierNumber: 5
+    tierNumber: 6
   },
   sxo: {
     icon: <Network className="text-indigo-600 shrink-0" size={16} />,
@@ -216,7 +223,7 @@ const TRACK_STYLING: Record<string, {
     textClass: "text-indigo-900 border-indigo-500/30",
     border: "border-indigo-200/70",
     accentBorder: "border-indigo-500",
-    tierNumber: 5
+    tierNumber: 6
   }
 };
 
@@ -228,10 +235,13 @@ export default function CourseCurriculum({
   onSelectTrackId,
   onDeleteCustomCourse,
   onEditCustomCourse,
-  onOpenConsulting
+  onOpenConsulting,
+  userPoints = 0,
+  streakCount = 1,
+  onClaimDailyBonus
 }: CourseCurriculumProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [viewMode, setViewMode] = useState<"modules" | "roadmap">("modules");
+  const [viewMode, setViewMode] = useState<"modules" | "roadmap" | "visual-lab" | "gamification">("modules");
   const [selectedTierFilter, setSelectedTierFilter] = useState<string>("all");
   const [difficultyFilter, setDifficultyFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -531,10 +541,10 @@ export default function CourseCurriculum({
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
           
           {/* View Mode Toggle */}
-          <div className="inline-flex p-1 bg-neutral-100 rounded-xl border border-neutral-200/60 self-start">
+          <div className="inline-flex flex-wrap p-1 bg-neutral-100 rounded-xl border border-neutral-200/60 self-start gap-1">
             <button
               onClick={() => setViewMode("modules")}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-sans font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-sans font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                 viewMode === "modules"
                   ? "bg-white text-neutral-900 shadow-xs font-extrabold"
                   : "text-neutral-600 hover:text-neutral-900"
@@ -545,14 +555,36 @@ export default function CourseCurriculum({
             </button>
             <button
               onClick={() => setViewMode("roadmap")}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-sans font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-sans font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
                 viewMode === "roadmap"
                   ? "bg-white text-neutral-900 shadow-xs font-extrabold"
                   : "text-neutral-600 hover:text-neutral-900"
               }`}
             >
               <Compass size={13} />
-              <span>🗺️ Step-by-Step Learning Roadmap</span>
+              <span>15-Step Roadmap</span>
+            </button>
+            <button
+              onClick={() => setViewMode("visual-lab")}
+              className={`px-3 py-1.5 rounded-lg text-xs font-sans font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                viewMode === "visual-lab"
+                  ? "bg-white text-purple-950 shadow-xs font-extrabold"
+                  : "text-neutral-600 hover:text-neutral-900"
+              }`}
+            >
+              <Cpu size={13} className="text-purple-600" />
+              <span>Visual Learning Lab</span>
+            </button>
+            <button
+              onClick={() => setViewMode("gamification")}
+              className={`px-3 py-1.5 rounded-lg text-xs font-sans font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                viewMode === "gamification"
+                  ? "bg-white text-amber-950 shadow-xs font-extrabold"
+                  : "text-neutral-600 hover:text-neutral-900"
+              }`}
+            >
+              <Trophy size={13} className="text-amber-500" />
+              <span>Ranks &amp; Quests</span>
             </button>
           </div>
 
@@ -965,7 +997,107 @@ export default function CourseCurriculum({
           </div>
 
           {/* Right Active Modules Column */}
-          <div className="lg:col-span-9 space-y-8">
+          <div className="lg:col-span-9 space-y-6">
+
+            {/* Active Tier Concept Primer Card (when a tier is filtered) */}
+            {selectedTierFilter !== "all" && (() => {
+              const activeTier = SYLLABUS_TIERS.find(t => t.id === selectedTierFilter);
+              if (!activeTier) return null;
+              const tierMetrics = getTierProgressMetrics(activeTier);
+              return (
+                <div className="p-6 bg-gradient-to-br from-neutral-900 to-neutral-850 text-white rounded-2xl border border-neutral-800 shadow-sm space-y-4 animate-fade-in">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-4">
+                    <div>
+                      <div className="flex items-center gap-2 text-xs font-mono text-emerald-400">
+                        <span>Tier 0{activeTier.tierNumber}</span>
+                        <span>·</span>
+                        <span>{activeTier.difficulty} Level</span>
+                        <span>·</span>
+                        <span>{activeTier.estimatedHours} Hours Required</span>
+                      </div>
+                      <h3 className="text-lg font-sans font-black text-white mt-1">
+                        {activeTier.title}
+                      </h3>
+                    </div>
+                    <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+                      <span className="text-xs font-mono text-neutral-300">
+                        {tierMetrics.completed}/{tierMetrics.total} Checkpoints ({tierMetrics.percent}%)
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-400 block">
+                      Core Concept &amp; Mental Model (In Plain English)
+                    </span>
+                    <p className="text-xs sm:text-sm text-neutral-200 leading-relaxed font-sans">
+                      {activeTier.conceptSummary}
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-3 text-xs text-neutral-300 border-t border-white/10">
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-mono font-bold uppercase text-neutral-400 block">
+                        Prerequisites:
+                      </span>
+                      <p className="text-neutral-300 text-xs font-sans">
+                        {activeTier.prerequisites}
+                      </p>
+                    </div>
+
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-mono font-bold uppercase text-neutral-400 block">
+                        Verified Skills Mastered:
+                      </span>
+                      <div className="flex flex-wrap gap-1 text-[11px] font-sans">
+                        {activeTier.keySkills.map((sk, sIdx) => (
+                          <span key={sIdx} className="text-neutral-300">
+                            {sk}{sIdx < activeTier.keySkills.length - 1 ? " · " : ""}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Overall Syllabus Architecture Overview (when viewing all tiers) */}
+            {selectedTierFilter === "all" && (
+              <div className="p-5 bg-neutral-50 rounded-2xl border border-neutral-200/80 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Compass size={16} className="text-indigo-600" />
+                    <h4 className="text-xs font-sans font-extrabold text-neutral-900 uppercase tracking-wider">
+                      6-Tier Modern SEO Pedagogical Architecture
+                    </h4>
+                  </div>
+                  <span className="text-[10px] font-mono text-neutral-500">
+                    Beginner → Master Flow
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 pt-1 text-xs">
+                  {SYLLABUS_TIERS.map(t => (
+                    <button
+                      key={t.id}
+                      onClick={() => {
+                        setSelectedTierFilter(t.id);
+                        onSelectTrackId("all");
+                      }}
+                      className="p-2.5 bg-white border border-neutral-200/70 hover:border-neutral-900 rounded-xl text-left transition-all group cursor-pointer"
+                    >
+                      <div className="flex items-center justify-between text-[9px] font-mono font-bold text-neutral-400">
+                        <span>Tier {t.tierNumber}</span>
+                        <span>{t.difficulty[0]}</span>
+                      </div>
+                      <div className="text-[11px] font-sans font-bold text-neutral-800 group-hover:text-neutral-950 truncate mt-1">
+                        {t.shortTitle.split(". ")[1] || t.shortTitle}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
             
             {/* Custom Courses Block (if any exist) */}
             {progress.customCourses.length > 0 && (selectedTrackId === "all" || selectedTrackId === "custom") && (
@@ -1250,6 +1382,33 @@ export default function CourseCurriculum({
 
           </div>
 
+        </div>
+      )}
+
+      {/* VISUAL LEARNING LAB VIEW: Interactive Architectural Models */}
+      {viewMode === "visual-lab" && (
+        <div className="animate-fade-in">
+          <VisualLearningLab 
+            onNavigateToLevel={(lvlId) => {
+              onSelectLevel(lvlId);
+            }}
+          />
+        </div>
+      )}
+
+      {/* GAMIFICATION & DAILY QUESTS ARENA */}
+      {viewMode === "gamification" && (
+        <div className="animate-fade-in">
+          <GamificationArena
+            userPoints={userPoints}
+            completedItemIds={progress.completedItemIds}
+            allLevels={levels}
+            streakCount={streakCount}
+            onNavigateToLevel={(lvlId) => {
+              onSelectLevel(lvlId);
+            }}
+            onClaimDailyBonus={onClaimDailyBonus}
+          />
         </div>
       )}
 
